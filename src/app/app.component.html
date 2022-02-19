@@ -20,3 +20,15 @@
     </ul>
   </div>
 </nav>
+
+<div class="container-fluid">
+  <div class="nav-content-container" *ngIf="web3Service.connected">
+    <router-outlet></router-outlet>
+  </div>
+
+  <div class="col-sm-12" *ngIf="!web3Service.connected">
+    <span style="display: inline-block;" class="align-middle">
+      <quartz-connect-wallet-button></quartz-connect-wallet-button>
+    </span>
+  </div>
+</div>

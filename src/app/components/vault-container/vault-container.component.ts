@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './vault-container.component.html',
   styleUrls: ['./vault-container.component.scss'],
 })
-export class VaultContainerComponent implements OnInit {
+export class VaultsContainerComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
