@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BigNumber, ethers } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { IVault, VAULTS } from 'src/lib/data/vaults';
 import { FormattedResult } from 'src/lib/utils/formatting';
@@ -42,7 +41,6 @@ export class VaultService {
       const amountIn = vault.walletBalanceBN;
       const pair = this.tokens.getTokenContract(vault.lpAddress);
       const balanceGucci = await this.userHasSufficientBalance(amountIn, pair);
-      console.log(balanceGucci);
       if (!balanceGucci) {
         this._error.next(new Error('User balance too low'));
         return;
@@ -144,7 +142,12 @@ export class VaultService {
         ? 0
         : new FormattedResult(userLpDepositBalance).toNumber();
       v.userLpDepositBalanceBN = userLpDepositBalance;
-      v.tokenName = await v.contract.name();
+      const [name, symbol] = await Promise.all([
+        v.contract.name(),
+        v.contract.symbol(),
+      ]);
+      v.tokenName = name;
+      v.symbol = symbol;
       vaults.push(v);
     }
 

@@ -1,3 +1,33 @@
 .vault {
+  margin-bottom: 10px;
+}
+
+.deposit-withdrawl {
+  padding-top: 1.5rem;
+  padding-top: 0px;
+}
+
+mat-expansion-panel {
+  //background-color: #505067;
   background-color: rgb(254, 255, 235);
+  //color: rgb(226, 226, 226);
+  color: black;
+}
+
+.mat-slider-horizontal {
+  width: 100%;
+}
+
+button[mat-raised-button] {
+  margin-left: 5px;
+  background-color: #bcff99;
+}
+
+.range-meter {
+  margin-bottom: 15px;
+}
+
+.mat-slider.mat-slider.mat-slider-horizontal {
+  padding-top: 0px;
+  padding-bottom: 0px;
 }

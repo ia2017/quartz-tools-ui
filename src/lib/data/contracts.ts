@@ -60,11 +60,20 @@ export let UsdcToken = new ethers.Contract(USDC_ADDRESS, ERC20_ABI);
 export let JewelToken = new ethers.Contract(JEWEL_ADDRESS, ERC20_ABI);
 export let wOneToken = new ethers.Contract(HARMONY_wONE_ADDRESS, ERC20_ABI);
 
-export const QUARTZ_UST_PAIR = new ethers.Contract(
+export const QuartzUstPair = new ethers.Contract(
   QUARTZ_UST_DFK_LP_ADDRESS,
   UNIV2_PAIR_ABI
 );
-export const QSHARE_QUARTZ_PAIR = new ethers.Contract(
+export const QShareQuartzPair = new ethers.Contract(
   QUARTZ_QSHARE_DFK_LP_ADDRESS,
   UNIV2_PAIR_ABI
 );
+export const QShareOnePair = new ethers.Contract(
+  QSHARE_ONE_DFK_LP_ADDRESS,
+  UNIV2_PAIR_ABI
+);
+
+export const VAULT_QUARTZ_UST_ADDRESS =
+  '0xEF80aFDD5b345269DEd372E0441b5C19D2680693';
+export const VAULT_QSHARE_ONE_ADDRESS =
+  '0x252A6B2958715B3Cc461Ce508ee9C7E55166C9c8';
