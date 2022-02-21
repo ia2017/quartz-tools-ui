@@ -1,6 +1,6 @@
 
         <div class="row">
-          <div class="col-md-12 clearfix" *ngIf="vault.loading">
+          <div class="col-md-12 clearfix" *ngIf="vault.loading" style="margin-bottom: 5px;">
             <mat-spinner diameter="35" class="float-right"></mat-spinner>
           </div>
 
@@ -73,6 +73,7 @@
                   [min]="0"
                   [step]="1"
                   thumbLabel
+                  tickInterval="25"
                   [(ngModel)]="depositValue">
                 </mat-slider>
 
@@ -86,8 +87,15 @@
                 </div>
 
                 <button
-                  mat-raised-button
+                mat-raised-button
+                class="float-right"
+                [disabled]="!vault.userLpWalletBalance"
+                (click)="setVaultDepositAll(vault)">
+                  Deposit All
+                </button>
 
+                <button
+                  mat-raised-button
                   class="float-right"
                  [disabled]="!vault.userLpWalletBalance"
                  (click)="setVaultDeposit(vault)">
@@ -105,6 +113,7 @@
                   [min]="0"
                   [step]="1"
                   thumbLabel
+                  tickInterval="25"
                   [(ngModel)]="withdrawValue">
                 </mat-slider>
 

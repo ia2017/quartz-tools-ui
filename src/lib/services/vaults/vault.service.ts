@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { IVault, VAULTS } from 'src/lib/data/vaults';
 import { FormattedResult } from 'src/lib/utils/formatting';
@@ -15,9 +15,9 @@ export class VaultService {
     return this._vaults.asObservable();
   }
 
-  private _operationComplete = new Subject<true>();
-  get operationComplete() {
-    return this._operationComplete.asObservable();
+  private _operationActive = new Subject<string>();
+  get operationActive() {
+    return this._operationActive.asObservable();
   }
 
   private _error = new Subject<Error>();
@@ -32,13 +32,42 @@ export class VaultService {
     this.initVaults();
   }
 
-  async deposit(vault: IVault) {
+  async deposit(vault: IVault, amount: number) {
     try {
-      if (vault.walletBalanceBN.isZero()) {
-        this._error.next(new Error('User balance too low'));
+      const amountBN = ethers.BigNumber.from(amount);
+      // Convert to percentage
+      const amountIn = vault.walletBalanceBN.mul(amountBN).div(100);
+      await this._deposit(vault, amountIn);
+    } catch (error) {
+      console.error(error);
+      this._error.next(new Error('Deposit Error'));
+    }
+  }
+
+  async depositAll(vault: IVault) {
+    try {
+      // if (vault.walletBalanceBN.isZero()) {
+      //   this._error.next(new Error("Can't deposit zero"));
+      //   return;
+      // }
+      // const pair = this.tokens.getTokenContract(vault.lpAddress);
+      // await this.approveVaultIfNeeded(vault, vault.walletBalanceBN, pair);
+      // const vaultContract = this.getVaultInstance(vault.vaultAddress);
+      // const depositTx = await this._deposit(vault, vault.walletBalanceBN);
+      //await awaitTransactionComplete(depositTx);
+
+      await this._deposit(vault, vault.walletBalanceBN);
+    } catch (error) {}
+  }
+
+  private async _deposit(vault: IVault, amountIn: ethers.BigNumber) {
+    try {
+      if (vault.walletBalanceBN.isZero() || amountIn.isZero()) {
+        this._error.next(new Error("Can't deposit zero"));
         return;
       }
-      const amountIn = vault.walletBalanceBN;
+
+      this._operationActive.next('Depositing..');
       const pair = this.tokens.getTokenContract(vault.lpAddress);
       const balanceGucci = await this.userHasSufficientBalance(amountIn, pair);
       if (!balanceGucci) {
@@ -46,15 +75,13 @@ export class VaultService {
         return;
       }
       await this.approveVaultIfNeeded(vault, amountIn, pair);
-
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
-      await awaitTransactionComplete(depositTx);
+      const tx = await awaitTransactionComplete(depositTx);
+      this._operationActive.next('Deposit complete.');
       await this.initVaults();
-      this._operationComplete.next(true);
     } catch (error) {
-      console.error(error);
-      this._error.next(new Error('Deposit Error'));
+      throw error;
     }
   }
 
@@ -72,21 +99,25 @@ export class VaultService {
 
   private async approveVaultIfNeeded(
     vault: IVault,
-    amount: BigNumber,
+    amount: ethers.BigNumber,
     pair: ethers.Contract
   ) {
     try {
+      this._operationActive.next('Checking allowances..');
       const allowance = await pair.allowance(
         this.web3.web3Info.userAddress,
         vault.vaultAddress
       );
       if (allowance.lt(amount)) {
         // Get user approval for LP pair for vault contract
+        this._operationActive.next('Awaiting approvals..');
         const tx = await pair.approve(
           vault.vaultAddress,
           ethers.constants.MaxUint256
         );
+
         await awaitTransactionComplete(tx);
+        this._operationActive.next('Approvals complete.');
       }
     } catch (error) {
       throw error;
@@ -94,11 +125,11 @@ export class VaultService {
   }
 
   private async userHasSufficientBalance(
-    amountIn: BigNumber,
+    amountIn: ethers.BigNumber,
     pair: ethers.Contract
   ): Promise<boolean> {
     try {
-      const userBalance: BigNumber = await pair.balanceOf(
+      const userBalance: ethers.BigNumber = await pair.balanceOf(
         this.web3.web3Info.userAddress
       );
       if (userBalance.gte(amountIn)) {
@@ -135,7 +166,7 @@ export class VaultService {
       const bal = await this.getUserBalanceLP(v.lpAddress);
       v.userLpWalletBalance = bal.toNumber();
       v.walletBalanceBN = bal.value;
-      const userLpDepositBalance: BigNumber = await v.contract.balanceOf(
+      const userLpDepositBalance: ethers.BigNumber = await v.contract.balanceOf(
         this.web3.web3Info.userAddress
       );
       v.userLpDepositBalance = userLpDepositBalance.isZero()

@@ -23,6 +23,7 @@ import {
 } from '../../data/contracts';
 import { FormattedResult } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
+import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
@@ -41,6 +42,29 @@ export class TokenService {
 
   getTokenContract(address: string) {
     return this.contractRefs[address];
+  }
+
+  async approveTokenIfNeeded(
+    tokenAddress: string,
+    owner: string,
+    spender: string,
+    amount: ethers.BigNumber
+  ) {
+    try {
+      const allowance: ethers.BigNumber = await this.contractRefs[
+        tokenAddress
+      ].allowance(owner, spender);
+      if (allowance.lt(amount)) {
+        const tx = await this.contractRefs[tokenAddress].approve(
+          spender,
+          ethers.constants.MaxUint256
+        );
+
+        await awaitTransactionComplete(tx);
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
   private setContractRefs() {
