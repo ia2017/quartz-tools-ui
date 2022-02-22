@@ -16,28 +16,34 @@ export class VaultComponent {
 
   constructor(public readonly vaultService: VaultService) {}
 
-  async setVaultDeposit(vault: IVault) {
-    vault.loading = true;
-    await this.vaultService.deposit(vault, this.depositValue);
+  async setVaultDeposit() {
+    this.vault.loading = true;
+    await this.vaultService.deposit(this.vault, this.depositValue);
     this.depositValue = 0;
-    vault.loading = false;
+    this.vault.loading = false;
   }
 
-  async setVaultDepositAll(vault: IVault) {
-    vault.loading = true;
+  async setVaultDepositAll() {
+    this.vault.loading = true;
     this.depositValue = 100;
-    await this.vaultService.depositAll(vault);
+    await this.vaultService.depositAll(this.vault);
     this.depositValue = 0;
-    vault.loading = false;
+    this.vault.loading = false;
   }
 
-  async setVaultWithdraw(vault: IVault) {
+  async setVaultWithdraw() {
     console.log(this.withdrawValue);
   }
 
-  async setVaultWithdrawAll(vault: IVault) {
-    vault.loading = true;
-    await this.vaultService.withdrawAll(vault);
-    vault.loading = false;
+  async setVaultWithdrawAll() {
+    this.vault.loading = true;
+    await this.vaultService.withdrawAll(this.vault);
+    this.vault.loading = false;
+  }
+
+  async setApproval() {
+    this.vault.loading = true;
+    await this.vaultService.approveVault(this.vault);
+    this.vault.loading = false;
   }
 }

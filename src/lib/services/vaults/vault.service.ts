@@ -77,7 +77,7 @@ export class VaultService {
       await this.approveVaultIfNeeded(vault, amountIn, pair);
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
-      const tx = await awaitTransactionComplete(depositTx);
+      await awaitTransactionComplete(depositTx);
       this._operationActive.next('Deposit complete.');
       await this.initVaults();
     } catch (error) {
@@ -124,6 +124,22 @@ export class VaultService {
     }
   }
 
+  async approveVault(
+    vault: IVault,
+    amount: ethers.BigNumber = ethers.constants.MaxUint256
+  ) {
+    try {
+      this._operationActive.next('Approving contract...');
+      const pair = this.tokens.getTokenContract(vault.lpAddress);
+      const tx = await pair.approve(vault.vaultAddress, amount);
+      await awaitTransactionComplete(tx);
+      vault.contractApproved = true;
+      this._operationActive.next('Approvals complete.');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   private async userHasSufficientBalance(
     amountIn: ethers.BigNumber,
     pair: ethers.Contract
@@ -150,6 +166,10 @@ export class VaultService {
     const pair = this.tokens.getTokenContract(lpAddress);
     const balance = await pair.balanceOf(this.web3.web3Info.userAddress);
     return new FormattedResult(balance);
+  }
+
+  reloadVault(vault: IVault) {
+    //
   }
 
   private async initVaults() {
@@ -179,6 +199,17 @@ export class VaultService {
       ]);
       v.tokenName = name;
       v.symbol = symbol;
+
+      const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
+      const allowance: ethers.BigNumber = await vaultPair.allowance(
+        this.web3.web3Info.userAddress,
+        vault.vaultAddress
+      );
+
+      if (allowance.gt(ethers.constants.Zero)) {
+        v.contractApproved = true;
+      }
+
       vaults.push(v);
     }
 

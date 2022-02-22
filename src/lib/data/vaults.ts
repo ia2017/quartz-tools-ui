@@ -23,6 +23,7 @@ export interface IVault {
   loading: boolean;
   contract?: ethers.Contract;
   logoURI: string;
+  contractApproved: boolean;
 }
 
 export const VAULT_QUARTZ_UST: IVault = {
@@ -39,22 +40,23 @@ export const VAULT_QUARTZ_UST: IVault = {
   totalValueLocked: 127000,
   loading: false,
   logoURI: 'assets/quartz-ust-lp.svg',
+  contractApproved: false,
 };
 
-export const VAULT_QSHARE_ONE: IVault = {
-  name: 'QShare-ONE',
-  poolId: 1,
-  vaultAddress: VAULT_QSHARE_ONE_ADDRESS,
-  lpAddress: QSHARE_ONE_DFK_LP_ADDRESS,
-  userLpWalletBalance: 0,
-  walletBalanceBN: ethers.constants.Zero,
-  userLpDepositBalance: 0,
-  userLpDepositBalanceBN: ethers.constants.Zero,
-  APY: 18,
-  dailyAPR: 0.02,
-  totalValueLocked: 117000,
-  loading: false,
-  logoURI: 'assets/qshare-one-lp.svg',
-};
+// export const VAULT_QSHARE_ONE: IVault = {
+//   name: 'QShare-ONE',
+//   poolId: 1,
+//   vaultAddress: VAULT_QSHARE_ONE_ADDRESS,
+//   lpAddress: QSHARE_ONE_DFK_LP_ADDRESS,
+//   userLpWalletBalance: 0,
+//   walletBalanceBN: ethers.constants.Zero,
+//   userLpDepositBalance: 0,
+//   userLpDepositBalanceBN: ethers.constants.Zero,
+//   APY: 18,
+//   dailyAPR: 0.02,
+//   totalValueLocked: 117000,
+//   loading: false,
+//   logoURI: 'assets/qshare-one-lp.svg',
+// };
 
-export const VAULTS = [VAULT_QUARTZ_UST, VAULT_QSHARE_ONE];
+export const VAULTS = [VAULT_QUARTZ_UST];
