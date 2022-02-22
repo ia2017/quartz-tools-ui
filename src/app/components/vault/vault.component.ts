@@ -11,7 +11,7 @@ import { FormattedResult } from 'src/lib/utils/formatting';
 })
 export class VaultComponent {
   @Input() vault: IVault;
-  depositValue = 0;
+  depositValue = 100;
   withdrawValue = 0;
 
   constructor(public readonly vaultService: VaultService) {}
@@ -19,7 +19,7 @@ export class VaultComponent {
   async setVaultDeposit() {
     this.vault.loading = true;
     await this.vaultService.deposit(this.vault, this.depositValue);
-    this.depositValue = 0;
+    this.depositValue = 100;
     this.vault.loading = false;
   }
 

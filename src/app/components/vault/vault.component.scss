@@ -32,3 +32,21 @@ button[mat-raised-button] {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
+.label-value {
+  font-size: 18px;
+  line-height: 18px;
+  // font-weight: bold;
+}
+
+@media (max-width: 1199px) {
+  // .balance {
+  //   margin-top: 15px;
+  // }
+
+  .deposit-withdrawl,
+  .balance {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}

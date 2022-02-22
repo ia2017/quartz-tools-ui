@@ -1,5 +1,5 @@
 <div class="row tab-option">
-  <div class="col-md-12 vault" *ngFor="let vault of vaultService.vaults | async">
+  <div class="col-md-12" *ngFor="let vault of vaultService.vaults | async">
 
       <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
@@ -7,13 +7,11 @@
             <span class="bold">
               {{ vault.name }}
             </span>
-
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="vault">
           <quartz-vault [vault]="vault"></quartz-vault>
         </div>
-
       </mat-expansion-panel>
 
   </div>

@@ -1,161 +1,170 @@
 
-        <div class="row">
-          <div class="col-md-12 clearfix" *ngIf="vault.loading" style="margin-bottom: 5px;">
-            <mat-spinner diameter="35" class="float-right"></mat-spinner>
-          </div>
+<div class="row">
+  <div class="col-12 clearfix" *ngIf="vault.loading" style="margin-bottom: 5px;">
+    <mat-spinner diameter="35" class="float-right"></mat-spinner>
+  </div>
 
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-2 bold">
-                <!-- <h3>
-                  {{ vault.name }}
-                </h3> -->
-                <img src="{{ vault.logoURI }}" alt="">
-                <p> {{ vault.symbol }}</p>
-              </div>
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12 col-12 col-xl-2 bold vault-info">
+        <img src="{{ vault.logoURI }}" alt="">
+        <span> {{ vault.symbol }}</span>
+      </div>
 
-              <div class="col-md-2 bold">
-                <div class="text-center">
-                  {{ vault.userLpWalletBalance }}
-                </div>
-                <div class="text-center">
-                    Wallet Balance
-                </div>
-              </div>
-
-              <div class="col-md-2 bold">
-                <div class="text-center">
-                  {{ vault.userLpDepositBalance }}
-                </div>
-                <div class="text-center">
-                    Deposit Balance
-                </div>
-              </div>
-
-              <div class="col-md-2 bold">
-                <div class="text-center">
-                  {{ vault.APY | percent }}
-                </div>
-                <div class="text-center">
-                    APY
-                </div>
-              </div>
-
-              <div class="col-md-2 bold">
-                <div class="text-center">
-                  {{ vault.dailyAPR | percent  }}
-                </div>
-                <div class="text-center">
-                    Daily %
-                </div>
-              </div>
-
-              <div class="col-md-2 bold">
-                <div class="text-center">
-                  {{ vault.totalValueLocked | currency  }}
-                </div>
-                <div class="text-center">
-                    TVL
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-6 clearfix deposit-withdrawl">
-                <mat-form-field appearance="outline">
-                  <input type="text" matInput [disabled]="!vault.userLpWalletBalance">
-                </mat-form-field>
-                <mat-slider
-                  [disabled]="!vault.userLpWalletBalance"
-                  [max]="100"
-                  [min]="0"
-                  [step]="1"
-                  thumbLabel
-                  tickInterval="25"
-                  [(ngModel)]="depositValue">
-                </mat-slider>
-
-                <div class="range-meter clearfix">
-                  <span class="range-meter-num">
-                    0%
-                  </span>
-                  <span class="range-meter-num float-right">
-                    100%
-                  </span>
-                </div>
-
-                <button
-                  *ngIf="!vault.contractApproved"
-                  mat-raised-button
-                  class="float-right"
-                  (click)="setApproval()">
-                  Approve
-                </button>
-
-                <button
-                  *ngIf="vault.contractApproved"
-                  mat-raised-button
-                  class="float-right"
-                  [disabled]="!vault.userLpWalletBalance"
-                  (click)="setVaultDepositAll()">
-                  Deposit All
-                </button>
-
-                <button
-                  *ngIf="vault.contractApproved"
-                  mat-raised-button
-                  class="float-right"
-                  [disabled]="!vault.userLpWalletBalance"
-                  (click)="setVaultDeposit()">
-                  Deposit
-                </button>
-              </div>
-
-              <div class="col-md-6 clearfix deposit-withdrawl">
-                <mat-form-field appearance="outline">
-                  <input type="text" matInput [disabled]="!vault.userLpDepositBalance">
-                </mat-form-field>
-                <mat-slider
-                  [disabled]="!vault.userLpDepositBalance"
-                  [max]="100"
-                  [min]="0"
-                  [step]="1"
-                  thumbLabel
-                  tickInterval="25"
-                  [(ngModel)]="withdrawValue">
-                </mat-slider>
-
-                <div class="range-meter clearfix">
-                  <span class="range-meter-num">
-                    0%
-                  </span>
-                  <span class="range-meter-num float-right">
-                    100%
-                  </span>
-                </div>
-
-
-                <button
-                  mat-raised-button
-                  color="primary"
-                  class="float-right"
-                  [disabled]="!vault.userLpDepositBalance"
-                  (click)="setVaultWithdrawAll()">
-                  Withdraw All
-                </button>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  class="float-right"
-                [disabled]="!vault.userLpDepositBalance"
-                  (click)="setVaultWithdraw()">
-                  Withdraw
-                </button>
-
-              </div>
-            </div>
-
-          </div>
+      <div class="col-md-6 col-6  col-xl-2 bold balance">
+        <div class="text-center label-value">
+          {{ vault.userLpWalletBalance }}
         </div>
+        <div class="text-center">
+            Wallet Balance
+        </div>
+      </div>
+
+      <div class="col-md-6 col-6  col-xl-2 bold balance">
+        <div class="text-center label-value">
+          {{ vault.userLpDepositBalance }}
+        </div>
+        <div class="text-center">
+            Deposit Balance
+        </div>
+      </div>
+
+      <div class="col-md-4 col-4  col-xl-2 bold">
+        <div class="text-center label-value">
+          {{ vault.APY | percent }}
+        </div>
+        <div class="text-center">
+            APY
+        </div>
+      </div>
+
+      <div class="col-md-4 col-4  col-xl-2 bold">
+        <div class="text-center label-value">
+          {{ vault.dailyAPR | percent  }}
+        </div>
+        <div class="text-center">
+            Daily %
+        </div>
+      </div>
+
+      <div class="col-md-4 col-4  col-xl-2 bold">
+        <div class="text-center label-value">
+          {{ vault.totalValueLocked | currency  }}
+        </div>
+        <div class="text-center">
+            TVL
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-6 deposit-withdrawl">
+        <mat-form-field appearance="outline">
+          <input type="text" matInput [disabled]="!vault.userLpWalletBalance">
+        </mat-form-field>
+        <mat-slider
+          [disabled]="!vault.userLpWalletBalance"
+          [max]="100"
+          [min]="0"
+          [step]="1"
+          thumbLabel
+          tickInterval="25"
+          [(ngModel)]="depositValue">
+        </mat-slider>
+
+        <div class="range-meter clearfix">
+          <span class="range-meter-num">
+            0%
+          </span>
+          <span class="range-meter-num float-right">
+            100%
+          </span>
+        </div>
+
+        <div class="clearfix">
+          <button
+          *ngIf="!vault.contractApproved"
+          mat-raised-button
+          class="float-right"
+          (click)="setApproval()">
+          Approve
+        </button>
+
+        <button
+          *ngIf="vault.contractApproved"
+          mat-raised-button
+          class="float-right"
+          [disabled]="!vault.userLpWalletBalance"
+          (click)="setVaultDepositAll()">
+          Deposit All
+        </button>
+
+        <button
+          *ngIf="vault.contractApproved"
+          mat-raised-button
+          class="float-right"
+          [disabled]="!vault.userLpWalletBalance"
+          (click)="setVaultDeposit()">
+          Deposit
+        </button>
+
+        </div>
+
+        <div class="bold" style="padding: 5px;">
+          <span>
+            Deposit Fee: 0%
+          </span>
+          <span>
+            Withdrawl Fee: 0.1%
+          </span>
+        </div>
+      </div>
+
+      <div class="col-md-6 clearfix deposit-withdrawl">
+        <mat-form-field appearance="outline">
+          <input type="text" matInput [disabled]="!vault.userLpDepositBalance">
+        </mat-form-field>
+        <mat-slider
+          [disabled]="!vault.userLpDepositBalance"
+          [max]="100"
+          [min]="0"
+          [step]="1"
+          thumbLabel
+          tickInterval="25"
+          [(ngModel)]="withdrawValue">
+        </mat-slider>
+
+        <div class="range-meter clearfix">
+          <span class="range-meter-num">
+            0%
+          </span>
+          <span class="range-meter-num float-right">
+            100%
+          </span>
+        </div>
+
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="float-right"
+          [disabled]="!vault.userLpDepositBalance"
+          (click)="setVaultWithdrawAll()">
+          Withdraw All
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          class="float-right"
+        [disabled]="!vault.userLpDepositBalance"
+          (click)="setVaultWithdraw()">
+          Withdraw
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</div>
