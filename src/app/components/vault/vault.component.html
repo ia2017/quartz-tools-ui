@@ -87,7 +87,7 @@
           <button
           *ngIf="!vault.contractApproved"
           mat-raised-button
-          class="float-right"
+          class="float-right quartz-btn"
           (click)="setApproval()">
           Approve
         </button>
@@ -95,7 +95,7 @@
         <button
           *ngIf="vault.contractApproved"
           mat-raised-button
-          class="float-right"
+          class="float-right quartz-btn"
           [disabled]="!vault.userLpWalletBalance"
           (click)="setVaultDepositAll()">
           Deposit All
@@ -104,7 +104,7 @@
         <button
           *ngIf="vault.contractApproved"
           mat-raised-button
-          class="float-right"
+          class="float-right quartz-btn"
           [disabled]="!vault.userLpWalletBalance"
           (click)="setVaultDeposit()">
           Deposit
@@ -148,23 +148,19 @@
 
         <button
           mat-raised-button
-          color="primary"
-          class="float-right"
+          class="float-right quartz-btn"
           [disabled]="!vault.userLpDepositBalance"
           (click)="setVaultWithdrawAll()">
           Withdraw All
         </button>
         <button
           mat-raised-button
-          color="primary"
-          class="float-right"
-        [disabled]="!vault.userLpDepositBalance"
+          class="float-right quartz-btn"
+          [disabled]="!vault.userLpDepositBalance"
           (click)="setVaultWithdraw()">
           Withdraw
         </button>
-
       </div>
     </div>
-
   </div>
 </div>

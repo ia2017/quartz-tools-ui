@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 
 @Component({
@@ -7,19 +8,23 @@ import { VaultService } from 'src/lib/services/vaults/vault.service';
   templateUrl: './vault-container.component.html',
   styleUrls: ['./vault-container.component.scss'],
 })
-export class VaultsContainerComponent {
+export class VaultsContainerComponent implements OnDestroy {
+  private subs = new Subscription();
+
+  loadingVaults = true;
+
   constructor(
     public readonly vaultService: VaultService,
     private snackBar: MatSnackBar
   ) {
-    this.vaultService.error.subscribe((err) => {
+    const s1 = this.vaultService.error.subscribe((err) => {
       this.snackBar.dismiss();
       this.snackBar.open(err.message, '', {
         duration: 1000 * 5,
       });
     });
 
-    this.vaultService.operationActive.subscribe((msg) => {
+    const s2 = this.vaultService.operationActive.subscribe((msg) => {
       this.snackBar.dismiss();
       if (msg) {
         this.snackBar.open(msg, '', {
@@ -27,5 +32,17 @@ export class VaultsContainerComponent {
         });
       }
     });
+
+    const s3 = this.vaultService.init.subscribe((init) => {
+      this.loadingVaults = !init;
+    });
+
+    this.subs.add(s1);
+    this.subs.add(s2);
+    this.subs.add(s3);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 }

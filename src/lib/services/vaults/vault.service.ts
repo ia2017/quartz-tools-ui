@@ -15,6 +15,11 @@ export class VaultService {
     return this._vaults.asObservable();
   }
 
+  private _init = new BehaviorSubject<boolean>(false);
+  get init() {
+    return this._init.asObservable();
+  }
+
   private _operationActive = new Subject<string>();
   get operationActive() {
     return this._operationActive.asObservable();
@@ -214,5 +219,7 @@ export class VaultService {
     }
 
     this._vaults.next(vaults);
+
+    this._init.next(true);
   }
 }
