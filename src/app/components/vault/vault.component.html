@@ -1,5 +1,5 @@
 
-<div class="row" [ngClass]="{'paused-vault': vault.strategy.paused === true }">
+<div class="row">
   <div class="banner-container" *ngIf="vault.strategy.paused === true">
     <div class="banner">Paused</div>
   </div>
@@ -93,6 +93,7 @@
           mat-raised-button
           class="float-right quartz-btn"
           (click)="setApproval()">
+          [disabled]="vault.strategy.paused"
           Approve
         </button>
 
