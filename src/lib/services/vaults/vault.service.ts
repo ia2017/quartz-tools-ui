@@ -204,7 +204,7 @@ export class VaultService {
 
       v.tokenName = name;
       v.symbol = symbol;
-      v.strategy.paused = true;
+      v.strategy.paused = paused;
       v.strategy.withdrawlFee = toNumber(withdrawalFee.div(100));
 
       // Check users current LP holdings in wallet
