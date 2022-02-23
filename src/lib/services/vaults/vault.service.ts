@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { IVault, VAULTS } from 'src/lib/data/vaults';
 import { FormattedResult } from 'src/lib/utils/formatting';
@@ -124,6 +125,7 @@ export class VaultService {
         await awaitTransactionComplete(tx);
         this._operationActive.next('Approvals complete.');
       }
+      this._operationActive.next(null);
     } catch (error) {
       throw error;
     }
@@ -188,29 +190,42 @@ export class VaultService {
         VAULT_ABI,
         this.web3.web3Info.signer
       );
-      const bal = await this.getUserBalanceLP(v.lpAddress);
-      v.userLpWalletBalance = bal.toNumber();
-      v.walletBalanceBN = bal.value;
-      const userLpDepositBalance: ethers.BigNumber = await v.contract.balanceOf(
-        this.web3.web3Info.userAddress
-      );
-      v.userLpDepositBalance = userLpDepositBalance.isZero()
-        ? 0
-        : new FormattedResult(userLpDepositBalance).toNumber();
-      v.userLpDepositBalanceBN = userLpDepositBalance;
-      const [name, symbol] = await Promise.all([
+
+      // Get/set basic vault token info
+      const [name, symbol, pricePerShare, totalSupply] = await Promise.all([
         v.contract.name(),
         v.contract.symbol(),
+        v.contract.getPricePerFullShare(),
+        v.contract.totalSupply(),
       ]);
       v.tokenName = name;
       v.symbol = symbol;
 
+      // Check users current LP holdings in wallet
+      const bal = await this.getUserBalanceLP(v.lpAddress);
+      v.userLpWalletBalance = bal.toNumber();
+      v.walletBalanceBN = bal.value;
+
+      // Check/set users current deposits into vault
+      const userLpDepositBalance: ethers.BigNumber = await v.contract.balanceOf(
+        this.web3.web3Info.userAddress
+      );
+      const amountTimesPricePerShare =
+        new FormattedResult(userLpDepositBalance).toNumber() *
+        new FormattedResult(pricePerShare).toNumber();
+      // .div(totalSupply);
+      v.userLpDepositBalance = userLpDepositBalance.isZero()
+        ? 0
+        : amountTimesPricePerShare;
+
+      v.userLpDepositBalanceBN = parseUnits(String(amountTimesPricePerShare));
+
+      // Check/set allowance for vault pair
       const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
       const allowance: ethers.BigNumber = await vaultPair.allowance(
         this.web3.web3Info.userAddress,
         vault.vaultAddress
       );
-
       if (allowance.gt(ethers.constants.Zero)) {
         v.contractApproved = true;
       }

@@ -24,6 +24,7 @@ export interface IVault {
   contract?: ethers.Contract;
   logoURI: string;
   contractApproved: boolean;
+  pricePerShare?: BigNumber;
 }
 
 export const VAULT_QUARTZ_UST: IVault = {
