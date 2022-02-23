@@ -1,5 +1,9 @@
 
-<div class="row">
+<div class="row" [ngClass]="{'paused-vault': vault.strategy.paused === true }">
+  <div class="banner-container" *ngIf="vault.strategy.paused === true">
+    <div class="banner">Paused</div>
+  </div>
+
   <div class="col-12 clearfix" *ngIf="vault.loading" style="margin-bottom: 5px;">
     <mat-spinner diameter="35" class="float-right"></mat-spinner>
   </div>
@@ -96,7 +100,7 @@
           *ngIf="vault.contractApproved"
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.userLpWalletBalance"
+          [disabled]="!vault.userLpWalletBalance || vault.strategy.paused"
           (click)="setVaultDepositAll()">
           Deposit All
         </button>
@@ -105,7 +109,7 @@
           *ngIf="vault.contractApproved"
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.userLpWalletBalance"
+          [disabled]="!vault.userLpWalletBalance || vault.strategy.paused"
           (click)="setVaultDeposit()">
           Deposit
         </button>
@@ -113,11 +117,11 @@
         </div>
 
         <div class="bold" style="padding: 5px;">
-          <span>
+          <span style="margin-right: 5px;">
             Deposit Fee: 0%
           </span>
           <span>
-            Withdrawl Fee: 0.1%
+            Withdrawl Fee: {{ vault.strategy.withdrawlFee }}%
           </span>
         </div>
       </div>

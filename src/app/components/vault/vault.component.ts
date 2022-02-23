@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ethers } from 'ethers';
-import { IVault } from 'src/lib/data/vaults';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
-import { FormattedResult } from 'src/lib/utils/formatting';
+import { IVault } from 'src/lib/types/vault.types';
 
 @Component({
   selector: 'quartz-vault',

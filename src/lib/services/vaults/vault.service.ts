@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { IVault, VAULTS } from 'src/lib/data/vaults';
-import { FormattedResult } from 'src/lib/utils/formatting';
+import { VAULTS } from 'src/lib/data/vaults';
+import { IVault } from 'src/lib/types/vault.types';
+import { FormattedResult, toNumber } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { TokenService } from '../tokens/token.service';
 import { Web3Service } from '../web3.service';
@@ -52,16 +53,6 @@ export class VaultService {
 
   async depositAll(vault: IVault) {
     try {
-      // if (vault.walletBalanceBN.isZero()) {
-      //   this._error.next(new Error("Can't deposit zero"));
-      //   return;
-      // }
-      // const pair = this.tokens.getTokenContract(vault.lpAddress);
-      // await this.approveVaultIfNeeded(vault, vault.walletBalanceBN, pair);
-      // const vaultContract = this.getVaultInstance(vault.vaultAddress);
-      // const depositTx = await this._deposit(vault, vault.walletBalanceBN);
-      //await awaitTransactionComplete(depositTx);
-
       await this._deposit(vault, vault.walletBalanceBN);
     } catch (error) {}
   }
@@ -175,6 +166,7 @@ export class VaultService {
     return new FormattedResult(balance);
   }
 
+  // TODO:
   reloadVault(vault: IVault) {
     //
   }
@@ -191,15 +183,29 @@ export class VaultService {
         this.web3.web3Info.signer
       );
 
+      v.strategyContract = new ethers.Contract(
+        v.strategy.address,
+        [
+          'function paused() view returns (bool)',
+          'function withdrawalFee() view returns (uint256)',
+        ],
+        this.web3.web3Info.provider
+      );
+
       // Get/set basic vault token info
-      const [name, symbol, pricePerShare, totalSupply] = await Promise.all([
-        v.contract.name(),
-        v.contract.symbol(),
-        v.contract.getPricePerFullShare(),
-        v.contract.totalSupply(),
-      ]);
+      const [name, symbol, pricePerShare, paused, withdrawalFee] =
+        await Promise.all([
+          v.contract.name(),
+          v.contract.symbol(),
+          v.contract.getPricePerFullShare(),
+          v.strategyContract.paused(),
+          v.strategyContract.withdrawalFee(),
+        ]);
+
       v.tokenName = name;
       v.symbol = symbol;
+      v.strategy.paused = true;
+      v.strategy.withdrawlFee = toNumber(withdrawalFee.div(100));
 
       // Check users current LP holdings in wallet
       const bal = await this.getUserBalanceLP(v.lpAddress);
@@ -213,7 +219,7 @@ export class VaultService {
       const amountTimesPricePerShare =
         new FormattedResult(userLpDepositBalance).toNumber() *
         new FormattedResult(pricePerShare).toNumber();
-      // .div(totalSupply);
+
       v.userLpDepositBalance = userLpDepositBalance.isZero()
         ? 0
         : amountTimesPricePerShare;

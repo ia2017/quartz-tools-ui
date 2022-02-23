@@ -1,31 +1,12 @@
 import { BigNumber, ethers } from 'ethers';
+import { IVault } from '../types/vault.types';
 import {
   QSHARE_ONE_DFK_LP_ADDRESS,
   QUARTZ_UST_DFK_LP_ADDRESS,
+  STRAT_QUARTZ_UST_ADDRESS,
   VAULT_QSHARE_ONE_ADDRESS,
   VAULT_QUARTZ_UST_ADDRESS,
 } from './contracts';
-
-export interface IVault {
-  name: string;
-  tokenName?: string;
-  symbol?: string;
-  poolId: number;
-  vaultAddress: string;
-  lpAddress: string;
-  userLpWalletBalance: number;
-  walletBalanceBN: BigNumber;
-  userLpDepositBalance: number;
-  userLpDepositBalanceBN: BigNumber;
-  APY: number;
-  dailyAPR: number;
-  totalValueLocked: number;
-  loading: boolean;
-  contract?: ethers.Contract;
-  logoURI: string;
-  contractApproved: boolean;
-  pricePerShare?: BigNumber;
-}
 
 export const VAULT_QUARTZ_UST: IVault = {
   name: 'Quartz-UST',
@@ -42,6 +23,9 @@ export const VAULT_QUARTZ_UST: IVault = {
   loading: false,
   logoURI: 'assets/quartz-ust-lp.svg',
   contractApproved: false,
+  strategy: {
+    address: STRAT_QUARTZ_UST_ADDRESS,
+  },
 };
 
 // export const VAULT_QSHARE_ONE: IVault = {
