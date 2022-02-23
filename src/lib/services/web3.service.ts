@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { Injectable } from '@angular/core';
 import { ChainService } from './chain/chain.service';
 import { Web3AppInfo } from '../types/web3.types';
+import { ChainBaseConfig } from '../types/chain.types';
 
 declare global {
   interface Window {
@@ -24,6 +25,11 @@ export class Web3Service {
   private _web3 = new BehaviorSubject<Web3AppInfo>(null);
   get web3() {
     return this._web3.asObservable();
+  }
+
+  private _chain = new BehaviorSubject<ChainBaseConfig>(null);
+  get chain() {
+    return this._chain.asObservable();
   }
 
   get web3Info() {
@@ -56,13 +62,21 @@ export class Web3Service {
       this._web3.next(null);
     });
 
-    window.ethereum.on('chainChanged', (chainId) => {
+    window.ethereum.on('chainChanged', async (chainId) => {
       // nada for now
       const supported = this.chainService.isChainSupported(chainId);
+      if (!supported) {
+        // freeze everything, blow it up, etc.
+        this._web3.next(null);
+        this._ready.next(false);
+        this._chain.next(null);
+      }
+      const chain = await this.chainService.getChainById(chainId);
+      this._chain.next(chain);
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.
       // We recommend reloading the page unless you have good reason not to.
-      window.location.reload();
+      // window.location.reload();
     });
   }
 
@@ -104,6 +118,18 @@ export class Web3Service {
       const signer = provider.getSigner();
       const chainId = await signer.getChainId();
       const currentChain = await this.chainService.getChainById(chainId);
+
+      const chain = await this.chainService.getChainById(chainId);
+      this._chain.next(chain);
+      // const supported = this.chainService.isChainSupported(chainId);
+      // if (!supported) {
+      //   // freeze everything, blow it up, etc.
+      //   this._web3.next(null)
+      //   this._ready.next(false)
+      //   this._chain.next(null)
+      //   return
+      // }
+
       const web3Info: Web3AppInfo = {
         provider,
         signer,

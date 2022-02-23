@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ChainService } from 'src/lib/services/chain/chain.service';
 import { Web3Service } from 'src/lib/services/web3.service';
 
 @Component({
@@ -8,5 +8,8 @@ import { Web3Service } from 'src/lib/services/web3.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(public web3Service: Web3Service, private snackBar: MatSnackBar) {}
+  constructor(
+    public web3Service: Web3Service,
+    public readonly chainService: ChainService
+  ) {}
 }
