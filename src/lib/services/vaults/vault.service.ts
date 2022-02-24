@@ -39,12 +39,12 @@ export class VaultService {
     this.initVaults();
   }
 
-  async deposit(vault: IVault, amount: number) {
+  async deposit(vault: IVault, amount: ethers.BigNumber) {
     try {
-      const amountBN = ethers.BigNumber.from(amount);
-      // Convert to percentage
-      const amountIn = vault.walletBalanceBN.mul(amountBN).div(100);
-      await this._deposit(vault, amountIn);
+      // const amountBN = ethers.BigNumber.from(amount);
+      // // Convert to percentage
+      // const amountIn = vault.walletBalanceBN.mul(amountBN).div(100);
+      await this._deposit(vault, amount);
     } catch (error) {
       console.error(error);
       this._error.next(new Error('Deposit Error'));
@@ -75,7 +75,7 @@ export class VaultService {
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
       await awaitTransactionComplete(depositTx);
-      this._operationActive.next('Deposit complete.');
+      this._operationActive.next('Deposit complete');
       await this.initVaults();
     } catch (error) {
       throw error;

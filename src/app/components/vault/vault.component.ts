@@ -26,43 +26,47 @@ export class VaultComponent {
   constructor(public readonly vaultService: VaultService) {}
 
   ngOnInit() {
+    this.resetInputs();
+  }
+
+  private resetInputs() {
     this.depositInput.value = '0';
     this.withdrawInput.value = '0';
   }
 
-  ngAfterViewInit() {}
-
   async setVaultDeposit() {
     this.vault.loading = true;
     console.log(this.depositInput.value);
-    // await this.vaultService.deposit(this.vault, this.depositValue);
-    // this.depositInput.value = '0';
-    // this.vault.loading = false;
+    await this.vaultService.deposit(
+      this.vault,
+      ethers.utils.parseUnits(this.depositInput.value)
+    );
+    this.resetInputs();
+    this.vault.loading = false;
   }
 
   async setVaultDepositAll() {
     this.vault.loading = true;
     await this.vaultService.depositAll(this.vault);
-    this.depositInput.value = '0';
+    this.resetInputs();
     this.vault.loading = false;
   }
 
   async setVaultWithdraw() {
-    console.log(this.withdrawInput.value);
     this.vault.loading = true;
     await this.vaultService.withdraw(
       this.vault,
       ethers.utils.parseUnits(this.withdrawInput.value)
     );
     this.vault.loading = false;
-    this.withdrawInput.value = '0';
+    this.resetInputs();
   }
 
   async setVaultWithdrawAll() {
     this.vault.loading = true;
     await this.vaultService.withdrawAll(this.vault);
     this.vault.loading = false;
-    this.withdrawInput.value = '0';
+    this.resetInputs();
   }
 
   async setApproval() {
@@ -71,30 +75,35 @@ export class VaultComponent {
     this.vault.loading = false;
   }
 
-  onDepositSliderChange(value: number) {
-    console.log('Deposit slider change');
-    console.log(value);
-  }
-
   onDepositSliderInputChange(value: number) {
-    console.log('Deposit slider input change');
-    console.log(value);
-  }
-
-  onWithdrawSliderInputChange(value: number) {
-    this.withdrawInput.value = String(this.getWithdrawValue(value));
-  }
-
-  private getWithdrawValue(value: number) {
     if (value === 0) {
-      return 0;
+      this.depositInput.value = '0';
+      return;
     }
 
     if (value === 100) {
-      return this.vault.userLpDepositBalance;
+      this.depositInput.value = String(this.vault.userLpWalletBalance);
+      return;
     }
-    const valuePerent = value / 100;
-    const balancePercent = this.vault.userLpDepositBalance * valuePerent;
-    return balancePercent;
+
+    this.depositInput.value = String(
+      this.vault.userLpWalletBalance * (value / 100)
+    );
+  }
+
+  onWithdrawSliderInputChange(value: number) {
+    if (value === 0) {
+      this.withdrawInput.value = '0';
+      return;
+    }
+
+    if (value === 100) {
+      this.withdrawInput.value = String(this.vault.userLpDepositBalance);
+      return;
+    }
+
+    this.withdrawInput.value = String(
+      this.vault.userLpDepositBalance * (value / 100)
+    );
   }
 }
