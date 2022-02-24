@@ -66,7 +66,7 @@
     <div class="row">
       <div class="col-md-6 deposit-withdrawl">
         <mat-form-field appearance="outline">
-          <input type="text" matInput [disabled]="!vault.userLpWalletBalance">
+          <input type="text" matInput #depositInput [disabled]="!vault.userLpWalletBalance">
         </mat-form-field>
         <mat-slider
           [disabled]="!vault.userLpWalletBalance"
@@ -75,7 +75,7 @@
           [step]="1"
           thumbLabel
           tickInterval="25"
-          [(ngModel)]="depositValue">
+          (change)="onDepositSliderChange($event.value)">
         </mat-slider>
 
         <div class="range-meter clearfix">
@@ -129,7 +129,7 @@
 
       <div class="col-md-6 clearfix deposit-withdrawl">
         <mat-form-field appearance="outline">
-          <input type="text" matInput [disabled]="!vault.userLpDepositBalance">
+          <input type="text" matInput #withdrawInput [disabled]="!vault.userLpDepositBalance">
         </mat-form-field>
         <mat-slider
           [disabled]="!vault.userLpDepositBalance"
@@ -138,7 +138,7 @@
           [step]="1"
           thumbLabel
           tickInterval="25"
-          [(ngModel)]="withdrawValue">
+          (input)="onWithdrawSliderInputChange($event.value)">
         </mat-slider>
 
         <div class="range-meter clearfix">
@@ -149,7 +149,6 @@
             100%
           </span>
         </div>
-
 
         <button
           mat-raised-button

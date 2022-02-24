@@ -82,6 +82,18 @@ export class VaultService {
     }
   }
 
+  async withdraw(vault: IVault, amount: ethers.BigNumber) {
+    try {
+      const vaultContract = this.getVaultInstance(vault.vaultAddress);
+      const tx = await vaultContract.withdraw(amount);
+      await awaitTransactionComplete(tx);
+      await this.initVaults();
+    } catch (error) {
+      console.error(error);
+      this._error.next(new Error('Withdraw Error'));
+    }
+  }
+
   async withdrawAll(vault: IVault) {
     try {
       const vaultContract = this.getVaultInstance(vault.vaultAddress);

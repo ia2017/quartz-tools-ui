@@ -34,7 +34,10 @@ export class ChainService {
 
   // EVM chains
   async getChainById(chainId: number): Promise<ChainBaseConfig> {
-    const chain = this._chains.value.find((c) => c.chainId === chainId);
+    const chain = this._chains.value.find((c) => c.chainId == chainId);
+    if (!chain) {
+      throw new Error(`Chain not found: ${chain}`);
+    }
     chain.nativeToken = await getCoinGeckoData(chain.nativeToken.coinGeckoId);
     return chain;
   }
