@@ -96,7 +96,7 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
 export const VAULT_1QSHARE_UST_BSC: IVault = {
   name: '1QSHARE-UST',
   poolId: 2,
-  vaultAddress: '0x709708d913664a85f7462882dB2B6F7f69E1BbC9',
+  vaultAddress: '0x76F2c1cc7A7e56215CB44753413D9D453AE44700',
   lpAddress: PAIR_1QSHARE_UST_BSC,
   userLpWalletBalance: 0,
   walletBalanceBN: ethers.constants.Zero,
@@ -109,7 +109,7 @@ export const VAULT_1QSHARE_UST_BSC: IVault = {
   logoURI: 'assets/1share-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
-    address: '0xce6E91e48Db1C42f4A379a79851f210786A9A17a',
+    address: '0x6BD355cE209CA9cd5f4673Db0a5540c0670f085D',
   },
 };
 
@@ -118,7 +118,7 @@ export const VAULTS_HARMONY = [VAULT_QUARTZ_UST];
 export const VAULTS_BSC = [
   VAULT_AMETHYST_UST_BSC,
   VAULT_1QSHARE_UST_BSC,
-  // VAULT_1QSHARE_UST,
+  // VAULT_ASHARE_UST,
 ];
 
 export const ALL_VAULTS = {
