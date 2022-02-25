@@ -149,13 +149,13 @@ export class VaultService {
       }
 
       this._operationActive.next('Depositing..');
-      const pair = this.tokens.getTokenContract(vault.lpAddress);
-      const balanceGucci = await this.userHasSufficientBalance(amountIn, pair);
-      if (!balanceGucci) {
-        this._error.next(new Error('User balance too low'));
-        return;
-      }
-      await this.approveVaultIfNeeded(vault, amountIn, pair);
+      // const pair = this.tokens.getTokenContract(vault.lpAddress);
+      // const balanceGucci = await this.userHasSufficientBalance(amountIn, pair);
+      // if (!balanceGucci) {
+      //   this._error.next(new Error('User balance too low'));
+      //   return;
+      // }
+      // await this.approveVaultIfNeeded(vault, amountIn, pair);
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
       await awaitTransactionComplete(depositTx);
@@ -228,7 +228,7 @@ export class VaultService {
       const tx = await pair.approve(vault.vaultAddress, amount);
       await awaitTransactionComplete(tx);
       vault.contractApproved = true;
-      this._operationActive.next('Approvals complete.');
+      // this._operationActive.next('Approvals complete.');
     } catch (error) {
       console.error(error);
     }
