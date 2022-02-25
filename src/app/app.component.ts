@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChainService } from 'src/lib/services/chain/chain.service';
+import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { Web3Service } from 'src/lib/services/web3.service';
 
 @Component({
@@ -10,6 +12,18 @@ import { Web3Service } from 'src/lib/services/web3.service';
 export class AppComponent {
   constructor(
     public web3Service: Web3Service,
-    public readonly chainService: ChainService
-  ) {}
+    public readonly chainService: ChainService,
+    private readonly vaults: VaultService,
+    private readonly snackBar: MatSnackBar
+  ) {
+    const snackbarFn = (msg: string) => {
+      snackBar.open(msg, null, {
+        duration: 5000,
+      });
+    };
+
+    this.vaults.error.subscribe((err) => {
+      snackbarFn(err.message);
+    });
+  }
 }

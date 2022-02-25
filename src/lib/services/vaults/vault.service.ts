@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { VAULTS } from 'src/lib/data/vaults';
+import { ALL_VAULTS, VAULTS_HARMONY } from 'src/lib/data/vaults';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult, toNumber } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
@@ -36,7 +36,91 @@ export class VaultService {
     private readonly tokens: TokenService,
     private readonly web3: Web3Service
   ) {
-    this.initVaults();
+    this.web3.chain.subscribe((chain) => {
+      if (chain) {
+        this.initVaults(chain.chainId);
+      }
+    });
+    // this.initVaults();
+  }
+
+  private async initVaults(chainId: number) {
+    const chainVaults = ALL_VAULTS[chainId];
+    if (!chainVaults) {
+      // Do suttin
+      // throw new Error(`ChainId: ${chainId} not found`);
+      this._error.next(new Error(`Unsupported chainId: ${chainId}`));
+    }
+    const vaults = [];
+    for (const vault of chainVaults) {
+      const v: IVault = {
+        ...vault,
+      };
+      v.contract = new ethers.Contract(
+        v.vaultAddress,
+        VAULT_ABI,
+        this.web3.web3Info.signer
+      );
+
+      v.strategyContract = new ethers.Contract(
+        v.strategy.address,
+        [
+          'function paused() view returns (bool)',
+          'function withdrawalFee() view returns (uint256)',
+        ],
+        this.web3.web3Info.provider
+      );
+
+      // Get/set basic vault token info
+      const [name, symbol, pricePerShare, paused, withdrawalFee] =
+        await Promise.all([
+          v.contract.name(),
+          v.contract.symbol(),
+          v.contract.getPricePerFullShare(),
+          v.strategyContract.paused(),
+          v.strategyContract.withdrawalFee(),
+        ]);
+
+      v.tokenName = name;
+      v.symbol = symbol;
+      v.strategy.paused = paused;
+      v.strategy.withdrawlFee = toNumber(withdrawalFee.div(100));
+
+      // Check users current LP holdings in wallet
+      const bal = await this.getUserBalanceLP(v.lpAddress);
+      v.userLpWalletBalance = bal.toNumber();
+      v.walletBalanceBN = bal.value;
+
+      // Check/set users current deposits into vault
+      const userLpDepositBalance: ethers.BigNumber = await v.contract.balanceOf(
+        this.web3.web3Info.userAddress
+      );
+      const amountTimesPricePerShare =
+        new FormattedResult(userLpDepositBalance).toNumber() *
+        new FormattedResult(pricePerShare).toNumber();
+
+      v.userLpDepositBalance = userLpDepositBalance.isZero()
+        ? 0
+        : amountTimesPricePerShare;
+
+      v.userLpDepositBalanceBN = parseUnits(String(amountTimesPricePerShare));
+
+      // Check/set allowance for vault pair
+      const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
+      const allowance: ethers.BigNumber = await vaultPair.allowance(
+        this.web3.web3Info.userAddress,
+        vault.vaultAddress
+      );
+      if (allowance.gt(ethers.constants.Zero)) {
+        v.contractApproved = true;
+      }
+
+      vaults.push(v);
+    }
+
+    this._vaults.next(vaults);
+
+    this._init.next(true);
   }
 
   async deposit(vault: IVault, amount: ethers.BigNumber) {
@@ -76,7 +160,7 @@ export class VaultService {
       const depositTx = await vaultContract.deposit(amountIn);
       await awaitTransactionComplete(depositTx);
       this._operationActive.next('Deposit complete');
-      await this.initVaults();
+      await this.initVaults(this.web3.web3Info.chainId);
     } catch (error) {
       throw error;
     }
@@ -87,7 +171,7 @@ export class VaultService {
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const tx = await vaultContract.withdraw(amount);
       await awaitTransactionComplete(tx);
-      await this.initVaults();
+      await this.initVaults(this.web3.web3Info.chainId);
     } catch (error) {
       console.error(error);
       this._error.next(new Error('Withdraw Error'));
@@ -99,7 +183,7 @@ export class VaultService {
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const tx = await vaultContract.withdrawAll();
       await awaitTransactionComplete(tx);
-      await this.initVaults();
+      await this.initVaults(this.web3.web3Info.chainId);
     } catch (error) {
       console.error(error);
       this._error.next(new Error('Withdraw Error'));
@@ -181,78 +265,5 @@ export class VaultService {
   // TODO:
   reloadVault(vault: IVault) {
     //
-  }
-
-  private async initVaults() {
-    const vaults = [];
-    for (const vault of VAULTS) {
-      const v: IVault = {
-        ...vault,
-      };
-      v.contract = new ethers.Contract(
-        v.vaultAddress,
-        VAULT_ABI,
-        this.web3.web3Info.signer
-      );
-
-      v.strategyContract = new ethers.Contract(
-        v.strategy.address,
-        [
-          'function paused() view returns (bool)',
-          'function withdrawalFee() view returns (uint256)',
-        ],
-        this.web3.web3Info.provider
-      );
-
-      // Get/set basic vault token info
-      const [name, symbol, pricePerShare, paused, withdrawalFee] =
-        await Promise.all([
-          v.contract.name(),
-          v.contract.symbol(),
-          v.contract.getPricePerFullShare(),
-          v.strategyContract.paused(),
-          v.strategyContract.withdrawalFee(),
-        ]);
-
-      v.tokenName = name;
-      v.symbol = symbol;
-      v.strategy.paused = paused;
-      v.strategy.withdrawlFee = toNumber(withdrawalFee.div(100));
-
-      // Check users current LP holdings in wallet
-      const bal = await this.getUserBalanceLP(v.lpAddress);
-      v.userLpWalletBalance = bal.toNumber();
-      v.walletBalanceBN = bal.value;
-
-      // Check/set users current deposits into vault
-      const userLpDepositBalance: ethers.BigNumber = await v.contract.balanceOf(
-        this.web3.web3Info.userAddress
-      );
-      const amountTimesPricePerShare =
-        new FormattedResult(userLpDepositBalance).toNumber() *
-        new FormattedResult(pricePerShare).toNumber();
-
-      v.userLpDepositBalance = userLpDepositBalance.isZero()
-        ? 0
-        : amountTimesPricePerShare;
-
-      v.userLpDepositBalanceBN = parseUnits(String(amountTimesPricePerShare));
-
-      // Check/set allowance for vault pair
-      const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
-      const allowance: ethers.BigNumber = await vaultPair.allowance(
-        this.web3.web3Info.userAddress,
-        vault.vaultAddress
-      );
-      if (allowance.gt(ethers.constants.Zero)) {
-        v.contractApproved = true;
-      }
-
-      vaults.push(v);
-    }
-
-    this._vaults.next(vaults);
-
-    this._init.next(true);
   }
 }

@@ -5,7 +5,7 @@ export type ChainName = 'Harmony' | 'Avalance';
 
 export interface ChainBaseConfig {
   name: string;
-  chainId?: number | string;
+  chainId?: number;
   provider?: ethers.providers.JsonRpcProvider;
   rpcURL?: string;
   blockExplorer?: string;

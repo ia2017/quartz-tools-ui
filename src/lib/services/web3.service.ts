@@ -13,6 +13,8 @@ declare global {
 
 @Injectable({ providedIn: 'root' })
 export class Web3Service {
+  private _storageKey = 'quartz_defi';
+
   get connected(): boolean {
     return this._web3.value !== null;
   }
@@ -48,6 +50,105 @@ export class Web3Service {
     this.setEventHandlers();
   }
 
+  private checkWasUserAlreadyConnected(user: {
+    address: string;
+    chainId: number;
+  }) {
+    let quartz = localStorage.getItem(this._storageKey);
+    if (!quartz) {
+      localStorage.setItem(this._storageKey, JSON.stringify({}));
+      quartz = localStorage.getItem(this._storageKey);
+    }
+
+    if (quartz['user'].address && quartz['user'].chainId) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private stashUser(user: { address: string; chainId: number }) {
+    localStorage.setItem(
+      this._storageKey,
+      JSON.stringify({
+        user,
+      })
+    );
+  }
+
+  private async checkAccountInit() {
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum,
+        'any'
+      );
+      const signer = provider.getSigner();
+      const selectedAccount = await signer.getAddress();
+      console.log(selectedAccount);
+      if (selectedAccount) {
+        // already previously connected, continue with flow
+        this.connectWeb3();
+      }
+    } catch (error) {
+      console.log('Web3 not previously connected');
+      await this.getWeb3Provider();
+    }
+  }
+
+  private async getWeb3Provider(): Promise<Web3AppInfo> {
+    if (typeof window.ethereum === 'undefined') {
+      this._error.next(new Error('MetaMask is not installed.'));
+      return;
+    }
+
+    if (this.connected) {
+      this._error.next(new Error('Wallet already connected.'));
+      return;
+    }
+
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum,
+        'any'
+      );
+      const accounts = await provider.send('eth_requestAccounts', []);
+      const signer = provider.getSigner();
+      const chainId = await signer.getChainId();
+      const currentChain = await this.chainService.getChainById(chainId);
+      const chain = await this.chainService.getChainById(chainId);
+      console.log(chain);
+      this._chain.next(chain);
+      const supported = this.chainService.isChainSupported(chainId);
+      if (!supported) {
+        // freeze everything, blow it up, etc.
+        this._web3.next(null);
+        this._ready.next(false);
+        this._chain.next(null);
+        return;
+      }
+
+      const web3Info: Web3AppInfo = {
+        provider,
+        signer,
+        chainId,
+        currentChain,
+        userAddress: accounts[0],
+      };
+
+      return web3Info;
+    } catch (error) {
+      this._error.next(error);
+    }
+  }
+
+  async connectWeb3() {
+    if (!this.connected) {
+      const web3Info: Web3AppInfo = await this.getWeb3Provider();
+      this._web3.next(web3Info);
+      this._ready.next(true);
+    }
+  }
+
   private setEventHandlers() {
     window.ethereum.on('accountsChanged', function (accounts) {
       console.log('Accounts changed:');
@@ -78,77 +179,5 @@ export class Web3Service {
       // We recommend reloading the page unless you have good reason not to.
       window.location.reload();
     });
-  }
-
-  private async checkAccountInit() {
-    try {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        'any'
-      );
-      const signer = provider.getSigner();
-      const selectedAccount = await signer.getAddress();
-      console.log(selectedAccount);
-      if (selectedAccount) {
-        // already previously connected, continue with flow
-        this.connectWeb3();
-      }
-    } catch (error) {
-      console.log('Web3 not previously connected');
-    }
-  }
-
-  private async getWeb3Provider(): Promise<Web3AppInfo> {
-    if (typeof window.ethereum === 'undefined') {
-      this._error.next(new Error('MetaMask is not installed.'));
-      return;
-    }
-
-    if (this.connected) {
-      this._error.next(new Error('Wallet already connected.'));
-      return;
-    }
-
-    try {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        'any'
-      );
-      const accounts = await provider.send('eth_requestAccounts', []);
-      const signer = provider.getSigner();
-      const chainId = await signer.getChainId();
-      const currentChain = await this.chainService.getChainById(chainId);
-
-      const chain = await this.chainService.getChainById(chainId);
-      this._chain.next(chain);
-      // const supported = this.chainService.isChainSupported(chainId);
-      // if (!supported) {
-      //   // freeze everything, blow it up, etc.
-      //   this._web3.next(null)
-      //   this._ready.next(false)
-      //   this._chain.next(null)
-      //   return
-      // }
-
-      const web3Info: Web3AppInfo = {
-        provider,
-        signer,
-        chainId,
-        currentChain,
-        userAddress: accounts[0],
-      };
-
-      return web3Info;
-    } catch (error) {
-      this._error.next(error);
-    }
-  }
-
-  async connectWeb3() {
-    if (!this.connected) {
-      const web3Info: Web3AppInfo = await this.getWeb3Provider();
-      this._web3.next(web3Info);
-      this._ready.next(true);
-    }
   }
 }

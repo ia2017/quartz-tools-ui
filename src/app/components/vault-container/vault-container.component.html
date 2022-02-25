@@ -20,15 +20,21 @@
 
 <div class="row tab-option" *ngIf="loadingVaults">
   <div class="col-4"></div>
-  <div class="col-4">
-    <div class="d-flex flex-column justify-content-end">
+  <div class="col-4 bold text-center">
+    Loading Vaults.. <mat-spinner diameter="20"></mat-spinner>
+  </div>
+  <div class="col-4"></div>
+</div>
+
+<div class="row tab-option" *ngIf="!loadingVaults && (vaultService.vaults | async).length == 0">
+  <div class="col-4"></div>
+  <div class="col-4 text-center bold">
+    Vaults currently not available on this chain.
+    <!-- <div class="d-flex flex-column justify-content-end">
       <p class="bold">
-        Loading Vaults..
+
       </p>
-      <span>
-        <mat-spinner></mat-spinner>
-      </span>
-    </div>
+    </div> -->
   </div>
   <div class="col-4"></div>
 </div>
