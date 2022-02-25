@@ -1,8 +1,12 @@
 import { ethers } from 'ethers';
 import { IVault } from '../types/vault.types';
 import {
+  STRAT_1QSHARE_UST_ADDRESS_BSC,
   STRAT_AMETHYST_UST_ADDRESS_BSC,
+  STRAT_ASHARE_UST_ADDRESS_BSC,
+  VAULT_1QSHARE_UST_ADDRESS_BSC,
   VAULT_AMETHYST_UST_ADDRESS_BSC,
+  VAULT_ASHARE_UST_ADDRESS_BSC,
 } from './bsc/bsc-addresses';
 import {
   PAIR_AMETHYST_UST_BSC,
@@ -76,7 +80,7 @@ export const VAULT_AMETHYST_UST_BSC: IVault = {
 export const VAULT_ASHARE_UST_BSC: IVault = {
   name: 'ASHARE-UST',
   poolId: 1,
-  vaultAddress: '',
+  vaultAddress: VAULT_ASHARE_UST_ADDRESS_BSC,
   lpAddress: PAIR_ASHARE_UST_BSC,
   userLpWalletBalance: 0,
   walletBalanceBN: ethers.constants.Zero,
@@ -89,14 +93,14 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
   logoURI: 'assets/ashare-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
-    address: '',
+    address: STRAT_ASHARE_UST_ADDRESS_BSC,
   },
 };
 
 export const VAULT_1QSHARE_UST_BSC: IVault = {
   name: '1QSHARE-UST',
   poolId: 2,
-  vaultAddress: '0x76F2c1cc7A7e56215CB44753413D9D453AE44700',
+  vaultAddress: VAULT_1QSHARE_UST_ADDRESS_BSC,
   lpAddress: PAIR_1QSHARE_UST_BSC,
   userLpWalletBalance: 0,
   walletBalanceBN: ethers.constants.Zero,
@@ -109,7 +113,7 @@ export const VAULT_1QSHARE_UST_BSC: IVault = {
   logoURI: 'assets/1share-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
-    address: '0x6BD355cE209CA9cd5f4673Db0a5540c0670f085D',
+    address: STRAT_1QSHARE_UST_ADDRESS_BSC,
   },
 };
 
@@ -117,8 +121,8 @@ export const VAULTS_HARMONY = [VAULT_QUARTZ_UST];
 
 export const VAULTS_BSC = [
   VAULT_AMETHYST_UST_BSC,
+  VAULT_ASHARE_UST_BSC,
   VAULT_1QSHARE_UST_BSC,
-  // VAULT_ASHARE_UST,
 ];
 
 export const ALL_VAULTS = {
