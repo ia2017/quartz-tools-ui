@@ -86,7 +86,7 @@ export class VaultService {
         v.tokenName = name;
         v.symbol = symbol;
         v.strategy.paused = paused;
-        v.strategy.withdrawlFee = toNumber(withdrawalFee.div(100));
+        v.strategy.withdrawlFee = withdrawalFee.toNumber() / 100;
         // Check users current LP holdings in wallet
         const bal = await this.getUserBalanceLP(v.lpAddress);
         v.userLpWalletBalance = bal.toNumber();
