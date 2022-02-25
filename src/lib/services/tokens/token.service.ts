@@ -30,7 +30,11 @@ export class TokenService {
   private contractRefs: { [address: string]: ethers.Contract } = {};
 
   constructor(private readonly web3: Web3Service) {
-    this.setContractRefs();
+    this.web3.web3.subscribe((web3Info) => {
+      if (web3Info) {
+        this.setContractRefs();
+      }
+    });
   }
 
   async getUserTokenBalance(tokenAddress: string) {

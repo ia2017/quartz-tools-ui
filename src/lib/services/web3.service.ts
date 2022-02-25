@@ -13,15 +13,8 @@ declare global {
 
 @Injectable({ providedIn: 'root' })
 export class Web3Service {
-  private _storageKey = 'quartz_defi';
-
   get connected(): boolean {
     return this._web3.value !== null;
-  }
-
-  private _ready = new BehaviorSubject<boolean>(false);
-  get ready() {
-    return this._ready.asObservable();
   }
 
   private _web3 = new BehaviorSubject<Web3AppInfo>(null);
@@ -50,32 +43,6 @@ export class Web3Service {
     this.setEventHandlers();
   }
 
-  private checkWasUserAlreadyConnected(user: {
-    address: string;
-    chainId: number;
-  }) {
-    let quartz = localStorage.getItem(this._storageKey);
-    if (!quartz) {
-      localStorage.setItem(this._storageKey, JSON.stringify({}));
-      quartz = localStorage.getItem(this._storageKey);
-    }
-
-    if (quartz['user'].address && quartz['user'].chainId) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private stashUser(user: { address: string; chainId: number }) {
-    localStorage.setItem(
-      this._storageKey,
-      JSON.stringify({
-        user,
-      })
-    );
-  }
-
   private async requestUserAccount() {
     try {
       const provider = new ethers.providers.Web3Provider(
@@ -91,7 +58,7 @@ export class Web3Service {
       }
     } catch (error) {
       console.log('Web3 not previously connected');
-      await this.getWeb3Provider();
+      await this.connectWeb3();
     }
   }
 
@@ -113,19 +80,20 @@ export class Web3Service {
       );
       const accounts = await provider.send('eth_requestAccounts', []);
       const signer = provider.getSigner();
+      console.log(signer);
       const chainId = await signer.getChainId();
 
       const currentChain = await this.chainService.getChainById(chainId);
       console.log(currentChain);
 
-      const supported = this.chainService.isChainSupported(chainId);
-      if (!supported) {
-        // freeze everything, blow it up, etc.
-        this._web3.next(null);
-        this._ready.next(false);
-        this._chain.next(null);
-        return;
-      }
+      // const supported = this.chainService.isChainSupported(chainId);
+      // if (!supported) {
+      //   // freeze everything, blow it up, etc.
+      //   this._web3.next(null);
+      //   this._ready.next(false);
+      //   this._chain.next(null);
+      //   return;
+      // }
 
       this._chain.next(currentChain);
 
@@ -145,9 +113,8 @@ export class Web3Service {
 
   async connectWeb3() {
     if (!this.connected) {
-      const web3Info: Web3AppInfo = await this.getWeb3Provider();
+      const web3Info = await this.getWeb3Provider();
       this._web3.next(web3Info);
-      this._ready.next(true);
     }
   }
 
@@ -161,7 +128,6 @@ export class Web3Service {
     window.ethereum.on('disconnect', (error) => {
       console.log(`Account disconnected`);
       console.error(error);
-      this._ready.next(false);
       this._web3.next(null);
     });
 
@@ -171,7 +137,6 @@ export class Web3Service {
       if (!supported) {
         // freeze everything, blow it up, etc.
         this._web3.next(null);
-        this._ready.next(false);
         this._chain.next(null);
       }
       const chain = await this.chainService.getChainById(chainId);
