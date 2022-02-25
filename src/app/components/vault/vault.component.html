@@ -12,7 +12,9 @@
     <div class="row">
       <div class="col-md-12 col-12 col-xl-2 bold vault-info">
         <img src="{{ vault.logoURI }}" alt="">
-        <span> {{ vault.symbol }}</span>
+        <p>
+          {{ vault.name }}
+        </p>
       </div>
 
       <div class="col-md-6 col-6  col-xl-2 bold balance">
@@ -92,8 +94,8 @@
           *ngIf="!vault.contractApproved"
           mat-raised-button
           class="float-right quartz-btn"
-          (click)="setApproval()">
-          [disabled]="vault.strategy.paused"
+          (click)="setApproval()"
+          [disabled]="vault.strategy.paused">
           Approve
         </button>
 

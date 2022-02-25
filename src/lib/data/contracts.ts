@@ -73,6 +73,10 @@ export const QShareOnePair = new ethers.Contract(
   UNIV2_PAIR_ABI
 );
 
+export function createPairContract(address: string, signer: ethers.Signer) {
+  return new ethers.Contract(address, UNIV2_PAIR_ABI, signer);
+}
+
 export const VAULT_QUARTZ_UST_ADDRESS =
   '0xE8f14022ee7f6E921f100137c6d5597c53A1B93D';
 export const STRAT_QUARTZ_UST_ADDRESS =

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { formatEther, parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ALL_VAULTS, VAULTS_HARMONY } from 'src/lib/data/vaults';
 import { IVault } from 'src/lib/types/vault.types';
@@ -258,7 +258,9 @@ export class VaultService {
 
   private async getUserBalanceLP(lpAddress: string) {
     const pair = this.tokens.getTokenContract(lpAddress);
-    const balance = await pair.balanceOf(this.web3.web3Info.userAddress);
+    const balance: ethers.BigNumber = await pair.balanceOf(
+      this.web3.web3Info.userAddress
+    );
     return new FormattedResult(balance);
   }
 

@@ -139,8 +139,8 @@ export class Web3Service {
         this._web3.next(null);
         this._chain.next(null);
       }
-      const chain = await this.chainService.getChainById(chainId);
-      this._chain.next(chain);
+      // const chain = await this.chainService.getChainById(chainId);
+      // this._chain.next(chain);
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.
       // We recommend reloading the page unless you have good reason not to.

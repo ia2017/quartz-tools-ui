@@ -1,9 +1,13 @@
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { IVault } from '../types/vault.types';
+import {
+  STRAT_AMETHYST_UST_ADDRESS_BSC,
+  VAULT_AMETHYST_UST_ADDRESS_BSC,
+} from './bsc/bsc-addresses';
 import {
   PAIR_AMETHYST_UST_BSC,
   PAIR_ASHARE_UST_BSC,
-  PAIR_ONE_QSHARE_UST_BSC,
+  PAIR_1QSHARE_UST_BSC,
 } from './bsc/pairs';
 import {
   QSHARE_ONE_DFK_LP_ADDRESS,
@@ -49,10 +53,10 @@ export const VAULT_QUARTZ_UST: IVault = {
 //   logoURI: 'assets/qshare-one-lp.svg',
 // };
 
-export const VAULT_AMETHYST_UST: IVault = {
+export const VAULT_AMETHYST_UST_BSC: IVault = {
   name: 'AMES-UST',
   poolId: 0,
-  vaultAddress: '',
+  vaultAddress: VAULT_AMETHYST_UST_ADDRESS_BSC,
   lpAddress: PAIR_AMETHYST_UST_BSC,
   userLpWalletBalance: 0,
   walletBalanceBN: ethers.constants.Zero,
@@ -65,13 +69,13 @@ export const VAULT_AMETHYST_UST: IVault = {
   logoURI: 'assets/ames-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
-    address: '',
+    address: STRAT_AMETHYST_UST_ADDRESS_BSC,
   },
 };
 
-export const VAULT_ASHARE_UST: IVault = {
+export const VAULT_ASHARE_UST_BSC: IVault = {
   name: 'ASHARE-UST',
-  poolId: 0,
+  poolId: 1,
   vaultAddress: '',
   lpAddress: PAIR_ASHARE_UST_BSC,
   userLpWalletBalance: 0,
@@ -89,11 +93,11 @@ export const VAULT_ASHARE_UST: IVault = {
   },
 };
 
-export const VAULT_1QSHARE_UST: IVault = {
+export const VAULT_1QSHARE_UST_BSC: IVault = {
   name: '1QSHARE-UST',
-  poolId: 0,
-  vaultAddress: '',
-  lpAddress: PAIR_ONE_QSHARE_UST_BSC,
+  poolId: 2,
+  vaultAddress: '0x709708d913664a85f7462882dB2B6F7f69E1BbC9',
+  lpAddress: PAIR_1QSHARE_UST_BSC,
   userLpWalletBalance: 0,
   walletBalanceBN: ethers.constants.Zero,
   userLpDepositBalance: 0,
@@ -105,15 +109,15 @@ export const VAULT_1QSHARE_UST: IVault = {
   logoURI: 'assets/1share-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
-    address: '',
+    address: '0xce6E91e48Db1C42f4A379a79851f210786A9A17a',
   },
 };
 
 export const VAULTS_HARMONY = [VAULT_QUARTZ_UST];
 
 export const VAULTS_BSC = [
-  // VAULT_AMETHYST_UST,
-  // VAULT_ASHARE_UST,
+  VAULT_AMETHYST_UST_BSC,
+  VAULT_1QSHARE_UST_BSC,
   // VAULT_1QSHARE_UST,
 ];
 

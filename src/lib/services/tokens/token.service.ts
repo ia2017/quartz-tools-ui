@@ -20,10 +20,16 @@ import {
   wOneToken,
   QSHARE_ONE_DFK_LP_ADDRESS,
   QShareOnePair,
+  createPairContract,
 } from '../../data/contracts';
 import { FormattedResult } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
+import {
+  PAIR_AMETHYST_UST_BSC,
+  PAIR_ASHARE_UST_BSC,
+  PAIR_1QSHARE_UST_BSC,
+} from 'src/lib/data/bsc/pairs';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
@@ -107,6 +113,21 @@ export class TokenService {
     );
 
     this.contractRefs[QSHARE_ONE_DFK_LP_ADDRESS] = QShareOnePair.connect(
+      this.web3.web3Info.signer
+    );
+
+    this.contractRefs[PAIR_ASHARE_UST_BSC] = createPairContract(
+      PAIR_ASHARE_UST_BSC,
+      this.web3.web3Info.signer
+    );
+
+    this.contractRefs[PAIR_AMETHYST_UST_BSC] = createPairContract(
+      PAIR_AMETHYST_UST_BSC,
+      this.web3.web3Info.signer
+    );
+
+    this.contractRefs[PAIR_1QSHARE_UST_BSC] = createPairContract(
+      PAIR_1QSHARE_UST_BSC,
       this.web3.web3Info.signer
     );
   }
