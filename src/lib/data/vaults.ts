@@ -109,7 +109,7 @@ export const VAULT_1QSHARE_UST: IVault = {
   },
 };
 
-export const VAULTS_HARMONY = [];
+export const VAULTS_HARMONY = [VAULT_QUARTZ_UST];
 
 export const VAULTS_BSC = [
   // VAULT_AMETHYST_UST,

@@ -46,7 +46,7 @@ export class Web3Service {
   }
 
   constructor(private chainService: ChainService) {
-    this.checkAccountInit();
+    this.requestUserAccount();
     this.setEventHandlers();
   }
 
@@ -76,7 +76,7 @@ export class Web3Service {
     );
   }
 
-  private async checkAccountInit() {
+  private async requestUserAccount() {
     try {
       const provider = new ethers.providers.Web3Provider(
         window.ethereum,
@@ -114,10 +114,10 @@ export class Web3Service {
       const accounts = await provider.send('eth_requestAccounts', []);
       const signer = provider.getSigner();
       const chainId = await signer.getChainId();
+
       const currentChain = await this.chainService.getChainById(chainId);
-      const chain = await this.chainService.getChainById(chainId);
-      console.log(chain);
-      this._chain.next(chain);
+      console.log(currentChain);
+
       const supported = this.chainService.isChainSupported(chainId);
       if (!supported) {
         // freeze everything, blow it up, etc.
@@ -126,6 +126,8 @@ export class Web3Service {
         this._chain.next(null);
         return;
       }
+
+      this._chain.next(currentChain);
 
       const web3Info: Web3AppInfo = {
         provider,

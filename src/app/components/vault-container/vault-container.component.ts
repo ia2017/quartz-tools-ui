@@ -34,7 +34,7 @@ export class VaultsContainerComponent implements OnDestroy {
     });
 
     const s3 = this.vaultService.init.subscribe((init) => {
-      this.loadingVaults = !init;
+      this.loadingVaults = init;
     });
 
     this.subs.add(s1);
