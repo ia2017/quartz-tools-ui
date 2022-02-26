@@ -80,7 +80,7 @@ export function createPairContract(address: string, signer: ethers.Signer) {
 export const VAULT_QUARTZ_UST_ADDRESS =
   '0xE8f14022ee7f6E921f100137c6d5597c53A1B93D';
 export const STRAT_QUARTZ_UST_ADDRESS =
-  '0x72bd47e1AF4b97D25076E36d2c177aa9c45033e2';
+  '0x69A0E815A67E5F3C584187b49106DeEB1DddcafE';
 
 export const VAULT_QSHARE_ONE_ADDRESS =
   '0xc568dae205F838eE5955a37f19BBf083eC336E36';
