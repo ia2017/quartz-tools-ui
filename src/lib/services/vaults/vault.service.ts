@@ -74,7 +74,7 @@ export class VaultService {
           this.web3.web3Info.provider
         );
 
-        //Get/set basic vault token info
+        // Get/set basic vault token info
         const [name, symbol, getPricePerFullShare, paused, withdrawalFee] =
           await Promise.all([
             v.contract.name(),
@@ -83,6 +83,7 @@ export class VaultService {
             v.strategyContract.paused(),
             v.strategyContract.withdrawalFee(),
           ]);
+
         v.tokenName = name;
         v.symbol = symbol;
         v.strategy.paused = paused;
