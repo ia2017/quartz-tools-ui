@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { ethers } from 'ethers';
+import { StatsService } from 'src/lib/services/stats/stats.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { IVault } from 'src/lib/types/vault.types';
 
@@ -23,10 +24,19 @@ export class VaultComponent {
   })
   withdrawInput: MatInput;
 
-  constructor(public readonly vaultService: VaultService) {}
+  constructor(
+    public readonly vaultService: VaultService,
+    private readonly vaultStats: StatsService
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.resetInputs();
+    const tvl = await this.vaultStats.getVaultTVL(this.vault, {
+      fetchPriceToken0: async () => 1,
+      fetchPriceToken1: async () => 25,
+    });
+    console.log(tvl.toNumber());
+    this.vault.totalValueLocked = tvl.toNumber();
   }
 
   private resetInputs() {

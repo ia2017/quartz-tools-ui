@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { IVault } from '../types/vault.types';
+import { getSingleTokenPrice } from '../utils/http-utils';
 import {
   STRAT_1QSHARE_UST_ADDRESS_BSC,
   STRAT_AMETHYST_UST_ADDRESS_BSC,
@@ -30,14 +31,19 @@ export const VAULT_QUARTZ_UST: IVault = {
   walletBalanceBN: ethers.constants.Zero,
   userLpDepositBalance: 0,
   userLpDepositBalanceBN: ethers.constants.Zero,
-  APY: 14,
-  dailyAPR: 0.012,
-  totalValueLocked: 127000,
+  APY: 0,
+  dailyAPR: 0.0,
+  totalValueLocked: 0,
+  tvlCheck: false,
   loading: false,
   logoURI: 'assets/quartz-ust-lp.svg',
   contractApproved: false,
   strategy: {
     address: STRAT_QUARTZ_UST_ADDRESS,
+  },
+  fetchPriceToken0: async () => 1,
+  fetchPriceToken1: async () => {
+    return (await getSingleTokenPrice('quartz-defi')).usd;
   },
 };
 
@@ -69,11 +75,16 @@ export const VAULT_AMETHYST_UST_BSC: IVault = {
   APY: 0,
   dailyAPR: 0.0,
   totalValueLocked: 0,
+  tvlCheck: false,
   loading: false,
   logoURI: 'assets/ames-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
     address: STRAT_AMETHYST_UST_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => 1,
+  fetchPriceToken1: async () => {
+    return (await getSingleTokenPrice('amethyst')).usd;
   },
 };
 
@@ -89,11 +100,16 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
   APY: 0,
   dailyAPR: 0.0,
   totalValueLocked: 0,
+  tvlCheck: false,
   loading: false,
   logoURI: 'assets/ashare-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
     address: STRAT_ASHARE_UST_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => 1,
+  fetchPriceToken1: async () => {
+    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
   },
 };
 
@@ -109,11 +125,17 @@ export const VAULT_1QSHARE_UST_BSC: IVault = {
   APY: 0,
   dailyAPR: 0.0,
   totalValueLocked: 0,
+  tvlCheck: false,
   loading: false,
   logoURI: 'assets/1share-ust-lp-logo.svg',
   contractApproved: false,
   strategy: {
     address: STRAT_1QSHARE_UST_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => 1,
+  fetchPriceToken1: async () => {
+    // TODO: need to setup fetching AMM pricing for none gecko tokens
+    return 25;
   },
 };
 

@@ -62,7 +62,6 @@ export async function getSingleTokenPrice(
   try {
     const id = tokenApiID.toLowerCase();
     const isStableCoin =
-      id === 'usdc' ||
       id === 'terrausd' ||
       id === 'usdt' ||
       id === 'dai' ||

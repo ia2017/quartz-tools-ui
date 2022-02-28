@@ -14,6 +14,7 @@ export interface IVault {
   APY: number;
   dailyAPR: number;
   totalValueLocked: number;
+  tvlCheck: boolean;
   loading: boolean;
   contract?: Contract;
   logoURI: string;
@@ -21,6 +22,10 @@ export interface IVault {
   pricePerShare?: BigNumber;
   strategy?: IStrategy;
   strategyContract?: Contract;
+  geckoIdToken0?: string;
+  geckoIdToken1?: string;
+  fetchPriceToken0: () => Promise<number>;
+  fetchPriceToken1: () => Promise<number>;
 }
 
 export interface IStrategy {

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
-import { formatEther, parseUnits } from 'ethers/lib/utils';
+import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ALL_VAULTS, VAULTS_HARMONY } from 'src/lib/data/vaults';
+import { ALL_VAULTS } from 'src/lib/data/vaults';
 import { IVault } from 'src/lib/types/vault.types';
-import { FormattedResult, toNumber } from 'src/lib/utils/formatting';
+import { FormattedResult } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { TokenService } from '../tokens/token.service';
 import { Web3Service } from '../web3.service';
