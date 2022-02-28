@@ -12,13 +12,7 @@ export class StatsService {
     private rewardPool: RewardPool
   ) {}
 
-  async getVaultTVL(
-    vault: IVault,
-    data: {
-      fetchPriceToken0: () => Promise<number>;
-      fetchPriceToken1: () => Promise<number>;
-    }
-  ) {
+  async getVaultTVL(vault: IVault) {
     const pair = new ethers.Contract(
       vault.lpAddress,
       [

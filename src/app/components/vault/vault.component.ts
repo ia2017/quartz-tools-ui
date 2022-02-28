@@ -31,10 +31,7 @@ export class VaultComponent {
 
   async ngOnInit() {
     this.resetInputs();
-    const tvl = await this.vaultStats.getVaultTVL(this.vault, {
-      fetchPriceToken0: async () => 1,
-      fetchPriceToken1: async () => 25,
-    });
+    const tvl = await this.vaultStats.getVaultTVL(this.vault);
     console.log(tvl.toNumber());
     this.vault.totalValueLocked = tvl.toNumber();
   }

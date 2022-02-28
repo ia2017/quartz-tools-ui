@@ -6,17 +6,13 @@ import { ALL_VAULTS } from 'src/lib/data/vaults';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
+import { SimpleStateStore } from '../store/simple-state-store';
 import { TokenService } from '../tokens/token.service';
 import { Web3Service } from '../web3.service';
 import { VAULT_ABI } from './vault-abi';
 
 @Injectable({ providedIn: 'root' })
 export class VaultService {
-  private _vaults = new BehaviorSubject<IVault[]>([]);
-  get vaults() {
-    return this._vaults.asObservable();
-  }
-
   private _init = new BehaviorSubject<boolean>(false);
   get init() {
     return this._init.asObservable();
@@ -34,7 +30,8 @@ export class VaultService {
 
   constructor(
     private readonly tokens: TokenService,
-    private readonly web3: Web3Service
+    private readonly web3: Web3Service,
+    private readonly state: SimpleStateStore
   ) {
     this.web3.web3.subscribe((web3Info) => {
       if (web3Info) {
@@ -114,12 +111,12 @@ export class VaultService {
         vaults.push(v);
       }
 
-      this._vaults.next(vaults);
+      this.state.setVaults(vaults);
       this._init.next(false);
     } catch (error) {
       console.error(error);
       this._init.next(false);
-      this._vaults.next([]);
+      this.state.setVaults([]);
       this._error.next(new Error(`Error initializing vaults`));
     }
   }

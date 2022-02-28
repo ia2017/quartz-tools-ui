@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
+import { SimpleStateStore } from 'src/lib/services/store/simple-state-store';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 
 @Component({
@@ -15,6 +16,7 @@ export class VaultsContainerComponent implements OnDestroy {
 
   constructor(
     public readonly vaultService: VaultService,
+    public readonly state: SimpleStateStore,
     private snackBar: MatSnackBar
   ) {
     const s1 = this.vaultService.error.subscribe((err) => {
