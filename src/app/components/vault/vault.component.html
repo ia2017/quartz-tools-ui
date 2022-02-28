@@ -72,7 +72,7 @@
           <input type="text" matInput #depositInput [disabled]="!vault.userLpWalletBalance">
         </mat-form-field>
         <mat-slider
-          [disabled]="!vault.userLpWalletBalance"
+          [disabled]="!vault.active || !vault.userLpWalletBalance"
           [max]="100"
           [min]="0"
           [step]="1"
@@ -96,26 +96,30 @@
           mat-raised-button
           class="float-right quartz-btn"
           (click)="setApproval()"
-          [disabled]="vault.strategy.paused">
-          Approve
+          [disabled]="!vault.active || vault.strategy.paused">
+          <span *ngIf="vault.active">Approve</span>
+          <span *ngIf="!vault.active">Inactive</span>
         </button>
 
         <button
           *ngIf="vault.contractApproved"
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.userLpWalletBalance || vault.strategy.paused"
+          [disabled]="!vault.active || !vault.userLpWalletBalance || vault.strategy.paused"
           (click)="setVaultDepositAll()">
-          Deposit All
+
+          <span *ngIf="vault.active">Deposit All</span>
+          <span *ngIf="!vault.active">Inactive</span>
         </button>
 
         <button
           *ngIf="vault.contractApproved"
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.userLpWalletBalance || vault.strategy.paused"
+          [disabled]="!vault.active || !vault.userLpWalletBalance || vault.strategy.paused"
           (click)="setVaultDeposit()">
-          Deposit
+          <span *ngIf="vault.active">Deposit</span>
+          <span *ngIf="!vault.active">Inactive</span>
         </button>
 
         </div>

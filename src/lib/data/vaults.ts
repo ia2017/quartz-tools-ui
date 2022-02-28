@@ -23,6 +23,7 @@ import {
 } from './contracts';
 
 export const VAULT_QUARTZ_UST: IVault = {
+  active: true,
   name: 'Quartz-UST',
   poolId: 0,
   vaultAddress: VAULT_QUARTZ_UST_ADDRESS,
@@ -34,7 +35,7 @@ export const VAULT_QUARTZ_UST: IVault = {
   APY: 0,
   dailyAPR: 0.0,
   totalValueLocked: 0,
-  tvlCheck: false,
+  tvlChecked: false,
   loading: false,
   logoURI: 'assets/quartz-ust-lp.svg',
   contractApproved: false,
@@ -64,6 +65,7 @@ export const VAULT_QUARTZ_UST: IVault = {
 // };
 
 export const VAULT_AMETHYST_UST_BSC: IVault = {
+  active: true,
   name: 'AMES-UST',
   poolId: 0,
   vaultAddress: VAULT_AMETHYST_UST_ADDRESS_BSC,
@@ -75,7 +77,7 @@ export const VAULT_AMETHYST_UST_BSC: IVault = {
   APY: 0,
   dailyAPR: 0.0,
   totalValueLocked: 0,
-  tvlCheck: false,
+  tvlChecked: false,
   loading: false,
   logoURI: 'assets/ames-ust-lp-logo.svg',
   contractApproved: false,
@@ -89,6 +91,7 @@ export const VAULT_AMETHYST_UST_BSC: IVault = {
 };
 
 export const VAULT_ASHARE_UST_BSC: IVault = {
+  active: true,
   name: 'ASHARE-UST',
   poolId: 1,
   vaultAddress: VAULT_ASHARE_UST_ADDRESS_BSC,
@@ -100,7 +103,7 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
   APY: 0,
   dailyAPR: 0.0,
   totalValueLocked: 0,
-  tvlCheck: false,
+  tvlChecked: false,
   loading: false,
   logoURI: 'assets/ashare-ust-lp-logo.svg',
   contractApproved: false,
@@ -114,6 +117,7 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
 };
 
 export const VAULT_1QSHARE_UST_BSC: IVault = {
+  active: false,
   name: '1QSHARE-UST',
   poolId: 2,
   vaultAddress: VAULT_1QSHARE_UST_ADDRESS_BSC,
@@ -125,7 +129,7 @@ export const VAULT_1QSHARE_UST_BSC: IVault = {
   APY: 0,
   dailyAPR: 0.0,
   totalValueLocked: 0,
-  tvlCheck: false,
+  tvlChecked: false,
   loading: false,
   logoURI: 'assets/1share-ust-lp-logo.svg',
   contractApproved: false,

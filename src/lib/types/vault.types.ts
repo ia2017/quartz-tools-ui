@@ -1,6 +1,7 @@
 import { BigNumber, Contract } from 'ethers';
 
 export interface IVault {
+  active: boolean;
   name: string;
   tokenName?: string;
   symbol?: string;
@@ -14,7 +15,7 @@ export interface IVault {
   APY: number;
   dailyAPR: number;
   totalValueLocked: number;
-  tvlCheck: boolean;
+  tvlChecked: boolean;
   loading: boolean;
   contract?: Contract;
   logoURI: string;

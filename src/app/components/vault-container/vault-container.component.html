@@ -5,7 +5,7 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <span class="bold">
-              {{ vault.name }}
+              {{ vault.name }} <span *ngIf="!vault.active">(Inactive)</span>
             </span>
           </mat-panel-title>
         </mat-expansion-panel-header>
