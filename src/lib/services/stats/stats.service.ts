@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
+import { CHAIN_ID_MAP } from 'src/lib/data/chains';
 import { IVault } from 'src/lib/types/vault.types';
-import { FormattedResult } from 'src/lib/utils/formatting';
+import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { RewardPool } from '../reward-pool/reward-pool';
 import { Web3Service } from '../web3.service';
 
@@ -51,11 +52,6 @@ export class StatsService {
     const rewardPoolToken1Share =
       pairToken1Amount.toNumber() * chefPercentOwnership;
 
-    // if (!vault.geckoIdToken0 || !vault.geckoIdToken1) {
-    //   console.log('Missing coin gecko ids');
-    //   return 0;
-    // }
-
     const [priceToken0, priceToken1] = await Promise.all([
       vault.fetchPriceToken0(),
       vault.fetchPriceToken1(),
@@ -63,7 +59,7 @@ export class StatsService {
 
     const rewardPoolValueToken0 = rewardPoolToken0Share * priceToken0;
     const rewardPoolValueToken1 = rewardPoolToken1Share * priceToken1;
-    const TVL = rewardPoolValueToken0 + rewardPoolValueToken1;
+    const poolTVL = rewardPoolValueToken0 + rewardPoolValueToken1;
 
     const stratInfo = await this.rewardPool.userInfo(
       vault.poolId,
@@ -71,11 +67,65 @@ export class StatsService {
     );
 
     const stratLpBalance = new FormattedResult(stratInfo.amount);
-    const dollarsPerChefShare = TVL / chefLpBalance.toNumber();
-    const vaultTVL = stratLpBalance.toNumber() * dollarsPerChefShare;
-    const tvlFmt = new FormattedResult(
-      ethers.utils.parseUnits(String(vaultTVL))
+    const stakingTokenPrice = poolTVL / chefLpBalance.toNumber();
+    const vaultTVL = stratLpBalance.toNumber() * stakingTokenPrice;
+    const { APR, dailyAPR, APY } = await this.getVaultAPRs(vault, poolTVL);
+
+    return {
+      vaultTVL,
+      APR,
+      dailyAPR,
+      APY,
+    };
+  }
+
+  async getVaultAPRs(vault: IVault, poolTVL: number) {
+    const chain = CHAIN_ID_MAP[this.web3.web3Info.chainId];
+
+    const [rewardsPerSecond, rewardTokenPrice] = await Promise.all([
+      this.rewardPool.rewardsPerSecond(),
+      vault.fetchRewardTokenPrice(),
+    ]);
+
+    const rewardTokensPerBlock =
+      rewardsPerSecond.toNumber() * chain.blockTimeSeconds;
+    const yearlyRewardsValue =
+      rewardTokenPrice * rewardTokensPerBlock * chain.blocksPerYear;
+
+    const { poolWeight } = await this.getPoolDataForAPR(vault.poolId);
+    const poolsRewardTokenPerYear = yearlyRewardsValue * poolWeight.toNumber();
+    const APR = (poolsRewardTokenPerYear / poolTVL) * 100;
+    const dailyAPR = APR / 365;
+
+    return {
+      APR: roundDecimals(APR, 2),
+      dailyAPR: roundDecimals(dailyAPR, 2),
+      APY: this.getAPY(APR, vault.compoundsDaily),
+    };
+  }
+
+  getAPY(apr: number, dailyCompounds: number) {
+    // APY = [1 + (APR / Number of Periods)]^(Number of Periods) - 1
+    const APY = Math.pow(1 + apr / dailyCompounds, dailyCompounds) - 1;
+    return roundDecimals(APY, 2);
+  }
+
+  async getPoolDataForAPR(poolId: number) {
+    const [poolInfo, totalAllocationPoints] = await Promise.all([
+      this.rewardPool.poolInfo(poolId),
+      this.rewardPool.totalAllocPoints(),
+    ]);
+
+    const poolAllocPoints = new FormattedResult(poolInfo.allocPoint);
+    const poolWeight = new FormattedResult(
+      ethers.utils.parseUnits(
+        String(poolAllocPoints.toNumber(4) / totalAllocationPoints.toNumber(4))
+      )
     );
-    return new FormattedResult(ethers.utils.parseUnits(String(vaultTVL)));
+    return {
+      poolAllocPoints,
+      totalAllocationPoints,
+      poolWeight,
+    };
   }
 }

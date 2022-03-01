@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ALL_VAULTS } from 'src/lib/data/vaults';
+import { ALL_VAULTS } from 'src/lib/data/bsc/vaults';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
@@ -32,15 +32,9 @@ export class VaultService {
     private readonly tokens: TokenService,
     private readonly web3: Web3Service,
     private readonly state: SimpleStateStore
-  ) {
-    this.web3.web3.subscribe((web3Info) => {
-      if (web3Info) {
-        this.initVaults(web3Info.chainId);
-      }
-    });
-  }
+  ) {}
 
-  private async initVaults(chainId: number) {
+  async initVaults(chainId: number) {
     try {
       this._init.next(true);
       const chainVaults = ALL_VAULTS[chainId];

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { QUARTZ_CONTRACTS } from 'src/lib/data/contracts';
+import { FormattedResult } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
 import { REWARD_POOL_ABI } from './reward-pool-abi';
 
@@ -22,5 +23,17 @@ export class RewardPool {
 
   userInfo(poolId: number, user: string) {
     return this.contract.userInfo(poolId, user);
+  }
+
+  poolInfo(poolId: number) {
+    return this.contract.poolInfo(poolId);
+  }
+
+  async totalAllocPoints() {
+    return new FormattedResult(await this.contract.totalAllocPoint());
+  }
+
+  async rewardsPerSecond() {
+    return new FormattedResult(await this.contract.tSharePerSecond());
   }
 }

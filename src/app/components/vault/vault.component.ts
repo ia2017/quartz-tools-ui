@@ -31,9 +31,14 @@ export class VaultComponent {
 
   async ngOnInit() {
     this.resetInputs();
-    const tvl = await this.vaultStats.getVaultTVL(this.vault);
-    console.log(tvl.toNumber());
-    this.vault.totalValueLocked = tvl.toNumber();
+    console.log('GETTING TVL');
+    const { vaultTVL, APR, dailyAPR, APY } = await this.vaultStats.getVaultTVL(
+      this.vault
+    );
+    this.vault.totalValueLocked = vaultTVL;
+    this.vault.APR = APR;
+    this.vault.dailyAPR = dailyAPR;
+    this.vault.APY = APY;
   }
 
   private resetInputs() {

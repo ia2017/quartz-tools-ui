@@ -11,4 +11,7 @@ export interface ChainBaseConfig {
   blockExplorer?: string;
   nativeToken?: TokenBaseConfig;
   evmCompatible?: boolean;
+  blockTimeSeconds?: number;
+  blocksPerYear?: number;
+  compoundsGuessimate?: number;
 }
