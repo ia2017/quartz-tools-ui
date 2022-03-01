@@ -31,7 +31,6 @@ export class VaultComponent {
 
   async ngOnInit() {
     this.resetInputs();
-    console.log('GETTING TVL');
     const { vaultTVL, APR, dailyAPR, APY } = await this.vaultStats.getVaultTVL(
       this.vault
     );

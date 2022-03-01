@@ -107,6 +107,9 @@ export class StatsService {
   getAPY(apr: number, dailyCompounds: number) {
     // APY = [1 + (APR / Number of Periods)]^(Number of Periods) - 1
     const APY = Math.pow(1 + apr / dailyCompounds, dailyCompounds) - 1;
+    const compoundPercent = 0.125 / dailyCompounds;
+    const idk = 1 * (1 + compoundPercent) ** (365 * dailyCompounds);
+    console.log(idk / 100);
     return roundDecimals(APY, 2);
   }
 
