@@ -100,7 +100,7 @@ export class StatsService {
     return {
       APR: roundDecimals(APR, 2),
       dailyAPR,
-      APY: this.getAPY(APR, vault.compoundsDaily, 4),
+      APY: this.getAPY(APR, vault.compoundsDaily, dailyAPR),
     };
   }
 
