@@ -12,6 +12,7 @@ export interface IVault {
   userLpWalletBalance: number;
   walletBalanceBN: BigNumber;
   userLpDepositBalance: number;
+  userLpDepositBalanceFull?: number;
   userLpDepositBalanceBN: BigNumber;
   APR?: number;
   dailyAPR: number;

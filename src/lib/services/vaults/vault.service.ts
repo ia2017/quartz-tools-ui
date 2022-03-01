@@ -4,7 +4,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ALL_VAULTS } from 'src/lib/data/bsc/vaults';
 import { IVault } from 'src/lib/types/vault.types';
-import { FormattedResult } from 'src/lib/utils/formatting';
+import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { SimpleStateStore } from '../store/simple-state-store';
 import { TokenService } from '../tokens/token.service';
@@ -91,7 +91,7 @@ export class VaultService {
           new FormattedResult(getPricePerFullShare).toNumber();
         v.userLpDepositBalance = userLpDepositBalance.isZero()
           ? 0
-          : amountTimesPricePerShare;
+          : roundDecimals(amountTimesPricePerShare, 8);
         v.userLpDepositBalanceBN = parseUnits(String(amountTimesPricePerShare));
         // Check/set allowance for vault pair
         const vaultPair = this.tokens.getTokenContract(vault.lpAddress);

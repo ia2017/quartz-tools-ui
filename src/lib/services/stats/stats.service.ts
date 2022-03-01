@@ -95,22 +95,38 @@ export class StatsService {
     const { poolWeight } = await this.getPoolDataForAPR(vault.poolId);
     const poolsRewardTokenPerYear = yearlyRewardsValue * poolWeight.toNumber();
     const APR = (poolsRewardTokenPerYear / poolTVL) * 100;
-    const dailyAPR = APR / 365;
+    const dailyAPR = roundDecimals(APR / 365, 2);
 
     return {
       APR: roundDecimals(APR, 2),
-      dailyAPR: roundDecimals(dailyAPR, 2),
-      APY: this.getAPY(APR, vault.compoundsDaily),
+      dailyAPR,
+      APY: this.getAPY(APR, vault.compoundsDaily, 4),
     };
   }
 
-  getAPY(apr: number, dailyCompounds: number) {
-    // APY = [1 + (APR / Number of Periods)]^(Number of Periods) - 1
-    const APY = Math.pow(1 + apr / dailyCompounds, dailyCompounds) - 1;
-    const compoundPercent = 0.125 / dailyCompounds;
-    const idk = 1 * (1 + compoundPercent) ** (365 * dailyCompounds);
-    console.log(idk / 100);
-    return roundDecimals(APY, 2);
+  // TODO: APR's are too high and show inifinte
+  // Need to convert to string and show something like "9.2m%"
+  getAPY(apr: number, dailyCompounds: number, dailyAPR: number) {
+    const toDecimalPercent = dailyAPR / 100;
+    console.log(toDecimalPercent);
+
+    const dailyCompoundResults = (1 + toDecimalPercent) ** 365;
+    const digits = String(dailyCompoundResults).length;
+    console.log(digits);
+
+    if (digits > 9) {
+      // string into comma count equivalent string
+    }
+
+    if (toDecimalPercent >= 0.05) {
+      // Just using 365 days for now
+
+      return dailyCompoundResults;
+    } else {
+      // Run usual comp interest formula
+      const compoundRate = toDecimalPercent / dailyCompounds;
+      return (1 + compoundRate) ** (365 * dailyCompounds);
+    }
   }
 
   async getPoolDataForAPR(poolId: number) {
