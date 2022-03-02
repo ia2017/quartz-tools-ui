@@ -2,10 +2,8 @@ import { ethers } from 'ethers';
 import { IVault } from '../../types/vault.types';
 import { getSingleTokenPrice } from '../../utils/http-utils';
 import {
-  STRAT_1QSHARE_UST_ADDRESS_BSC,
   STRAT_AMETHYST_UST_ADDRESS_BSC,
   STRAT_ASHARE_UST_ADDRESS_BSC,
-  VAULT_1QSHARE_UST_ADDRESS_BSC,
   VAULT_AMETHYST_UST_ADDRESS_BSC,
   VAULT_ASHARE_UST_ADDRESS_BSC,
 } from './bsc-addresses';

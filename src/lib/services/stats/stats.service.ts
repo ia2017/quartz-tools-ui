@@ -107,39 +107,20 @@ export class StatsService {
   // TODO: APR's are too high and show inifinte
   // Need to convert to string and show something like "9.2m%"
   getAPY(apr: number, dailyCompounds: number, dailyAPR: number) {
-    const toDecimalPercent = dailyAPR / 100;
-    //const compoundRate = toDecimalPercent / dailyCompounds;
-    const dailyCompoundResults = (1 + toDecimalPercent) ** 365;
-    console.log(dailyCompoundResults);
+    const dailyToPercent = dailyAPR / 100;
 
-    if (toDecimalPercent <= 0.05) {
+    if (dailyToPercent <= 0.05) {
       // Run usual comp interest formula
-      const compoundRate = toDecimalPercent / dailyCompounds;
+      const compoundRate = dailyToPercent / dailyCompounds;
       return (1 + compoundRate) ** (365 * dailyCompounds);
     }
 
+    const dailyCompoundResults = (1 + dailyToPercent) ** 365;
+    console.log(dailyCompoundResults);
     return dailyCompoundResults;
 
     const digits = String(dailyCompoundResults).length;
     if (digits > 4) {
-      // const split: string[] = ethers.utils
-      //   .commify(dailyCompoundResults)
-      //   .split(',');
-      // const commaCount = split.length;
-      // console.log('commaCount: ' + commaCount);
-      // console.log(split);
-      // // 1 comma = 100k
-      // // 2 commas = Million
-      // // 3 commas = B
-      // // cut off at 1m? Just "+x.xm%"
-      // if (commaCount == 1) {
-      //   return `+${split[0]}k`;
-      // }
-      // if (commaCount >= 2) {
-      //   const first = split[split.length - 3][2];
-      //   const after = split[split.length - 2][2];
-      //   return `+${first}.${after}M`;
-      // }
     }
   }
 
