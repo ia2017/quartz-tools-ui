@@ -134,11 +134,13 @@ export class Web3Service {
     window.ethereum.on('chainChanged', async (chainId) => {
       // nada for now
       const supported = this.chainService.isChainSupported(chainId);
+      console.log(supported);
       if (!supported) {
         // freeze everything, blow it up, etc.
         this._web3.next(null);
         this._chain.next(null);
       }
+      this._chain.next(supported);
       window.location.reload();
     });
   }

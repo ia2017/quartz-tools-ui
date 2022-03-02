@@ -4,7 +4,7 @@ import { SECONDS_IN_YEAR } from '../utils/time-constants';
 export const HARMONY_CHAIN: ChainBaseConfig = {
   name: 'Harmony',
   nativeToken: { coinGeckoId: 'harmony' },
-  chainId: 166660000,
+  chainId: 1666600000,
   blockTimeSeconds: 2,
   blocksPerYear: SECONDS_IN_YEAR / 2,
   compoundsGuessimate: 4 * 24, //  Hard coded until API is set up

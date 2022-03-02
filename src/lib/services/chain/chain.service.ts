@@ -34,7 +34,9 @@ export class ChainService {
 
   // EVM chains
   async getChainById(chainId: number): Promise<ChainBaseConfig> {
+    console.log(chainId);
     const chain = this._chains.value.find((c) => c.chainId == chainId);
+    console.log(chain);
     if (!chain) {
       throw new Error(`Chain not found: ${chain}`);
     }
