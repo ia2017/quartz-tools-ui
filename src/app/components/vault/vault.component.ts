@@ -1,8 +1,10 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { ethers } from 'ethers';
+import { Subscription } from 'rxjs';
 import { StatsService } from 'src/lib/services/stats/stats.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
+import { Web3Service } from 'src/lib/services/web3.service';
 import { IVault } from 'src/lib/types/vault.types';
 
 @Component({
@@ -10,7 +12,7 @@ import { IVault } from 'src/lib/types/vault.types';
   templateUrl: './vault.component.html',
   styleUrls: ['./vault.component.scss'],
 })
-export class VaultComponent {
+export class VaultComponent implements OnInit, OnDestroy {
   @Input() vault: IVault;
 
   @ViewChild('depositInput', {
@@ -24,10 +26,18 @@ export class VaultComponent {
   })
   withdrawInput: MatInput;
 
+  private _subs = new Subscription();
+
   constructor(
     public readonly vaultService: VaultService,
-    private readonly vaultStats: StatsService
-  ) {}
+    private readonly vaultStats: StatsService,
+    private readonly webService: Web3Service
+  ) {
+    const sub = this.webService.error.subscribe(
+      (err) => (this.vault.loading = false)
+    );
+    this._subs.add(sub);
+  }
 
   async ngOnInit() {
     this.resetInputs();
@@ -38,6 +48,10 @@ export class VaultComponent {
     this.vault.APR = APR;
     this.vault.dailyAPR = dailyAPR;
     this.vault.APY = APY;
+  }
+
+  ngOnDestroy(): void {
+    this._subs.unsubscribe();
   }
 
   private resetInputs() {
