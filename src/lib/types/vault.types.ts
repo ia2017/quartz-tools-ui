@@ -16,7 +16,7 @@ export interface IVault {
   userLpDepositBalanceBN: BigNumber;
   APR?: number;
   dailyAPR: number;
-  APY: number;
+  APY: number | string;
   totalValueLocked: number;
   tvlChecked: boolean;
   loading: boolean;

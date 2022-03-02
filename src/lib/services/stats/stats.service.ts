@@ -108,24 +108,38 @@ export class StatsService {
   // Need to convert to string and show something like "9.2m%"
   getAPY(apr: number, dailyCompounds: number, dailyAPR: number) {
     const toDecimalPercent = dailyAPR / 100;
-    console.log(toDecimalPercent);
-
+    //const compoundRate = toDecimalPercent / dailyCompounds;
     const dailyCompoundResults = (1 + toDecimalPercent) ** 365;
-    const digits = String(dailyCompoundResults).length;
-    console.log(digits);
+    console.log(dailyCompoundResults);
 
-    if (digits > 9) {
-      // string into comma count equivalent string
-    }
-
-    if (toDecimalPercent >= 0.05) {
-      // Just using 365 days for now
-
-      return dailyCompoundResults;
-    } else {
+    if (toDecimalPercent <= 0.05) {
       // Run usual comp interest formula
       const compoundRate = toDecimalPercent / dailyCompounds;
       return (1 + compoundRate) ** (365 * dailyCompounds);
+    }
+
+    return dailyCompoundResults;
+
+    const digits = String(dailyCompoundResults).length;
+    if (digits > 4) {
+      // const split: string[] = ethers.utils
+      //   .commify(dailyCompoundResults)
+      //   .split(',');
+      // const commaCount = split.length;
+      // console.log('commaCount: ' + commaCount);
+      // console.log(split);
+      // // 1 comma = 100k
+      // // 2 commas = Million
+      // // 3 commas = B
+      // // cut off at 1m? Just "+x.xm%"
+      // if (commaCount == 1) {
+      //   return `+${split[0]}k`;
+      // }
+      // if (commaCount >= 2) {
+      //   const first = split[split.length - 3][2];
+      //   const after = split[split.length - 2][2];
+      //   return `+${first}.${after}M`;
+      // }
     }
   }
 

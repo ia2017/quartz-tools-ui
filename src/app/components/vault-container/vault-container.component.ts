@@ -13,7 +13,7 @@ import { Web3Service } from 'src/lib/services/web3.service';
 })
 export class VaultsContainerComponent implements OnDestroy {
   private _subs = new Subscription();
-  private _dataWatchInterval = 1000 * 60;
+  private _dataWatchInterval = 1000 * 60 * 3;
   loadingVaults = true;
 
   constructor(
