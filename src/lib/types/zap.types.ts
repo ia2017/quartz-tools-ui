@@ -1,10 +1,12 @@
 import { ethers } from 'ethers';
-import { IERC20, IPair } from './token.types';
+import { ERC20 } from './classes/erc20';
+import { Pair } from './classes/pair';
+import { IERC20 } from './token.types';
 
 export interface IZapPool {
   name: string;
-  token0: IERC20;
-  token1: IERC20;
+  token0?: ERC20;
+  token1?: ERC20;
   // zapInWithPath parameters
   tokenInAddress: string;
   pairAddress: string;
@@ -14,5 +16,7 @@ export interface IZapPool {
   path: string[];
 
   // UI helpers
-  pair?: IPair;
+  pair?: Pair;
+  userBalanceToken0?: number;
+  userBalanceToken1?: number;
 }

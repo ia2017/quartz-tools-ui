@@ -29,6 +29,8 @@ import { BehaviorSubject } from 'rxjs';
 import { TokenPriceInfo } from 'src/lib/types/token.types';
 import { PRICE_TOKENS } from 'src/lib/data/price-tokens';
 import { createPairContract } from 'src/lib/utils/contract.utils';
+import { Pair } from 'src/lib/types/classes/pair';
+import { ERC20 } from 'src/lib/types/classes/erc20';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
@@ -50,6 +52,14 @@ export class TokenService {
 
   setPriceTokens(info: TokenPriceInfo[]) {
     this._priceTokens.next(info);
+  }
+
+  getPair(pairAddress: string) {
+    return new Pair(pairAddress, this.web3.web3Info.signer);
+  }
+
+  getERC20(address: string) {
+    return new ERC20(address, this.web3.web3Info.signer);
   }
 
   private async setPriceTokensInfo(chainId: number) {

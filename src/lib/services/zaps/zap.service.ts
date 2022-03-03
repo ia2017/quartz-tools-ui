@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { QUARTZ_CONTRACTS } from 'src/lib/data/contract';
 import { ZAPS } from 'src/lib/data/zaps';
+import { Pair } from 'src/lib/types/classes/pair';
 import { IZapPool } from 'src/lib/types/zap.types';
 import { Web3Service } from '../web3.service';
 
@@ -24,9 +25,23 @@ export class ZapService {
     this.web3.web3.subscribe((info) => {
       if (info) {
         this.setContract(info.chainId);
-        this.setZaps(info.chainId);
+        this.setZapData(info.chainId);
       }
     });
+  }
+
+  async setZapData(chainId: number) {
+    const zaps = this.getZapsForChain(chainId);
+    const zappers: IZapPool[] = [];
+    for (const zap of zaps) {
+      const z: IZapPool = {
+        ...zap,
+        pair: new Pair(zap.pairAddress, this.web3.web3Info.signer),
+      };
+      zappers.push(z);
+    }
+
+    this._zaps.next(zappers);
   }
 
   private setContract(chainId: number) {
@@ -44,16 +59,16 @@ export class ZapService {
     );
   }
 
-  private async setZaps(chainId: number) {
-    // const chainZaps = ZAPS[chainId];
-    // if (!chainZaps) {
-    //   throw new Error('setZaps: Dafuq?');
-    // }
-    // console.log(chainZaps);
-    // this._zaps.next(chainZaps || []);
+  private getZapsForChain(chainId: number) {
+    const chainZaps = ZAPS[chainId];
+    if (!chainZaps) {
+      throw new Error('setZaps: Dafuq?');
+    }
+
+    return chainZaps;
   }
 
-  async zapIn(zapInfo: IZapPool) {
+  async zapInWithPath(zapInfo: IZapPool) {
     //
   }
 

@@ -1,13 +1,14 @@
 import { ethers } from 'ethers';
 import { IERC20 } from '../token.types';
 
-export class ERC20TokenBase implements IERC20 {
+export class ERC20TokenBase extends ethers.Contract implements IERC20 {
   private _name: string;
   private _decimals: number;
 
   public readonly contract: ethers.Contract;
 
   constructor(address: string, abi: any[], signer: ethers.Signer) {
+    super(address, abi, signer);
     this.contract = new ethers.Contract(address, abi, signer);
   }
 
