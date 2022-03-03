@@ -1,10 +1,4 @@
 import { BigNumber, BigNumberish, ethers } from 'ethers';
-import {
-  formatEther,
-  formatUnits,
-  parseEther,
-  parseUnits,
-} from 'ethers/lib/utils';
 
 export function roundDecimals(value: number, decimalPlaces: number): number {
   return Number(
@@ -14,35 +8,38 @@ export function roundDecimals(value: number, decimalPlaces: number): number {
 
 export function toNumber(value: BigNumber, decimals?: number): number {
   if (decimals) {
-    return Number(formatUnits(value, decimals));
+    return Number(ethers.utils.formatUnits(value, decimals));
   }
-  return Number(formatEther(value));
+  return Number(ethers.utils.formatEther(value));
 }
 
 export function toCommaString(value: BigNumber, decimals?: number) {
   if (decimals) {
     return ethers.utils.commify(toNumber(value, decimals));
   }
-  return ethers.utils.commify(formatEther(value));
+  return ethers.utils.commify(ethers.utils.formatEther(value));
 }
 
 export class FormattedResult {
   constructor(public readonly value: BigNumber) {}
 
   formatEther(): string {
-    return formatEther(this.value);
+    return ethers.utils.formatEther(this.value);
   }
 
   parseEther(): BigNumber {
-    return parseEther(formatEther(this.value));
+    return ethers.utils.parseEther(ethers.utils.formatEther(this.value));
   }
 
   parseUnits(unitName: BigNumberish) {
-    return parseUnits(formatEther(this.value), unitName);
+    return ethers.utils.parseUnits(
+      ethers.utils.formatEther(this.value),
+      unitName
+    );
   }
 
   formatUnits(unitName: BigNumberish): string {
-    return formatUnits(this.value, unitName);
+    return ethers.utils.formatUnits(this.value, unitName);
   }
 
   toNumber(decimals?: number): number {

@@ -13,7 +13,7 @@ import {
   PAIR_1QSHARE_UST_BSC,
 } from './pairs';
 import { BINANCE_SMART_CHAIN } from '../chains';
-import { VAULTS_HARMONY } from '../harmony/harmony-vaults';
+import { VAULTS_HARMONY } from '../harmony/vaults';
 
 export const VAULT_AMETHYST_UST_BSC: IVault = {
   active: true,

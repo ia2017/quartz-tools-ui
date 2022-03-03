@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
-import { SimpleStateStore } from 'src/lib/services/store/simple-state-store';
 import { VaultWatchService } from 'src/lib/services/vaults/vault-watch.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { Web3Service } from 'src/lib/services/web3.service';
@@ -15,17 +14,23 @@ export class VaultsContainerComponent implements OnDestroy {
   private _subs = new Subscription();
   private _dataWatchInterval = 1000 * 60 * 3;
   loadingVaults = true;
+  vaults = [];
 
   constructor(
     private readonly web3: Web3Service,
     public readonly vaultService: VaultService,
-    public readonly state: SimpleStateStore,
     private readonly snackBar: MatSnackBar,
     private readonly watcher: VaultWatchService
   ) {
     this.web3.web3.subscribe((web3Info) => {
       if (web3Info) {
         this.vaultService.initVaults(web3Info.chainId);
+        this.watcher.watchVaults(
+          this._dataWatchInterval,
+          this.web3.web3Info.chainId
+        );
+      } else {
+        this.watcher.stopWatchingVaults();
       }
     });
 
@@ -49,21 +54,9 @@ export class VaultsContainerComponent implements OnDestroy {
       this.loadingVaults = init;
     });
 
-    const s4 = this.state.vaults.subscribe((vaults) => {
-      if (!vaults.length) {
-        this.watcher.stopWatchingVaults();
-      } else {
-        this.watcher.watchVaults(
-          this._dataWatchInterval,
-          this.web3.web3Info.chainId
-        );
-      }
-    });
-
     this._subs.add(s1);
     this._subs.add(s2);
     this._subs.add(s3);
-    this._subs.add(s4);
   }
 
   ngOnDestroy(): void {

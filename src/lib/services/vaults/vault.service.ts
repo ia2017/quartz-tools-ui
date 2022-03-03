@@ -6,7 +6,6 @@ import { ALL_VAULTS } from 'src/lib/data/bsc/vaults';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
-import { SimpleStateStore } from '../store/simple-state-store';
 import { TokenService } from '../tokens/token.service';
 import { Web3Service } from '../web3.service';
 import { VAULT_ABI } from './vault-abi';
@@ -16,6 +15,11 @@ export class VaultService {
   private _init = new BehaviorSubject<boolean>(false);
   get init() {
     return this._init.asObservable();
+  }
+
+  private _vaults = new BehaviorSubject<IVault[]>([]);
+  get vaults() {
+    return this._vaults.asObservable();
   }
 
   private _operationActive = new Subject<string>();
@@ -30,8 +34,7 @@ export class VaultService {
 
   constructor(
     private readonly tokens: TokenService,
-    private readonly web3: Web3Service,
-    private readonly state: SimpleStateStore
+    private readonly web3: Web3Service
   ) {}
 
   async initVaults(chainId: number) {
@@ -105,12 +108,12 @@ export class VaultService {
         vaults.push(v);
       }
 
-      this.state.setVaults(vaults);
+      this._vaults.next(vaults);
       this._init.next(false);
     } catch (error) {
       console.error(error);
       this._init.next(false);
-      this.state.setVaults([]);
+      this._vaults.next([]);
       this._error.next(new Error(`Error initializing vaults`));
     }
   }

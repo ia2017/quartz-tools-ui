@@ -1,5 +1,5 @@
 <div class="row tab-option">
-  <div class="col-md-12" *ngFor="let vault of state.vaults | async">
+  <div class="col-md-12" *ngFor="let vault of vaultService.vaults | async">
 
       <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
@@ -31,7 +31,7 @@
   <div class="col-4"></div>
 </div>
 
-<div class="row tab-option" *ngIf="!loadingVaults && (state.vaults | async).length == 0">
+<div class="row tab-option" *ngIf="!loadingVaults && (vaultService.vaults | async).length == 0">
   <div class="col-4"></div>
   <div class="col-4 text-center bold">
     Vaults currently not available on this chain.
