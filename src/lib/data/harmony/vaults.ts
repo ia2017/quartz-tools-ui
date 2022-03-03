@@ -39,4 +39,4 @@ export const VAULT_QUARTZ_UST_HARMONY: IVault = {
   compoundsDaily: HARMONY_CHAIN.compoundsGuessimate,
 };
 
-export const VAULTS_HARMONY = [VAULT_QUARTZ_UST_HARMONY];
+export const VAULTS_HARMONY = [];

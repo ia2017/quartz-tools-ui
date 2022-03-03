@@ -10,7 +10,7 @@ const routes: Routes = [
     component: VaultsContainerComponent,
   },
   {
-    path: 'zap',
+    path: 'zaps',
     component: ZapContainerComponent,
   },
   // {

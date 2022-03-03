@@ -58,6 +58,10 @@ export class TokenService {
 
   private async setPriceTokensInfo(chainId: number) {
     const chainTokens = PRICE_TOKENS[chainId];
+    if (!chainTokens || !chainTokens.length) {
+      this.setPriceTokens([]);
+      return;
+    }
     const priceTokens: TokenPriceInfo[] = [];
     for (const token of chainTokens) {
       priceTokens.push({

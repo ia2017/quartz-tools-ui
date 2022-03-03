@@ -48,6 +48,12 @@ export class VaultService {
         return;
       }
 
+      if (!chainVaults.length) {
+        this._vaults.next([]);
+        this._init.next(false);
+        return;
+      }
+
       const vaults = [];
       for (const vault of chainVaults) {
         const v: IVault = {

@@ -115,7 +115,7 @@ export const VAULTS_BSC = [
   // VAULT_1QSHARE_UST_BSC,
 ];
 
-export const ALL_VAULTS = {
+export const ALL_VAULTS: { [chainId: number]: IVault[] } = {
   [56]: VAULTS_BSC,
   [1666600000]: VAULTS_HARMONY,
 };
