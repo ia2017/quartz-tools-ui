@@ -30,17 +30,45 @@ import {
   PAIR_ASHARE_UST_BSC,
   PAIR_1QSHARE_UST_BSC,
 } from 'src/lib/data/bsc/pairs';
+import { BehaviorSubject } from 'rxjs';
+import { TokenPriceInfo } from 'src/lib/types/token.types';
+import { PRICE_TOKENS } from 'src/lib/data/price-tokens';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
   private contractRefs: { [address: string]: ethers.Contract } = {};
 
+  private _priceTokens = new BehaviorSubject<TokenPriceInfo[]>([]);
+  get priceTokens() {
+    return this._priceTokens.asObservable();
+  }
+
   constructor(private readonly web3: Web3Service) {
     this.web3.web3.subscribe((web3Info) => {
       if (web3Info) {
         this.setContractRefs();
+        this.setPriceTokensInfo(web3Info.chainId);
       }
     });
+  }
+
+  setPriceTokens(info: TokenPriceInfo[]) {
+    this._priceTokens.next(info);
+  }
+
+  private async setPriceTokensInfo(chainId: number) {
+    const chainTokens = PRICE_TOKENS[chainId];
+    const priceTokens: TokenPriceInfo[] = [];
+    for (const token of chainTokens) {
+      priceTokens.push({
+        ...token,
+        ...{
+          price: await token.getPrice(),
+        },
+      });
+    }
+
+    this.setPriceTokens(priceTokens);
   }
 
   async getUserTokenBalance(tokenAddress: string) {

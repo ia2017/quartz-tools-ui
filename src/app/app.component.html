@@ -13,6 +13,8 @@
     <img src="assets/logo3.svg" alt="">
   </a>
 
+
+
   <quartz-connect-wallet-button *ngIf="!web3Service.connected"></quartz-connect-wallet-button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -28,6 +30,10 @@
       </li> -->
     </ul>
   </div>
+
+  <span *ngFor="let token of tokenService.priceTokens | async">
+    <quartz-price-button [priceInfo]="token"></quartz-price-button>
+  </span>
 
   <quartz-chain-badge [chain]="web3Service.chain | async" *ngIf="web3Service.connected"></quartz-chain-badge>
 </nav>

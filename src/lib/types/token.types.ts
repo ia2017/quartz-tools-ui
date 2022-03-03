@@ -31,3 +31,10 @@ export interface IERC20 {
   approve: (spender: string, amount: BigNumber) => Promise<BigNumber>;
   balanceOf: (who: string) => Promise<BigNumber>;
 }
+
+export interface TokenPriceInfo {
+  price: number;
+  imgPath: string;
+  priceLink: string;
+  getPrice: () => Promise<number>;
+}
