@@ -14,7 +14,7 @@ export const PRICE_INFO_ASHARE: TokenPriceInfo = {
   price: 0,
   priceLink:
     'https://dexscreener.com/bsc/0x39846550ef3cb8d06e3cff52845df42f71ac3851',
-  getPrice: async () => (await getSingleTokenPrice('ashare')).usd,
+  getPrice: async () => (await getSingleTokenPrice('quartz-defi-ashare')).usd,
 };
 
 export const BSC_PRICE_TOKENS = [PRICE_INFO_AMES, PRICE_INFO_ASHARE];
