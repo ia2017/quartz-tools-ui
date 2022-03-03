@@ -22,9 +22,9 @@ import { ChainBadgeComponent } from './components/chain-badge/chain-badge.compon
 import { ConnectWalletButtonComponent } from './components/connect-wallet-button/connect-wallet-button.component';
 
 // import { SwapComponent } from './components/swap/swap.component';
-// import { ZapContainerComponent } from './components/zap-container/zap-container.component';
+import { ZapContainerComponent } from './components/zap-container/zap-container.component';
 // import { SwapContainerComponent } from './components/swap-container/swap-container.component';
-// import { ZapInComponent } from './components/zap-in/zap-in.component';
+import { ZapInComponent } from './components/zap-in/zap-in.component';
 import { PriceButtonComponent } from './components/price-button/price-button.component';
 
 @NgModule({
@@ -32,9 +32,9 @@ import { PriceButtonComponent } from './components/price-button/price-button.com
     AppComponent,
     VaultsContainerComponent,
     VaultComponent,
-    // ZapInComponent,
+    ZapInComponent,
     // SwapComponent,
-    //ZapContainerComponent,
+    ZapContainerComponent,
     //SwapContainerComponent,
     ChainBadgeComponent,
     ConnectWalletButtonComponent,

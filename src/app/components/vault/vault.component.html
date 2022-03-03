@@ -67,6 +67,12 @@
 
   <div class="col-md-12">
     <div class="row">
+      <div class="col-md-6"></div>
+      <div class="col-md-6">
+        <p class="bold"> {{ vault.symbol }}: {{ vault.userLpDepositBalanceFull }}</p>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-6 deposit-withdrawl">
         <mat-form-field appearance="outline">
           <input type="text" matInput #depositInput [disabled]="!vault.userLpWalletBalance">
@@ -134,6 +140,7 @@
       </div>
 
       <div class="col-md-6 clearfix deposit-withdrawl">
+
         <mat-form-field appearance="outline">
           <input type="text" matInput #withdrawInput [disabled]="!vault.userLpDepositBalance">
         </mat-form-field>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
-import { QUARTZ_CONTRACTS } from 'src/lib/data/contracts';
+import { QUARTZ_CONTRACTS } from 'src/lib/data/data';
 import { FormattedResult } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
 import { REWARD_POOL_ABI } from './reward-pool-abi';

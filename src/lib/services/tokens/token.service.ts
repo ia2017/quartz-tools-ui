@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import {
   QUARTZ_TOKEN_ADDRESS_HARMONY,
   QuartzToken,
@@ -9,9 +8,7 @@ import {
   UST_ADDRESS,
   UstToken,
   QUARTZ_QSHARE_DFK_LP_ADDRESS,
-  QShareQuartzPair,
   QUARTZ_UST_DFK_LP_ADDRESS,
-  QuartzUstPair,
   UsdcToken,
   USDC_ADDRESS,
   JEWEL_ADDRESS,
@@ -19,9 +16,8 @@ import {
   HARMONY_wONE_ADDRESS,
   wOneToken,
   QSHARE_ONE_DFK_LP_ADDRESS,
-  QShareOnePair,
   createPairContract,
-} from '../../data/contracts';
+} from '../../data/data';
 import { FormattedResult } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
@@ -136,15 +132,18 @@ export class TokenService {
   }
 
   private setPairRefs() {
-    this.contractRefs[QUARTZ_QSHARE_DFK_LP_ADDRESS] = QShareQuartzPair.connect(
+    this.contractRefs[QUARTZ_QSHARE_DFK_LP_ADDRESS] = createPairContract(
+      QUARTZ_QSHARE_DFK_LP_ADDRESS,
       this.web3.web3Info.signer
     );
 
-    this.contractRefs[QUARTZ_UST_DFK_LP_ADDRESS] = QuartzUstPair.connect(
+    this.contractRefs[QUARTZ_UST_DFK_LP_ADDRESS] = createPairContract(
+      QUARTZ_UST_DFK_LP_ADDRESS,
       this.web3.web3Info.signer
     );
 
-    this.contractRefs[QSHARE_ONE_DFK_LP_ADDRESS] = QShareOnePair.connect(
+    this.contractRefs[QSHARE_ONE_DFK_LP_ADDRESS] = createPairContract(
+      QSHARE_ONE_DFK_LP_ADDRESS,
       this.web3.web3Info.signer
     );
 

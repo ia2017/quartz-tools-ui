@@ -6,7 +6,7 @@ import {
   VAULT_QUARTZ_UST_ADDRESS,
   QUARTZ_UST_DFK_LP_ADDRESS,
   STRAT_QUARTZ_UST_ADDRESS,
-} from '../contracts';
+} from '../data';
 
 export const VAULT_QUARTZ_UST_HARMONY: IVault = {
   active: true,

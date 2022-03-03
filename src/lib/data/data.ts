@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { ERC20_ABI } from 'src/lib/abis/erc20-abi';
 import { UNIV2_PAIR_ABI } from 'src/lib/abis/UniV2Pair';
+import { IERC20 } from '../types/token.types';
 
 export const ZAP_CONTRACT_MAINNET_ADDRESS =
   '0x0b4C72fe9aafaFdB7c9675B41b6D3F6Fa44C0004';
@@ -14,22 +15,6 @@ export const QBOND_ADDRESS_HARMONY =
   '0x5A12bc3Ad86c674a50fae82510DcB03751ab218b';
 export const QSHARE_REWARD_POOL_HARMONY =
   '0x1da194F8baf85175519D92322a06b46A2638A530';
-export const QUARTZ_TAX_ORACLE_ADDRESS_HARMONY =
-  '0x24866b121217F391b0079348146Ea139d7Fd77c7';
-export const QUARTZ_TREASURY_ADDRESS_HARMONY =
-  '0xFc0B7c105A6dd49Fd956b607CA8c8f00Ed159353';
-export const QUARTZ_BOARDROOM_ADDRESS_HARMONY =
-  '0xE1E48d3476027af9dC92542b3a60F2D45A36e082';
-export const QUARTZ_ORACLE_ADDRESS_HARMONY =
-  '0x543AB16f3EDe6dDD26a7C182869a282618B0891C';
-export const QUARTZ_DEPLOYER_ADDRESS_HARMONY =
-  '0x6b2FD2BD34676E4c312cA2F8a472e7C2d9e380e7';
-export const QUARTZ_DAO_FUND_ADDRESS_HARMONY =
-  '0xEE07b8Ee4D827F7EDAC3FFA7bf1a84B8c816623A';
-export const QUARTZ_DEV_WALLET_ADDRESS_HARMONY =
-  '0xB182b5b0Cf6bDB738e9157D6a21B02d92dbf5C38';
-export const QUARTZ_TEAM_WALLET_ADDRESS_HARMONY =
-  '0xc4A0A5D5B50BAB1Ee3D37769e94cAe5B9023f1d3';
 
 // QUARTZ DFK LP's
 export const QUARTZ_UST_DFK_LP_ADDRESS =
@@ -60,21 +45,15 @@ export let UsdcToken = new ethers.Contract(USDC_ADDRESS, ERC20_ABI);
 export let JewelToken = new ethers.Contract(JEWEL_ADDRESS, ERC20_ABI);
 export let wOneToken = new ethers.Contract(HARMONY_wONE_ADDRESS, ERC20_ABI);
 
-export const QuartzUstPair = new ethers.Contract(
-  QUARTZ_UST_DFK_LP_ADDRESS,
-  UNIV2_PAIR_ABI
-);
-export const QShareQuartzPair = new ethers.Contract(
-  QUARTZ_QSHARE_DFK_LP_ADDRESS,
-  UNIV2_PAIR_ABI
-);
-export const QShareOnePair = new ethers.Contract(
-  QSHARE_ONE_DFK_LP_ADDRESS,
-  UNIV2_PAIR_ABI
-);
-
 export function createPairContract(address: string, signer: ethers.Signer) {
   return new ethers.Contract(address, UNIV2_PAIR_ABI, signer);
+}
+
+export function createTokenContract(
+  address: string,
+  signer: ethers.Signer
+): IERC20 {
+  return <IERC20>(<unknown>new ethers.Contract(address, ERC20_ABI, signer));
 }
 
 export const VAULT_QUARTZ_UST_ADDRESS =

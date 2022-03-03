@@ -98,6 +98,10 @@ export class VaultService {
         const amountTimesPricePerShare =
           new FormattedResult(userLpDepositBalance).toNumber() *
           new FormattedResult(getPricePerFullShare).toNumber();
+
+        v.userLpDepositBalanceFull = userLpDepositBalance.isZero()
+          ? 0
+          : amountTimesPricePerShare;
         v.userLpDepositBalance = userLpDepositBalance.isZero()
           ? 0
           : roundDecimals(amountTimesPricePerShare, 8);

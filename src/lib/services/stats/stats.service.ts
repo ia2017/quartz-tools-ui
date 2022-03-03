@@ -109,19 +109,23 @@ export class StatsService {
   getAPY(apr: number, dailyCompounds: number, dailyAPR: number) {
     const dailyToPercent = dailyAPR / 100;
 
-    if (dailyToPercent <= 0.05) {
-      // Run usual comp interest formula
-      const compoundRate = dailyToPercent / dailyCompounds;
-      return (1 + compoundRate) ** (365 * dailyCompounds);
-    }
+    // if (dailyToPercent <= 0.05) {
+    //   // Run usual comp interest formula
+    //   const compoundRate = dailyToPercent / dailyCompounds;
+    //   return (1 + compoundRate) ** (365 * dailyCompounds);
+    // }
 
     const dailyCompoundResults = (1 + dailyToPercent) ** 365;
     console.log(dailyCompoundResults);
-    return dailyCompoundResults;
 
-    const digits = String(dailyCompoundResults).length;
-    if (digits > 4) {
+    const digits = String(dailyCompoundResults);
+
+    if (digits.length >= 4) {
+      const commas = ethers.utils.commify(dailyCompoundResults);
+      console.log(commas.split(','));
     }
+
+    return dailyCompoundResults;
   }
 
   async getPoolDataForAPR(poolId: number) {

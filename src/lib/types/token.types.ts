@@ -27,6 +27,8 @@ export interface TokenBaseConfig {
 }
 
 export interface IERC20 {
+  name: () => Promise<string>;
+  decimals: () => Promise<number>;
   allowance: (owner: string, spender: string) => Promise<BigNumber>;
   approve: (spender: string, amount: BigNumber) => Promise<BigNumber>;
   balanceOf: (who: string) => Promise<BigNumber>;
