@@ -51,9 +51,7 @@ export class Web3Service {
       );
       const signer = provider.getSigner();
       const selectedAccount = await signer.getAddress();
-      console.log(selectedAccount);
       if (selectedAccount) {
-        // already previously connected, continue with flow
         this.connectWeb3();
       }
     } catch (error) {
@@ -80,11 +78,8 @@ export class Web3Service {
       );
       const accounts = await provider.send('eth_requestAccounts', []);
       const signer = provider.getSigner();
-      console.log(signer);
       const chainId = await signer.getChainId();
-
       const currentChain = await this.chainService.getChainById(chainId);
-      console.log(currentChain);
 
       // const supported = this.chainService.isChainSupported(chainId);
       // if (!supported) {

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { IERC20 } from './token.types';
+import { IERC20, IPair } from './token.types';
 
 export interface IZapPool {
   name: string;
@@ -12,4 +12,7 @@ export interface IZapPool {
   tokenInAmountBN: ethers.BigNumber;
   routerAddress: string;
   path: string[];
+
+  // UI helpers
+  pair?: IPair;
 }

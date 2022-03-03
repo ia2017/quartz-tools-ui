@@ -1,1 +1,6 @@
-<p>zap-container works!</p>
+
+<div class="row">
+  <div class="col-md-3" *ngFor="let zap of zapService.zaps | async">
+    {{ zap.name }}
+  </div>
+</div>

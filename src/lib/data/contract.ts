@@ -6,10 +6,10 @@ export const QUARTZ_CONTRACTS: {
 } = {
   [BINANCE_SMART_CHAIN.chainId]: {
     Zapper: '',
-    RewardPool: '',
+    RewardPool: '0x1da194F8baf85175519D92322a06b46A2638A530',
   },
   [HARMONY_CHAIN.chainId]: {
-    Zapper: '',
+    Zapper: '0x56EA1648a0174AFC0bCf3B1ee5f406A065640A4B',
     RewardPool: '',
   },
 };

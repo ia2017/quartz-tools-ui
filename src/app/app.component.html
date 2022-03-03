@@ -22,9 +22,9 @@
       <li class="nav-item cursor">
         <a class="nav-link" routerLink="/vaults" routerLinkActive="active">Vaults</a>
       </li>
-      <!-- <li class="nav-item cursor">
+      <li class="nav-item cursor">
         <a class="nav-link" routerLink="/zaps" routerLinkActive="active">Zaps</a>
-      </li> -->
+      </li>
     </ul>
   </div>
 
@@ -42,8 +42,5 @@
 
   <div class="col-sm-12" *ngIf="!web3Service.connected">
     <h3 class="bold text-center">Please connect your wallet</h3>
-    <!-- <span style="display: inline-block;" class="align-middle">
-      <quartz-connect-wallet-button></quartz-connect-wallet-button>
-    </span> -->
   </div>
 </div>

@@ -1,10 +1,5 @@
 import { ethers } from 'ethers';
 import { ERC20_ABI } from 'src/lib/abis/erc20-abi';
-import { UNIV2_PAIR_ABI } from 'src/lib/abis/UniV2Pair';
-import { IERC20 } from '../types/token.types';
-
-export const ZAP_CONTRACT_MAINNET_ADDRESS =
-  '0x0b4C72fe9aafaFdB7c9675B41b6D3F6Fa44C0004';
 
 // QUARTZ.DEFI
 export const QSHARE_TOKEN_ADDRESS_HARMONY =
@@ -45,28 +40,5 @@ export let UsdcToken = new ethers.Contract(USDC_ADDRESS, ERC20_ABI);
 export let JewelToken = new ethers.Contract(JEWEL_ADDRESS, ERC20_ABI);
 export let wOneToken = new ethers.Contract(HARMONY_wONE_ADDRESS, ERC20_ABI);
 
-export function createPairContract(address: string, signer: ethers.Signer) {
-  return new ethers.Contract(address, UNIV2_PAIR_ABI, signer);
-}
-
-export function createTokenContract(
-  address: string,
-  signer: ethers.Signer
-): IERC20 {
-  return <IERC20>(<unknown>new ethers.Contract(address, ERC20_ABI, signer));
-}
-
-export const VAULT_QUARTZ_UST_ADDRESS =
-  '0xE8f14022ee7f6E921f100137c6d5597c53A1B93D';
-export const STRAT_QUARTZ_UST_ADDRESS =
-  '0x69A0E815A67E5F3C584187b49106DeEB1DddcafE';
-
-export const VAULT_QSHARE_ONE_ADDRESS =
-  '0xc568dae205F838eE5955a37f19BBf083eC336E36';
-
-export const QUARTZ_CONTRACTS = {
-  REWARD_POOL: {
-    BSC: '0x1da194F8baf85175519D92322a06b46A2638A530',
-    HARMONY: '',
-  },
-};
+export const VAULT_QUARTZ_UST_ADDRESS = '';
+export const STRAT_QUARTZ_UST_ADDRESS = '';

@@ -7,8 +7,6 @@ import {
   QShareToken,
   UST_ADDRESS,
   UstToken,
-  QUARTZ_QSHARE_DFK_LP_ADDRESS,
-  QUARTZ_UST_DFK_LP_ADDRESS,
   UsdcToken,
   USDC_ADDRESS,
   JEWEL_ADDRESS,
@@ -16,7 +14,8 @@ import {
   HARMONY_wONE_ADDRESS,
   wOneToken,
   QSHARE_ONE_DFK_LP_ADDRESS,
-  createPairContract,
+  QUARTZ_QSHARE_DFK_LP_ADDRESS,
+  QUARTZ_UST_DFK_LP_ADDRESS,
 } from '../../data/data';
 import { FormattedResult } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
@@ -29,6 +28,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { TokenPriceInfo } from 'src/lib/types/token.types';
 import { PRICE_TOKENS } from 'src/lib/data/price-tokens';
+import { createPairContract } from 'src/lib/utils/contract.utils';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {

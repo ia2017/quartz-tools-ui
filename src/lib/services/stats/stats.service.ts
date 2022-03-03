@@ -104,26 +104,26 @@ export class StatsService {
     };
   }
 
-  // TODO: APR's are too high and show inifinte
+  // TODO: APR's are too high and show inifinte sometimes
   // Need to convert to string and show something like "9.2m%"
   getAPY(apr: number, dailyCompounds: number, dailyAPR: number) {
     const dailyToPercent = dailyAPR / 100;
-
-    // if (dailyToPercent <= 0.05) {
-    //   // Run usual comp interest formula
-    //   const compoundRate = dailyToPercent / dailyCompounds;
-    //   return (1 + compoundRate) ** (365 * dailyCompounds);
-    // }
-
     const dailyCompoundResults = (1 + dailyToPercent) ** 365;
+
     console.log(dailyCompoundResults);
 
-    const digits = String(dailyCompoundResults);
+    // const digits = String(dailyCompoundResults);
+    // if (digits.length > 9) {
+    //   return '+1b';
+    // }
 
-    if (digits.length >= 4) {
-      const commas = ethers.utils.commify(dailyCompoundResults);
-      console.log(commas.split(','));
-    }
+    // if (digits.length > 6) {
+    //   return '+1m';
+    // }
+
+    // if (digits.length > 3) {
+    //   return '+1k';
+    // }
 
     return dailyCompoundResults;
   }

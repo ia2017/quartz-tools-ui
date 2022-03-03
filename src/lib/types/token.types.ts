@@ -34,6 +34,11 @@ export interface IERC20 {
   balanceOf: (who: string) => Promise<BigNumber>;
 }
 
+export interface IPair extends IERC20 {
+  token0: () => Promise<string>;
+  token1: () => Promise<string>;
+}
+
 export interface TokenPriceInfo {
   price: number;
   imgPath: string;
