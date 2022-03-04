@@ -15,7 +15,6 @@ import { FormattedResult } from 'src/lib/utils/formatting';
 })
 export class VaultComponent implements OnInit, OnDestroy {
   @Input() vault: IVault;
-
   @ViewChild('depositInput', {
     read: MatInput,
     static: true,
@@ -28,6 +27,8 @@ export class VaultComponent implements OnInit, OnDestroy {
   withdrawInput: MatInput;
 
   private _subs = new Subscription();
+
+  private _depositValue = 0;
 
   constructor(
     public readonly vaultService: VaultService,
@@ -63,18 +64,18 @@ export class VaultComponent implements OnInit, OnDestroy {
 
   async setVaultDeposit() {
     this.vault.loading = true;
-    console.log(this.depositInput.value);
-    // 1.1038112367305388
-    // 1103811236730538800
-    const amountIn = ethers.utils.parseUnits(this.depositInput.value);
-    console.log(amountIn.toString());
-    // console.log(ethers.FixedNumber.from(this.depositInput.value).toString());
-    // console.log(ethers.utils.parseEther(amountIn.toString()).toString());
+    console.log(this._depositValue);
+    console.log(this.vault.walletBalanceBN.toString());
 
-    await this.vaultService.deposit(
-      this.vault,
-      ethers.utils.parseUnits(this.depositInput.value)
-    );
+    const multiplier = ethers.utils.parseUnits(String(this._depositValue));
+    const ps = ethers.utils
+      .parseEther(this.vault.walletBalanceBN.toString())
+      .mul(multiplier)
+      .div(1000);
+
+    const amountIn = ethers.utils.parseUnits(ps.toString().slice(0, 18), 'wei');
+    console.log('Amount in: ' + amountIn.toString());
+    await this.vaultService.deposit(this.vault, amountIn);
     this.resetInputs();
     this.vault.loading = false;
   }
@@ -110,6 +111,7 @@ export class VaultComponent implements OnInit, OnDestroy {
   }
 
   onDepositSliderInputChange(value: number) {
+    this._depositValue = value;
     if (value === 0) {
       this.depositInput.value = '0';
       return;

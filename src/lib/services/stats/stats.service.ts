@@ -110,7 +110,7 @@ export class StatsService {
     const dailyToPercent = dailyAPR / 100;
     const dailyCompoundResults = (1 + dailyToPercent) ** 365;
 
-    console.log(dailyCompoundResults);
+    //console.log(dailyCompoundResults);
 
     // const digits = String(dailyCompoundResults);
     // if (digits.length > 9) {

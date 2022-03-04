@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ALL_VAULTS } from 'src/lib/data/bsc/vaults';
 import { IVault } from 'src/lib/types/vault.types';
@@ -90,8 +89,11 @@ export class VaultService {
         v.strategy.withdrawlFee = withdrawalFee.toNumber() / 1000;
         // Check users current LP holdings in wallet
         const bal = await this.getUserBalanceLP(v.lpAddress);
+
         v.userLpWalletBalance = bal.toNumber();
+
         v.walletBalanceBN = bal.value;
+
         // Check/set users current deposits into vault
         const userLpDepositBalance: ethers.BigNumber =
           await v.contract.balanceOf(this.web3.web3Info.userAddress);
@@ -105,9 +107,8 @@ export class VaultService {
         v.userLpDepositBalance = userLpDepositBalance.isZero()
           ? 0
           : roundDecimals(amountTimesPricePerShare, 8);
-        v.userLpDepositBalanceBN = parseUnits(
-          String(amountTimesPricePerShare),
-          18
+        v.userLpDepositBalanceBN = ethers.utils.parseUnits(
+          String(amountTimesPricePerShare)
         );
         // Check/set allowance for vault pair
         const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
@@ -164,10 +165,8 @@ export class VaultService {
       //   return;
       // }
       await this.approveVaultIfNeeded(vault, amountIn, pair);
-      // amountIn = ethers.utils.parseUnits(amountIn.toString(), 'wei');
-      // console.log(amountIn.toString());
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
-      const depositTx = await vaultContract.deposit(amountIn.toHexString());
+      const depositTx = await vaultContract.deposit(amountIn);
       await awaitTransactionComplete(depositTx);
       this._operationActive.next('Deposit complete');
       await this.initVaults(this.web3.web3Info.chainId);
