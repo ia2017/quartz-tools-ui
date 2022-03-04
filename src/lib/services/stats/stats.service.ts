@@ -25,7 +25,11 @@ export class StatsService {
       const pricePerFullShare = await vaultRef.contract.getPricePerFullShare();
 
       const userLpDepositBalance: ethers.BigNumber =
-        await vaultRef.contract.balanceOf(this.web3.web3Info.userAddress);
+        await vaultRef.contract.balanceOf(userAddress);
+
+      // const userLpDepositBalance = ethers.BigNumber.from(
+      //   '4823145521089576646130'
+      // );
 
       const amountTimesPricePerShare =
         new FormattedResult(userLpDepositBalance).toNumber() *
@@ -78,29 +82,37 @@ export class StatsService {
       await pair.balanceOf(this.rewardPool.contract.address)
     );
 
+    // Get rewards % ownership of the pairs total supply
     const chefPercentOwnership =
       chefLpBalance.toNumber(4) / totalSupply.toNumber(4);
-
-    const rewardPoolToken0Share =
+    const chefPercentOfToken0 =
       pairToken0Amount.toNumber() * chefPercentOwnership;
-    const rewardPoolToken1Share =
+    const chefPercentOfToken1 =
       pairToken1Amount.toNumber() * chefPercentOwnership;
 
+    // Get current external USD price for each token in the pair
     const [priceToken0, priceToken1] = await Promise.all([
       vault.fetchPriceToken0(),
       vault.fetchPriceToken1(),
     ]);
 
-    const rewardPoolValueToken0 = rewardPoolToken0Share * priceToken0;
-    const rewardPoolValueToken1 = rewardPoolToken1Share * priceToken1;
+    // The percentage of token0 and token1 for the pool * their price
+    // will gives us the total current USD value of the chefs pool
+    const poolValueUsdToken0 = chefPercentOfToken0 * priceToken0;
+    const poolValueUsdToken1 = chefPercentOfToken1 * priceToken1;
+    const totalValueOfChefPoolUSD = poolValueUsdToken0 + poolValueUsdToken1;
 
-    const poolTVL = rewardPoolValueToken0 + rewardPoolValueToken1;
+    // TVL really comes through the strategies
     const vaultTVL = await this.getStrategyTVL(
       vault,
-      poolTVL,
+      totalValueOfChefPoolUSD,
       chefLpBalance.toNumber()
     );
-    const { APR, dailyAPR, APY } = await this.getVaultAPRs(vault, poolTVL);
+
+    const { APR, dailyAPR, APY } = await this.getVaultAPRs(
+      vault,
+      totalValueOfChefPoolUSD
+    );
 
     return {
       vaultTVL,
