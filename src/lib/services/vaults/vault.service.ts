@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ALL_VAULTS } from 'src/lib/data/bsc/vaults';
+import { VAULTS } from 'src/lib/data/vaults';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
+import { StatsService } from '../stats/stats.service';
 import { TokenService } from '../tokens/token.service';
 import { Web3Service } from '../web3.service';
 import { VAULT_ABI } from './vault-abi';
@@ -33,16 +34,15 @@ export class VaultService {
 
   constructor(
     private readonly tokens: TokenService,
-    private readonly web3: Web3Service
+    private readonly web3: Web3Service,
+    private readonly statService: StatsService
   ) {}
 
   async initVaults(chainId: number) {
     try {
       this._init.next(true);
-      const chainVaults = ALL_VAULTS[chainId];
+      const chainVaults = VAULTS[chainId];
       if (!chainVaults) {
-        // Do suttin
-        // throw new Error(`ChainId: ${chainId} not found`);
         this._error.next(new Error(`Unsupported chainId: ${chainId}`));
         return;
       }
@@ -55,71 +55,17 @@ export class VaultService {
 
       const vaults = [];
       for (const vault of chainVaults) {
-        const v: IVault = {
+        const vaultRef: IVault = {
           ...vault,
         };
-        //console.log(this.web3.web3Info.signer);
-        v.contract = new ethers.Contract(
-          v.vaultAddress,
-          VAULT_ABI,
-          this.web3.web3Info.signer
+
+        await this._initVaultFields(vaultRef);
+        await this.statService.setVaultUserStats(
+          vaultRef,
+          this.web3.web3Info.userAddress
         );
-        v.strategyContract = new ethers.Contract(
-          v.strategy.address,
-          [
-            'function paused() view returns (bool)',
-            'function withdrawalFee() view returns (uint256)',
-          ],
-          this.web3.web3Info.provider
-        );
-
-        // Get/set basic vault token info
-        const [name, symbol, getPricePerFullShare, paused, withdrawalFee] =
-          await Promise.all([
-            v.contract.name(),
-            v.contract.symbol(),
-            v.contract.getPricePerFullShare(),
-            v.strategyContract.paused(),
-            v.strategyContract.withdrawalFee(),
-          ]);
-
-        v.tokenName = name;
-        v.symbol = symbol;
-        v.strategy.paused = paused;
-        v.strategy.withdrawlFee = withdrawalFee.toNumber() / 1000;
-        // Check users current LP holdings in wallet
-        const bal = await this.getUserBalanceLP(v.lpAddress);
-
-        v.userLpWalletBalance = bal.toNumber();
-
-        v.walletBalanceBN = bal.value;
-
-        // Check/set users current deposits into vault
-        const userLpDepositBalance: ethers.BigNumber =
-          await v.contract.balanceOf(this.web3.web3Info.userAddress);
-        const amountTimesPricePerShare =
-          new FormattedResult(userLpDepositBalance).toNumber() *
-          new FormattedResult(getPricePerFullShare).toNumber();
-
-        v.userLpDepositBalanceFull = userLpDepositBalance.isZero()
-          ? 0
-          : amountTimesPricePerShare;
-        v.userLpDepositBalance = userLpDepositBalance.isZero()
-          ? 0
-          : roundDecimals(amountTimesPricePerShare, 8);
-        v.userLpDepositBalanceBN = ethers.utils.parseUnits(
-          String(amountTimesPricePerShare)
-        );
-        // Check/set allowance for vault pair
-        const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
-        const allowance: ethers.BigNumber = await vaultPair.allowance(
-          this.web3.web3Info.userAddress,
-          vault.vaultAddress
-        );
-        if (allowance.gt(ethers.constants.Zero)) {
-          v.contractApproved = true;
-        }
-        vaults.push(v);
+        await this._setVaultAllowance(vaultRef);
+        vaults.push(vaultRef);
       }
 
       this._vaults.next(vaults);
@@ -132,11 +78,58 @@ export class VaultService {
     }
   }
 
+  private async _setVaultAllowance(vault: IVault) {
+    try {
+      // Check/set allowance for vault pair
+      const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
+      const allowance: ethers.BigNumber = await vaultPair.allowance(
+        this.web3.web3Info.userAddress,
+        vault.vaultAddress
+      );
+      if (allowance.gt(ethers.constants.Zero)) {
+        vault.contractApproved = true;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async _initVaultFields(vault: IVault) {
+    try {
+      vault.contract = new ethers.Contract(
+        vault.vaultAddress,
+        VAULT_ABI,
+        this.web3.web3Info.signer
+      );
+
+      vault.strategyContract = new ethers.Contract(
+        vault.strategy.address,
+        [
+          'function paused() view returns (bool)',
+          'function withdrawalFee() view returns (uint256)',
+        ],
+        this.web3.web3Info.provider
+      );
+
+      // Get/set basic vault token info
+      const [name, symbol, paused, withdrawalFee] = await Promise.all([
+        vault.contract.name(),
+        vault.contract.symbol(),
+        vault.strategyContract.paused(),
+        vault.strategyContract.withdrawalFee(),
+      ]);
+
+      vault.tokenName = name;
+      vault.symbol = symbol;
+      vault.strategy.paused = paused;
+      vault.strategy.withdrawlFee = withdrawalFee.toNumber() / 1000;
+    } catch (error) {
+      this._error.next(new Error(`Error initializing vault: ${vault.name}`));
+    }
+  }
+
   async deposit(vault: IVault, amount: ethers.BigNumber) {
     try {
-      // const amountBN = ethers.BigNumber.from(amount);
-      // // Convert to percentage
-      // const amountIn = vault.walletBalanceBN.mul(amountBN).div(100);
       await this._deposit(vault, amount);
     } catch (error) {
       console.error(error);
@@ -159,11 +152,6 @@ export class VaultService {
 
       this._operationActive.next('Depositing..');
       const pair = this.tokens.getTokenContract(vault.lpAddress);
-      // const balanceGucci = await this.userHasSufficientBalance(amountIn, pair);
-      // if (!balanceGucci) {
-      //   this._error.next(new Error('User balance too low'));
-      //   return;
-      // }
       await this.approveVaultIfNeeded(vault, amountIn, pair);
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
@@ -243,24 +231,6 @@ export class VaultService {
     }
   }
 
-  private async userHasSufficientBalance(
-    amountIn: ethers.BigNumber,
-    pair: ethers.Contract
-  ): Promise<boolean> {
-    try {
-      const userBalance: ethers.BigNumber = await pair.balanceOf(
-        this.web3.web3Info.userAddress
-      );
-      if (userBalance.gte(amountIn)) {
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      this._error.next(error);
-    }
-  }
-
   private getVaultInstance(address: string) {
     return new ethers.Contract(address, VAULT_ABI, this.web3.web3Info.signer);
   }
@@ -271,10 +241,5 @@ export class VaultService {
       this.web3.web3Info.userAddress
     );
     return new FormattedResult(balance);
-  }
-
-  // TODO:
-  reloadVault(vault: IVault) {
-    //
   }
 }

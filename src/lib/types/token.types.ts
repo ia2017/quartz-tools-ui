@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { FormattedResult } from '../utils/formatting';
 
 export interface TokenMarketData {
   usd: number;
@@ -29,9 +30,9 @@ export interface TokenBaseConfig {
 export interface IERC20 {
   name: () => Promise<string>;
   decimals: () => Promise<number>;
-  allowance: (owner: string, spender: string) => Promise<BigNumber>;
-  approve: (spender: string, amount: BigNumber) => Promise<BigNumber>;
-  balanceOf: (who: string) => Promise<BigNumber>;
+  allowance: (owner: string, spender: string) => Promise<FormattedResult>;
+  approve: (spender: string, amount: BigNumber) => Promise<void>;
+  balanceOf: (who: string) => Promise<FormattedResult>;
 }
 
 export interface IPair extends IERC20 {

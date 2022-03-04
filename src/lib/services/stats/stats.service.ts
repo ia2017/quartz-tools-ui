@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { CHAIN_ID_MAP } from 'src/lib/data/chains';
+import { Pair } from 'src/lib/types/classes/pair';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { RewardPool } from '../reward-pool/reward-pool';
@@ -10,8 +11,40 @@ import { Web3Service } from '../web3.service';
 export class StatsService {
   constructor(
     private readonly web3: Web3Service,
-    private rewardPool: RewardPool
+    private readonly rewardPool: RewardPool
   ) {}
+
+  async setVaultUserStats(vaultRef: IVault, userAddress: string) {
+    try {
+      const pair = new Pair(vaultRef.lpAddress, this.web3.web3Info.signer);
+      const userBalance = await pair.balanceOf(userAddress);
+
+      vaultRef.userLpWalletBalance = userBalance.toNumber();
+      vaultRef.walletBalanceBN = userBalance.value;
+
+      const pricePerFullShare = await vaultRef.contract.getPricePerFullShare();
+      // Check/set users current deposits into vault
+      const userLpDepositBalance: ethers.BigNumber =
+        await vaultRef.contract.balanceOf(this.web3.web3Info.userAddress);
+      const amountTimesPricePerShare =
+        new FormattedResult(userLpDepositBalance).toNumber() *
+        new FormattedResult(pricePerFullShare).toNumber();
+
+      vaultRef.userLpDepositBalanceFull = userLpDepositBalance.isZero()
+        ? 0
+        : amountTimesPricePerShare;
+
+      vaultRef.userLpDepositBalance = userLpDepositBalance.isZero()
+        ? 0
+        : roundDecimals(amountTimesPricePerShare, 8);
+
+      vaultRef.userLpDepositBalanceBN = ethers.utils.parseUnits(
+        String(amountTimesPricePerShare)
+      );
+    } catch (error) {
+      throw new Error(`Error getting vault stats: ${vaultRef.name}`);
+    }
+  }
 
   async getVaultTVL(vault: IVault) {
     const pair = new ethers.Contract(
