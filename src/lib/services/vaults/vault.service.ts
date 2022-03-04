@@ -105,7 +105,10 @@ export class VaultService {
         v.userLpDepositBalance = userLpDepositBalance.isZero()
           ? 0
           : roundDecimals(amountTimesPricePerShare, 8);
-        v.userLpDepositBalanceBN = parseUnits(String(amountTimesPricePerShare));
+        v.userLpDepositBalanceBN = parseUnits(
+          String(amountTimesPricePerShare),
+          18
+        );
         // Check/set allowance for vault pair
         const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
         const allowance: ethers.BigNumber = await vaultPair.allowance(
@@ -154,15 +157,17 @@ export class VaultService {
       }
 
       this._operationActive.next('Depositing..');
-      // const pair = this.tokens.getTokenContract(vault.lpAddress);
+      const pair = this.tokens.getTokenContract(vault.lpAddress);
       // const balanceGucci = await this.userHasSufficientBalance(amountIn, pair);
       // if (!balanceGucci) {
       //   this._error.next(new Error('User balance too low'));
       //   return;
       // }
-      // await this.approveVaultIfNeeded(vault, amountIn, pair);
+      await this.approveVaultIfNeeded(vault, amountIn, pair);
+      // amountIn = ethers.utils.parseUnits(amountIn.toString(), 'wei');
+      // console.log(amountIn.toString());
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
-      const depositTx = await vaultContract.deposit(amountIn);
+      const depositTx = await vaultContract.deposit(amountIn.toHexString());
       await awaitTransactionComplete(depositTx);
       this._operationActive.next('Deposit complete');
       await this.initVaults(this.web3.web3Info.chainId);

@@ -6,6 +6,7 @@ import { StatsService } from 'src/lib/services/stats/stats.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { Web3Service } from 'src/lib/services/web3.service';
 import { IVault } from 'src/lib/types/vault.types';
+import { FormattedResult } from 'src/lib/utils/formatting';
 
 @Component({
   selector: 'quartz-vault',
@@ -33,9 +34,10 @@ export class VaultComponent implements OnInit, OnDestroy {
     private readonly vaultStats: StatsService,
     private readonly webService: Web3Service
   ) {
-    const sub = this.webService.error.subscribe(
-      (err) => (this.vault.loading = false)
-    );
+    const sub = this.webService.error.subscribe((err) => {
+      this.vault.loading = false;
+      this.resetInputs();
+    });
     this._subs.add(sub);
   }
 
@@ -62,6 +64,13 @@ export class VaultComponent implements OnInit, OnDestroy {
   async setVaultDeposit() {
     this.vault.loading = true;
     console.log(this.depositInput.value);
+    // 1.1038112367305388
+    // 1103811236730538800
+    const amountIn = ethers.utils.parseUnits(this.depositInput.value);
+    console.log(amountIn.toString());
+    // console.log(ethers.FixedNumber.from(this.depositInput.value).toString());
+    // console.log(ethers.utils.parseEther(amountIn.toString()).toString());
+
     await this.vaultService.deposit(
       this.vault,
       ethers.utils.parseUnits(this.depositInput.value)
@@ -81,7 +90,7 @@ export class VaultComponent implements OnInit, OnDestroy {
     this.vault.loading = true;
     await this.vaultService.withdraw(
       this.vault,
-      ethers.utils.parseUnits(this.withdrawInput.value)
+      ethers.utils.parseUnits(this.withdrawInput.value, 18)
     );
     this.vault.loading = false;
     this.resetInputs();
