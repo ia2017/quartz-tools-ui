@@ -6,7 +6,6 @@ import { StatsService } from 'src/lib/services/stats/stats.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { Web3Service } from 'src/lib/services/web3.service';
 import { IVault } from 'src/lib/types/vault.types';
-import { FormattedResult } from 'src/lib/utils/formatting';
 
 @Component({
   selector: 'quartz-vault',
@@ -28,7 +27,8 @@ export class VaultComponent implements OnInit, OnDestroy {
 
   private _subs = new Subscription();
 
-  private _depositValue = 0;
+  private _depositAmountMachine: ethers.BigNumber;
+  private _withdrawAmountMachine: ethers.BigNumber;
 
   constructor(
     public readonly vaultService: VaultService,
@@ -64,18 +64,14 @@ export class VaultComponent implements OnInit, OnDestroy {
 
   async setVaultDeposit() {
     this.vault.loading = true;
-    console.log(this._depositValue);
+
     console.log(this.vault.walletBalanceBN.toString());
+    console.log(this._depositAmountMachine.toString());
 
-    const multiplier = ethers.utils.parseUnits(String(this._depositValue));
-    const ps = ethers.utils
-      .parseEther(this.vault.walletBalanceBN.toString())
-      .mul(multiplier)
-      .div(1000);
+    console.log(ethers.utils.formatEther(this.vault.walletBalanceBN));
+    console.log(ethers.utils.formatEther(this._depositAmountMachine));
 
-    const amountIn = ethers.utils.parseUnits(ps.toString().slice(0, 18), 'wei');
-    console.log('Amount in: ' + amountIn.toString());
-    await this.vaultService.deposit(this.vault, amountIn);
+    await this.vaultService.deposit(this.vault, this._depositAmountMachine);
     this.resetInputs();
     this.vault.loading = false;
   }
@@ -89,10 +85,14 @@ export class VaultComponent implements OnInit, OnDestroy {
 
   async setVaultWithdraw() {
     this.vault.loading = true;
-    await this.vaultService.withdraw(
-      this.vault,
-      ethers.utils.parseUnits(this.withdrawInput.value, 18)
-    );
+
+    console.log(this.vault.userLpDepositBalanceBN.toString());
+    console.log(this._withdrawAmountMachine.toString());
+
+    console.log(ethers.utils.formatEther(this.vault.userLpDepositBalanceBN));
+    console.log(ethers.utils.formatEther(this._withdrawAmountMachine));
+
+    await this.vaultService.withdraw(this.vault, this._withdrawAmountMachine);
     this.vault.loading = false;
     this.resetInputs();
   }
@@ -104,42 +104,50 @@ export class VaultComponent implements OnInit, OnDestroy {
     this.resetInputs();
   }
 
-  async setApproval() {
-    this.vault.loading = true;
-    await this.vaultService.approveVault(this.vault);
-    this.vault.loading = false;
-  }
-
   onDepositSliderInputChange(value: number) {
-    this._depositValue = value;
     if (value === 0) {
+      this._depositAmountMachine = ethers.constants.Zero;
       this.depositInput.value = '0';
       return;
     }
 
     if (value === 100) {
+      this._depositAmountMachine = this.vault.walletBalanceBN;
       this.depositInput.value = String(this.vault.userLpWalletBalance);
       return;
     }
 
-    this.depositInput.value = String(
-      this.vault.userLpWalletBalance * (value / 100)
+    const depositAmountHuman = this.vault.userLpWalletBalance * (value / 100);
+    this.depositInput.value = String(depositAmountHuman);
+    this._depositAmountMachine = ethers.utils.parseEther(
+      this.depositInput.value
     );
   }
 
   onWithdrawSliderInputChange(value: number) {
     if (value === 0) {
+      this._withdrawAmountMachine = ethers.constants.Zero;
       this.withdrawInput.value = '0';
       return;
     }
 
     if (value === 100) {
+      this._withdrawAmountMachine = this.vault.userLpDepositBalanceBN;
       this.withdrawInput.value = String(this.vault.userLpDepositBalance);
       return;
     }
 
-    this.withdrawInput.value = String(
-      this.vault.userLpDepositBalance * (value / 100)
+    const withdrawAmountHuman = this.vault.userLpDepositBalance * (value / 100);
+    this.withdrawInput.value = String(withdrawAmountHuman);
+
+    this._withdrawAmountMachine = ethers.utils.parseEther(
+      this.withdrawInput.value
     );
+  }
+
+  async setApproval() {
+    this.vault.loading = true;
+    await this.vaultService.approveVault(this.vault);
+    this.vault.loading = false;
   }
 }
