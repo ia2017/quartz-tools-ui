@@ -23,9 +23,10 @@ export class StatsService {
       vaultRef.walletBalanceBN = userBalance.value;
 
       const pricePerFullShare = await vaultRef.contract.getPricePerFullShare();
-      // Check/set users current deposits into vault
+
       const userLpDepositBalance: ethers.BigNumber =
         await vaultRef.contract.balanceOf(this.web3.web3Info.userAddress);
+
       const amountTimesPricePerShare =
         new FormattedResult(userLpDepositBalance).toNumber() *
         new FormattedResult(pricePerFullShare).toNumber();
@@ -92,16 +93,13 @@ export class StatsService {
 
     const rewardPoolValueToken0 = rewardPoolToken0Share * priceToken0;
     const rewardPoolValueToken1 = rewardPoolToken1Share * priceToken1;
+
     const poolTVL = rewardPoolValueToken0 + rewardPoolValueToken1;
-
-    const stratInfo = await this.rewardPool.userInfo(
-      vault.poolId,
-      vault.strategy.address
+    const vaultTVL = await this.getStrategyTVL(
+      vault,
+      poolTVL,
+      chefLpBalance.toNumber()
     );
-
-    const stratLpBalance = new FormattedResult(stratInfo.amount);
-    const stakingTokenPrice = poolTVL / chefLpBalance.toNumber();
-    const vaultTVL = stratLpBalance.toNumber() * stakingTokenPrice;
     const { APR, dailyAPR, APY } = await this.getVaultAPRs(vault, poolTVL);
 
     return {
@@ -110,6 +108,21 @@ export class StatsService {
       dailyAPR,
       APY,
     };
+  }
+
+  private async getStrategyTVL(
+    vault: IVault,
+    poolTVL: number,
+    chefLpBalance: number
+  ) {
+    const stratInfo = await this.rewardPool.userInfo(
+      vault.poolId,
+      vault.strategy.address
+    );
+
+    const stratLpBalance = new FormattedResult(stratInfo.amount);
+    const stakingTokenPrice = poolTVL / chefLpBalance;
+    return stratLpBalance.toNumber() * stakingTokenPrice;
   }
 
   async getVaultAPRs(vault: IVault, poolTVL: number) {
@@ -133,30 +146,15 @@ export class StatsService {
     return {
       APR: roundDecimals(APR, 2),
       dailyAPR,
-      APY: this.getAPY(APR, vault.compoundsDaily, dailyAPR),
+      APY: this.getAPY(dailyAPR),
     };
   }
 
   // TODO: APR's are too high and show inifinte sometimes
   // Need to convert to string and show something like "9.2m%"
-  getAPY(apr: number, dailyCompounds: number, dailyAPR: number) {
+  getAPY(dailyAPR: number) {
     const dailyToPercent = dailyAPR / 100;
     const dailyCompoundResults = (1 + dailyToPercent) ** 365;
-
-    //console.log(dailyCompoundResults);
-
-    // const digits = String(dailyCompoundResults);
-    // if (digits.length > 9) {
-    //   return '+1b';
-    // }
-
-    // if (digits.length > 6) {
-    //   return '+1m';
-    // }
-
-    // if (digits.length > 3) {
-    //   return '+1k';
-    // }
 
     return dailyCompoundResults;
   }
