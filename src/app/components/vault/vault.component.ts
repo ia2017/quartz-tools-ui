@@ -149,5 +149,6 @@ export class VaultComponent implements OnInit, OnDestroy {
     this.vault.loading = true;
     await this.vaultService.approveVault(this.vault);
     this.vault.loading = false;
+    this.vault.contractApproved = true;
   }
 }

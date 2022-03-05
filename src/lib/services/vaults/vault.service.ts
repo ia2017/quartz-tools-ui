@@ -225,7 +225,7 @@ export class VaultService {
       const tx = await pair.approve(vault.vaultAddress, amount);
       await awaitTransactionComplete(tx);
       vault.contractApproved = true;
-      // this._operationActive.next('Approvals complete.');
+      this._operationActive.next('Approvals complete.');
     } catch (error) {
       console.error(error);
     }

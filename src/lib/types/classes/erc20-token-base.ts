@@ -44,4 +44,8 @@ export class ERC20TokenBase extends ethers.Contract implements IERC20 {
   async balanceOf(who: string) {
     return new FormattedResult(await this.contract.balanceOf(who));
   }
+
+  async totalSupply() {
+    return new FormattedResult(await this.contract.totalSupply());
+  }
 }

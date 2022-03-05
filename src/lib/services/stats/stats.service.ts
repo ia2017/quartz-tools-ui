@@ -163,37 +163,40 @@ export class StatsService {
     const { totalSupply, chefLpBalance, chefPercentOwnership } =
       await this.getChefInfo(stakeToken);
 
-    // const chefPercentOfToken0 = totalSupply.toNumber() * chefPercentOwnership;
-    // const tokenPrice = await vault.fetchPriceToken0();
+    const chefPercentOfToken0 = totalSupply.toNumber() * chefPercentOwnership;
+    const tokenPrice = await vault.fetchPriceToken0();
 
-    // const poolValueUsdToken0 = chefPercentOfToken0 * tokenPrice;
-    // const totalValueOfChefPoolUSD = poolValueUsdToken0;
+    const poolValueUsdToken0 = chefPercentOfToken0 * tokenPrice;
+    const totalValueOfChefPoolUSD = poolValueUsdToken0;
 
-    // // TVL really comes through the strategies
-    // const vaultTVL = await this.getStrategyTVL(
-    //   vault,
-    //   totalValueOfChefPoolUSD,
-    //   chefLpBalance.toNumber()
-    // );
+    // TVL really comes through the strategies
+    const vaultTVL = await this.getStrategyTVL(
+      vault,
+      totalValueOfChefPoolUSD,
+      chefLpBalance.toNumber()
+    );
 
-    // const { APR, dailyAPR, APY } = await this.getVaultAPRs(
-    //   vault,
-    //   totalValueOfChefPoolUSD
-    // );
+    const { APR, dailyAPR, APY } = await this.getVaultAPRs(
+      vault,
+      totalValueOfChefPoolUSD
+    );
 
     return {
-      vaultTVL: 0,
-      APR: 0,
-      dailyAPR: 0,
-      APY: 0,
+      vaultTVL,
+      APR,
+      dailyAPR,
+      APY,
     };
   }
 
   private async getChefInfo(tokenContract) {
     const totalSupply = await tokenContract.totalSupply();
-    const chefLpBalance = new FormattedResult(
-      await tokenContract.balanceOf(this.rewardPool.contract.address)
+    const chefLpBalance = await tokenContract.balanceOf(
+      this.rewardPool.contract.address
     );
+
+    console.log(totalSupply);
+    console.log(chefLpBalance.toNumber());
 
     // Get rewards % ownership of the pairs total supply
     const chefPercentOwnership =
