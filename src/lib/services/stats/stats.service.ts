@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { CHAIN_ID_MAP } from 'src/lib/data/chains';
+import { ERC20 } from 'src/lib/types/classes/erc20';
 import { Pair } from 'src/lib/types/classes/pair';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
@@ -16,8 +17,18 @@ export class StatsService {
 
   async setVaultUserStats(vaultRef: IVault, userAddress: string) {
     try {
-      const pair = new Pair(vaultRef.lpAddress, this.web3.web3Info.signer);
-      const userBalance = await pair.balanceOf(userAddress);
+      let userBalance: FormattedResult;
+      if (vaultRef.isSingleStake) {
+        const stakeToken = new ERC20(
+          vaultRef.lpAddress,
+          this.web3.web3Info.signer
+        );
+        userBalance = await stakeToken.balanceOf(userAddress);
+      } else {
+        const pair = new Pair(vaultRef.lpAddress, this.web3.web3Info.signer);
+        userBalance = await pair.balanceOf(userAddress);
+      }
+
       vaultRef.userLpWalletBalance = userBalance.toNumber();
       vaultRef.walletBalanceBN = userBalance.value;
 
@@ -68,6 +79,14 @@ export class StatsService {
   }
 
   async getVaultTVL(vault: IVault) {
+    if (vault.isSingleStake) {
+      return this.getSingleStakeTVL(vault);
+    }
+
+    return this.getPairVaultTVL(vault);
+  }
+
+  async getPairVaultTVL(vault: IVault) {
     const pair = new ethers.Contract(
       vault.lpAddress,
       [
@@ -135,6 +154,55 @@ export class StatsService {
       APR,
       dailyAPR,
       APY,
+    };
+  }
+
+  async getSingleStakeTVL(vault: IVault) {
+    const stakeToken = new ERC20(vault.lpAddress, this.web3.web3Info.signer);
+
+    const { totalSupply, chefLpBalance, chefPercentOwnership } =
+      await this.getChefInfo(stakeToken);
+
+    // const chefPercentOfToken0 = totalSupply.toNumber() * chefPercentOwnership;
+    // const tokenPrice = await vault.fetchPriceToken0();
+
+    // const poolValueUsdToken0 = chefPercentOfToken0 * tokenPrice;
+    // const totalValueOfChefPoolUSD = poolValueUsdToken0;
+
+    // // TVL really comes through the strategies
+    // const vaultTVL = await this.getStrategyTVL(
+    //   vault,
+    //   totalValueOfChefPoolUSD,
+    //   chefLpBalance.toNumber()
+    // );
+
+    // const { APR, dailyAPR, APY } = await this.getVaultAPRs(
+    //   vault,
+    //   totalValueOfChefPoolUSD
+    // );
+
+    return {
+      vaultTVL: 0,
+      APR: 0,
+      dailyAPR: 0,
+      APY: 0,
+    };
+  }
+
+  private async getChefInfo(tokenContract) {
+    const totalSupply = await tokenContract.totalSupply();
+    const chefLpBalance = new FormattedResult(
+      await tokenContract.balanceOf(this.rewardPool.contract.address)
+    );
+
+    // Get rewards % ownership of the pairs total supply
+    const chefPercentOwnership =
+      chefLpBalance.toNumber(4) / totalSupply.toNumber(4);
+
+    return {
+      totalSupply,
+      chefLpBalance,
+      chefPercentOwnership,
     };
   }
 

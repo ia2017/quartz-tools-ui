@@ -44,6 +44,7 @@ export const VAULT_AMETHYST_UST_BSC: IVault = {
     return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
   },
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
+  isSingleStake: false,
 };
 
 export const VAULT_ASHARE_UST_BSC: IVault = {
@@ -75,6 +76,7 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
     return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
   },
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
+  isSingleStake: false,
 };
 
 // export const VAULT_1QSHARE_UST_BSC: IVault = {
