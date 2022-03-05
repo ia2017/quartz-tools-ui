@@ -4,8 +4,10 @@ import { getSingleTokenPrice } from '../../utils/http-utils';
 import {
   STRAT_AMETHYST_UST_ADDRESS_BSC,
   STRAT_ASHARE_UST_ADDRESS_BSC,
+  STRAT_SINGLE_STAKE_1QSHARE_ADDRESS_BSC,
   VAULT_AMETHYST_UST_ADDRESS_BSC,
   VAULT_ASHARE_UST_ADDRESS_BSC,
+  VAULT_SINGLE_STAKE_1QSHARE_ADDRESS_BSC,
 } from './bsc-addresses';
 import {
   PAIR_AMETHYST_UST_BSC,
@@ -14,6 +16,7 @@ import {
 } from './pairs';
 import { BINANCE_SMART_CHAIN } from '../chains';
 import { VAULTS_HARMONY } from '../harmony/vaults';
+import { TOKENS } from '../tokens';
 
 export const VAULT_AMETHYST_UST_BSC: IVault = {
   active: true,
@@ -79,6 +82,41 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
   isSingleStake: false,
 };
 
+const VAULT_SINGLE_STAKE_1QSHARE: IVault = {
+  active: true,
+  chainId: BINANCE_SMART_CHAIN.chainId,
+  name: '1QSHARE',
+  poolId: 4,
+  vaultAddress: VAULT_SINGLE_STAKE_1QSHARE_ADDRESS_BSC,
+  lpAddress: TOKENS.QSHARE.BSC,
+  userLpWalletBalance: 0,
+  walletBalanceBN: ethers.constants.Zero,
+  userLpDepositBalance: 0,
+  userLpDepositBalanceBN: ethers.constants.Zero,
+  APY: 0,
+  dailyAPR: 0.0,
+  totalValueLocked: 0,
+  tvlChecked: false,
+  loading: false,
+  logoURI: 'assets/qshare-logo.svg',
+  contractApproved: false,
+  strategy: {
+    address: STRAT_SINGLE_STAKE_1QSHARE_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => {
+    // TODO: need to setup fetching AMM pricing for non gecko tokens
+    return (await getSingleTokenPrice('qshare')).usd;
+  },
+  fetchPriceToken1: async () => {
+    return null;
+  },
+  fetchRewardTokenPrice: async () => {
+    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
+  },
+  compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
+  isSingleStake: true,
+};
+
 // export const VAULT_1QSHARE_UST_BSC: IVault = {
 //   active: false,
 //   chainId: BINANCE_SMART_CHAIN.chainId,
@@ -114,5 +152,5 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
 export const VAULTS_BSC = [
   VAULT_AMETHYST_UST_BSC,
   VAULT_ASHARE_UST_BSC,
-  // VAULT_1QSHARE_UST_BSC,
+  VAULT_SINGLE_STAKE_1QSHARE,
 ];

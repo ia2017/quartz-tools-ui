@@ -126,7 +126,9 @@
           *ngIf="vault.contractApproved"
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.active || !vault.userLpWalletBalance || vault.strategy.paused"
+          [disabled]="!vault.active
+          || !vault.userLpWalletBalance
+          || vault.strategy.paused"
           (click)="setVaultDeposit()">
           <span *ngIf="vault.active">Deposit</span>
           <span *ngIf="!vault.active">Inactive</span>

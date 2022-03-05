@@ -27,8 +27,8 @@ export class VaultComponent implements OnInit, OnDestroy {
 
   private _subs = new Subscription();
 
-  private _depositAmountMachine: ethers.BigNumber;
-  private _withdrawAmountMachine: ethers.BigNumber;
+  private _depositAmountMachine: ethers.BigNumber = ethers.constants.Zero;
+  private _withdrawAmountMachine: ethers.BigNumber = ethers.constants.Zero;
 
   constructor(
     public readonly vaultService: VaultService,
@@ -63,17 +63,17 @@ export class VaultComponent implements OnInit, OnDestroy {
   }
 
   async setVaultDeposit() {
-    this.vault.loading = true;
+    if (this._depositAmountMachine.gt(ethers.constants.Zero)) {
+      this.vault.loading = true;
+      console.log(this.vault.walletBalanceBN.toString());
+      console.log(this._depositAmountMachine.toString());
+      console.log(ethers.utils.formatEther(this.vault.walletBalanceBN));
+      console.log(ethers.utils.formatEther(this._depositAmountMachine));
 
-    console.log(this.vault.walletBalanceBN.toString());
-    console.log(this._depositAmountMachine.toString());
-
-    console.log(ethers.utils.formatEther(this.vault.walletBalanceBN));
-    console.log(ethers.utils.formatEther(this._depositAmountMachine));
-
-    await this.vaultService.deposit(this.vault, this._depositAmountMachine);
-    this.resetInputs();
-    this.vault.loading = false;
+      await this.vaultService.deposit(this.vault, this._depositAmountMachine);
+      this.resetInputs();
+      this.vault.loading = false;
+    }
   }
 
   async setVaultDepositAll() {
@@ -84,17 +84,17 @@ export class VaultComponent implements OnInit, OnDestroy {
   }
 
   async setVaultWithdraw() {
-    this.vault.loading = true;
+    if (this._withdrawAmountMachine.gt(ethers.constants.Zero)) {
+      this.vault.loading = true;
+      console.log(this.vault.userLpDepositBalanceBN.toString());
+      console.log(this._withdrawAmountMachine.toString());
+      console.log(ethers.utils.formatEther(this.vault.userLpDepositBalanceBN));
+      console.log(ethers.utils.formatEther(this._withdrawAmountMachine));
 
-    console.log(this.vault.userLpDepositBalanceBN.toString());
-    console.log(this._withdrawAmountMachine.toString());
-
-    console.log(ethers.utils.formatEther(this.vault.userLpDepositBalanceBN));
-    console.log(ethers.utils.formatEther(this._withdrawAmountMachine));
-
-    await this.vaultService.withdraw(this.vault, this._withdrawAmountMachine);
-    this.vault.loading = false;
-    this.resetInputs();
+      await this.vaultService.withdraw(this.vault, this._withdrawAmountMachine);
+      this.vault.loading = false;
+      this.resetInputs();
+    }
   }
 
   async setVaultWithdrawAll() {

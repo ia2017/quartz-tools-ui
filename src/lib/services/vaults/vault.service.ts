@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { VAULTS } from 'src/lib/data/vaults';
+import { ERC20 } from 'src/lib/types/classes/erc20';
+import { ERC20TokenBase } from 'src/lib/types/classes/erc20-token-base';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
@@ -80,13 +82,18 @@ export class VaultService {
 
   private async _setVaultAllowance(vault: IVault) {
     try {
+      // Will handle single stake and pairs just the same
+      const tokenContract = new ERC20TokenBase(
+        vault.lpAddress,
+        ['function allowance(address, address) public view returns(uint256)'],
+        this.web3.web3Info.signer
+      );
       // Check/set allowance for vault pair
-      const vaultPair = this.tokens.getTokenContract(vault.lpAddress);
-      const allowance: ethers.BigNumber = await vaultPair.allowance(
+      const allowance = await tokenContract.allowance(
         this.web3.web3Info.userAddress,
         vault.vaultAddress
       );
-      if (allowance.gt(ethers.constants.Zero)) {
+      if (allowance.value.gt(ethers.constants.Zero)) {
         vault.contractApproved = true;
       }
     } catch (error) {
@@ -151,8 +158,7 @@ export class VaultService {
       }
 
       this._operationActive.next('Depositing..');
-      const pair = this.tokens.getTokenContract(vault.lpAddress);
-      await this.approveVaultIfNeeded(vault, amountIn, pair);
+      await this.approveVaultIfNeeded(vault, amountIn, vault.lpAddress);
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
       await awaitTransactionComplete(depositTx);
@@ -190,24 +196,17 @@ export class VaultService {
   private async approveVaultIfNeeded(
     vault: IVault,
     amount: ethers.BigNumber,
-    pair: ethers.Contract
+    erc20Address: string
   ) {
     try {
       this._operationActive.next('Checking allowances..');
-      const allowance = await pair.allowance(
+      const token = new ERC20(erc20Address, this.web3.web3Info.signer);
+      const allowance = await token.allowance(
         this.web3.web3Info.userAddress,
         vault.vaultAddress
       );
-      if (allowance.lt(amount)) {
-        // Get user approval for LP pair for vault contract
-        this._operationActive.next('Awaiting approvals..');
-        const tx = await pair.approve(
-          vault.vaultAddress,
-          ethers.constants.MaxUint256
-        );
-
-        await awaitTransactionComplete(tx);
-        this._operationActive.next('Approvals complete.');
+      if (allowance.value.lt(amount)) {
+        await this.approveVault(vault);
       }
       this._operationActive.next(null);
     } catch (error) {
@@ -221,8 +220,13 @@ export class VaultService {
   ) {
     try {
       this._operationActive.next('Approving contract...');
-      const pair = this.tokens.getTokenContract(vault.lpAddress);
-      const tx = await pair.approve(vault.vaultAddress, amount);
+      // Will handle single stake and pairs just the same
+      const tokenContract = new ethers.Contract(
+        vault.lpAddress,
+        ['function approve(address, uint256) public returns(bool)'],
+        this.web3.web3Info.signer
+      );
+      const tx = await tokenContract.approve(vault.vaultAddress, amount);
       await awaitTransactionComplete(tx);
       vault.contractApproved = true;
       this._operationActive.next('Approvals complete.');
@@ -233,13 +237,5 @@ export class VaultService {
 
   private getVaultInstance(address: string) {
     return new ethers.Contract(address, VAULT_ABI, this.web3.web3Info.signer);
-  }
-
-  private async getUserBalanceLP(lpAddress: string) {
-    const pair = this.tokens.getTokenContract(lpAddress);
-    const balance: ethers.BigNumber = await pair.balanceOf(
-      this.web3.web3Info.userAddress
-    );
-    return new FormattedResult(balance);
   }
 }
