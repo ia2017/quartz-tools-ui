@@ -29,8 +29,18 @@ export class StatsService {
         userBalance = await pair.balanceOf(userAddress);
       }
 
-      vaultRef.userLpWalletBalance = userBalance.toNumber();
+      // 0.000095553488826912
+      // let userBalance = new FormattedResult(
+      //   ethers.utils.parseEther('0.000095553488826912')
+      // );
+
+      // Trim user balance to avoid weird long decimal issues
+      const str = ethers.utils.formatEther(userBalance.value);
+      userBalance = new FormattedResult(
+        ethers.utils.parseEther((+str).toFixed(12))
+      );
       vaultRef.walletBalanceBN = userBalance.value;
+      vaultRef.userLpWalletBalance = userBalance.toNumber();
 
       const pricePerFullShare = new FormattedResult(
         await vaultRef.contract.getPricePerFullShare()
@@ -194,9 +204,6 @@ export class StatsService {
     const chefLpBalance = await tokenContract.balanceOf(
       this.rewardPool.contract.address
     );
-
-    console.log(totalSupply);
-    console.log(chefLpBalance.toNumber());
 
     // Get rewards % ownership of the pairs total supply
     const chefPercentOwnership =
