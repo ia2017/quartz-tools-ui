@@ -39,6 +39,3 @@ export let UstToken = new ethers.Contract(UST_ADDRESS, ERC20_ABI);
 export let UsdcToken = new ethers.Contract(USDC_ADDRESS, ERC20_ABI);
 export let JewelToken = new ethers.Contract(JEWEL_ADDRESS, ERC20_ABI);
 export let wOneToken = new ethers.Contract(HARMONY_wONE_ADDRESS, ERC20_ABI);
-
-export const VAULT_QUARTZ_UST_ADDRESS = '';
-export const STRAT_QUARTZ_UST_ADDRESS = '';

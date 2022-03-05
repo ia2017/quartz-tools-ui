@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { CHAIN_ID_MAP } from 'src/lib/data/chains';
+import { ERC20 } from 'src/lib/types/classes/erc20';
+import { Pair } from 'src/lib/types/classes/pair';
 import { IVault } from 'src/lib/types/vault.types';
 import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { RewardPool } from '../reward-pool/reward-pool';
@@ -10,10 +12,91 @@ import { Web3Service } from '../web3.service';
 export class StatsService {
   constructor(
     private readonly web3: Web3Service,
-    private rewardPool: RewardPool
+    private readonly rewardPool: RewardPool
   ) {}
 
+  async setVaultUserStats(vaultRef: IVault, userAddress: string) {
+    try {
+      let userBalance: FormattedResult;
+      if (vaultRef.isSingleStake) {
+        const stakeToken = new ERC20(
+          vaultRef.lpAddress,
+          this.web3.web3Info.signer
+        );
+        userBalance = await stakeToken.balanceOf(userAddress);
+      } else {
+        const pair = new Pair(vaultRef.lpAddress, this.web3.web3Info.signer);
+        userBalance = await pair.balanceOf(userAddress);
+      }
+
+      // 0.000095553488826912
+      // let userBalance = new FormattedResult(
+      //   ethers.utils.parseEther('0.000095553488826912')
+      // );
+
+      // Trim user balance to avoid weird long decimal issues
+      const str = ethers.utils.formatEther(userBalance.value);
+      userBalance = new FormattedResult(
+        ethers.utils.parseEther((+str).toFixed(12))
+      );
+      vaultRef.walletBalanceBN = userBalance.value;
+      vaultRef.userLpWalletBalance = userBalance.toNumber();
+
+      const pricePerFullShare = new FormattedResult(
+        await vaultRef.contract.getPricePerFullShare()
+      );
+      vaultRef.pricePerShare = pricePerFullShare.toNumber();
+
+      let userLpDepositBalance: ethers.BigNumber =
+        await vaultRef.contract.balanceOf(userAddress);
+
+      // let userLpDepositBalance = ethers.BigNumber.from('58332221');
+      // const balStr = ethers.utils.formatEther(userLpDepositBalance);
+      // console.log(balStr);
+
+      // if (balStr.length > 18) {
+      //   console.log(ethers.utils.parseEther('58332221').toString());
+
+      //   const trimmed = balStr.slice(19);
+      //   console.log(trimmed);
+
+      //   const t2 = ethers.utils.parseEther('58332221').toString().slice(18);
+      //   console.log(t2);
+
+      //   userLpDepositBalance = ethers.utils.parseEther(trimmed);
+      //   // console.log(ethers.utils.formatEther(userLpDepositBalance));
+      // }
+
+      const amountTimesPricePerShare =
+        new FormattedResult(userLpDepositBalance).toNumber() *
+        pricePerFullShare.toNumber();
+
+      vaultRef.userLpDepositBalanceFull = userLpDepositBalance.isZero()
+        ? 0
+        : amountTimesPricePerShare;
+
+      vaultRef.userLpDepositBalance = userLpDepositBalance.isZero()
+        ? 0
+        : roundDecimals(amountTimesPricePerShare, 8);
+
+      vaultRef.userLpDepositBalanceBN = ethers.utils.parseUnits(
+        String(amountTimesPricePerShare)
+      );
+    } catch (error) {
+      console.error(error);
+      throw new Error(`Error getting vault stats: ${vaultRef.name}`);
+    }
+  }
+
   async getVaultTVL(vault: IVault) {
+    if (vault.isSingleStake) {
+      return this.getSingleStakeTVL(vault);
+    }
+
+    return this.getPairVaultTVL(vault);
+  }
+
+  async getPairVaultTVL(vault: IVault) {
     const pair = new ethers.Contract(
       vault.lpAddress,
       [
@@ -44,32 +127,37 @@ export class StatsService {
       await pair.balanceOf(this.rewardPool.contract.address)
     );
 
+    // Get rewards % ownership of the pairs total supply
     const chefPercentOwnership =
       chefLpBalance.toNumber(4) / totalSupply.toNumber(4);
-
-    const rewardPoolToken0Share =
+    const chefPercentOfToken0 =
       pairToken0Amount.toNumber() * chefPercentOwnership;
-    const rewardPoolToken1Share =
+    const chefPercentOfToken1 =
       pairToken1Amount.toNumber() * chefPercentOwnership;
 
+    // Get current external USD price for each token in the pair
     const [priceToken0, priceToken1] = await Promise.all([
       vault.fetchPriceToken0(),
       vault.fetchPriceToken1(),
     ]);
 
-    const rewardPoolValueToken0 = rewardPoolToken0Share * priceToken0;
-    const rewardPoolValueToken1 = rewardPoolToken1Share * priceToken1;
-    const poolTVL = rewardPoolValueToken0 + rewardPoolValueToken1;
+    // The percentage of token0 and token1 for the pool * their price
+    // will gives us the total current USD value of the chefs pool
+    const poolValueUsdToken0 = chefPercentOfToken0 * priceToken0;
+    const poolValueUsdToken1 = chefPercentOfToken1 * priceToken1;
+    const totalValueOfChefPoolUSD = poolValueUsdToken0 + poolValueUsdToken1;
 
-    const stratInfo = await this.rewardPool.userInfo(
-      vault.poolId,
-      vault.strategy.address
+    // TVL really comes through the strategies
+    const vaultTVL = await this.getStrategyTVL(
+      vault,
+      totalValueOfChefPoolUSD,
+      chefLpBalance.toNumber()
     );
 
-    const stratLpBalance = new FormattedResult(stratInfo.amount);
-    const stakingTokenPrice = poolTVL / chefLpBalance.toNumber();
-    const vaultTVL = stratLpBalance.toNumber() * stakingTokenPrice;
-    const { APR, dailyAPR, APY } = await this.getVaultAPRs(vault, poolTVL);
+    const { APR, dailyAPR, APY } = await this.getVaultAPRs(
+      vault,
+      totalValueOfChefPoolUSD
+    );
 
     return {
       vaultTVL,
@@ -77,6 +165,70 @@ export class StatsService {
       dailyAPR,
       APY,
     };
+  }
+
+  async getSingleStakeTVL(vault: IVault) {
+    const stakeToken = new ERC20(vault.lpAddress, this.web3.web3Info.signer);
+
+    const { totalSupply, chefLpBalance, chefPercentOwnership } =
+      await this.getChefInfo(stakeToken);
+
+    const chefPercentOfToken0 = totalSupply.toNumber() * chefPercentOwnership;
+    const tokenPrice = await vault.fetchPriceToken0();
+
+    const poolValueUsdToken0 = chefPercentOfToken0 * tokenPrice;
+    const totalValueOfChefPoolUSD = poolValueUsdToken0;
+
+    // TVL really comes through the strategies
+    const vaultTVL = await this.getStrategyTVL(
+      vault,
+      totalValueOfChefPoolUSD,
+      chefLpBalance.toNumber()
+    );
+
+    const { APR, dailyAPR, APY } = await this.getVaultAPRs(
+      vault,
+      totalValueOfChefPoolUSD
+    );
+
+    return {
+      vaultTVL,
+      APR,
+      dailyAPR,
+      APY,
+    };
+  }
+
+  private async getChefInfo(tokenContract) {
+    const totalSupply = await tokenContract.totalSupply();
+    const chefLpBalance = await tokenContract.balanceOf(
+      this.rewardPool.contract.address
+    );
+
+    // Get rewards % ownership of the pairs total supply
+    const chefPercentOwnership =
+      chefLpBalance.toNumber(4) / totalSupply.toNumber(4);
+
+    return {
+      totalSupply,
+      chefLpBalance,
+      chefPercentOwnership,
+    };
+  }
+
+  private async getStrategyTVL(
+    vault: IVault,
+    poolTVL: number,
+    chefLpBalance: number
+  ) {
+    const stratInfo = await this.rewardPool.userInfo(
+      vault.poolId,
+      vault.strategy.address
+    );
+
+    const stratLpBalance = new FormattedResult(stratInfo.amount);
+    const stakingTokenPrice = poolTVL / chefLpBalance;
+    return stratLpBalance.toNumber() * stakingTokenPrice;
   }
 
   async getVaultAPRs(vault: IVault, poolTVL: number) {
@@ -100,30 +252,15 @@ export class StatsService {
     return {
       APR: roundDecimals(APR, 2),
       dailyAPR,
-      APY: this.getAPY(APR, vault.compoundsDaily, dailyAPR),
+      APY: this.getAPY(dailyAPR),
     };
   }
 
   // TODO: APR's are too high and show inifinte sometimes
   // Need to convert to string and show something like "9.2m%"
-  getAPY(apr: number, dailyCompounds: number, dailyAPR: number) {
+  getAPY(dailyAPR: number) {
     const dailyToPercent = dailyAPR / 100;
     const dailyCompoundResults = (1 + dailyToPercent) ** 365;
-
-    console.log(dailyCompoundResults);
-
-    // const digits = String(dailyCompoundResults);
-    // if (digits.length > 9) {
-    //   return '+1b';
-    // }
-
-    // if (digits.length > 6) {
-    //   return '+1m';
-    // }
-
-    // if (digits.length > 3) {
-    //   return '+1k';
-    // }
 
     return dailyCompoundResults;
   }

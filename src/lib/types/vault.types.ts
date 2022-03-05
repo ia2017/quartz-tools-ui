@@ -23,7 +23,7 @@ export interface IVault {
   contract?: Contract;
   logoURI: string;
   contractApproved: boolean;
-  pricePerShare?: BigNumber;
+  pricePerShare?: number;
   strategy?: IStrategy;
   strategyContract?: Contract;
   geckoIdToken0?: string;
@@ -32,6 +32,7 @@ export interface IVault {
   fetchPriceToken1: () => Promise<number>;
   fetchRewardTokenPrice: () => Promise<number>;
   compoundsDaily: number;
+  isSingleStake: boolean;
 }
 
 export interface IStrategy {

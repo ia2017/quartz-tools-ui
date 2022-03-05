@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { BigNumberish, ethers } from 'ethers';
 
 export function roundDecimals(value: number, decimalPlaces: number): number {
   return Number(
@@ -6,14 +6,14 @@ export function roundDecimals(value: number, decimalPlaces: number): number {
   );
 }
 
-export function toNumber(value: BigNumber, decimals?: number): number {
+export function toNumber(value: ethers.BigNumber, decimals?: number): number {
   if (decimals) {
     return Number(ethers.utils.formatUnits(value, decimals));
   }
   return Number(ethers.utils.formatEther(value));
 }
 
-export function toCommaString(value: BigNumber, decimals?: number) {
+export function toCommaString(value: ethers.BigNumber, decimals?: number) {
   if (decimals) {
     return ethers.utils.commify(toNumber(value, decimals));
   }
@@ -21,13 +21,13 @@ export function toCommaString(value: BigNumber, decimals?: number) {
 }
 
 export class FormattedResult {
-  constructor(public readonly value: BigNumber) {}
+  constructor(public readonly value: ethers.BigNumber) {}
 
   formatEther(): string {
     return ethers.utils.formatEther(this.value);
   }
 
-  parseEther(): BigNumber {
+  parseEther(): ethers.BigNumber {
     return ethers.utils.parseEther(ethers.utils.formatEther(this.value));
   }
 

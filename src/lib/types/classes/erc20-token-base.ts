@@ -1,4 +1,6 @@
 import { ethers } from 'ethers';
+import { FormattedResult } from 'src/lib/utils/formatting';
+import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { IERC20 } from '../token.types';
 
 export class ERC20TokenBase extends ethers.Contract implements IERC20 {
@@ -16,7 +18,6 @@ export class ERC20TokenBase extends ethers.Contract implements IERC20 {
     if (!this._name) {
       this._name = await this.contract.name();
     }
-
     return this._name;
   }
 
@@ -24,19 +25,27 @@ export class ERC20TokenBase extends ethers.Contract implements IERC20 {
     if (!this._decimals) {
       this._decimals = await this.contract.decimals();
     }
-
     return this._decimals;
   }
 
   async allowance(owner: string, spender: string) {
-    return this.contract.allowance(owner, spender);
+    return new FormattedResult(await this.contract.allowance(owner, spender));
   }
 
   async approve(spender: string, amount: ethers.BigNumber) {
-    return this.contract.approve(spender, amount);
+    try {
+      const tx = this.contract.approve(spender, amount);
+      await awaitTransactionComplete(tx);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async balanceOf(who: string) {
-    return this.contract.balanceOf(who);
+    return new FormattedResult(await this.contract.balanceOf(who));
+  }
+
+  async totalSupply() {
+    return new FormattedResult(await this.contract.totalSupply());
   }
 }
