@@ -18,22 +18,37 @@ export class StatsService {
     try {
       const pair = new Pair(vaultRef.lpAddress, this.web3.web3Info.signer);
       const userBalance = await pair.balanceOf(userAddress);
-
       vaultRef.userLpWalletBalance = userBalance.toNumber();
       vaultRef.walletBalanceBN = userBalance.value;
 
-      const pricePerFullShare = await vaultRef.contract.getPricePerFullShare();
+      const pricePerFullShare = new FormattedResult(
+        await vaultRef.contract.getPricePerFullShare()
+      );
+      vaultRef.pricePerShare = pricePerFullShare.toNumber();
 
-      const userLpDepositBalance: ethers.BigNumber =
+      let userLpDepositBalance: ethers.BigNumber =
         await vaultRef.contract.balanceOf(userAddress);
 
-      // const userLpDepositBalance = ethers.BigNumber.from(
-      //   '4823145521089576646130'
-      // );
+      // let userLpDepositBalance = ethers.BigNumber.from('58332221');
+      // const balStr = ethers.utils.formatEther(userLpDepositBalance);
+      // console.log(balStr);
+
+      // if (balStr.length > 18) {
+      //   console.log(ethers.utils.parseEther('58332221').toString());
+
+      //   const trimmed = balStr.slice(19);
+      //   console.log(trimmed);
+
+      //   const t2 = ethers.utils.parseEther('58332221').toString().slice(18);
+      //   console.log(t2);
+
+      //   userLpDepositBalance = ethers.utils.parseEther(trimmed);
+      //   // console.log(ethers.utils.formatEther(userLpDepositBalance));
+      // }
 
       const amountTimesPricePerShare =
         new FormattedResult(userLpDepositBalance).toNumber() *
-        new FormattedResult(pricePerFullShare).toNumber();
+        pricePerFullShare.toNumber();
 
       vaultRef.userLpDepositBalanceFull = userLpDepositBalance.isZero()
         ? 0
@@ -47,6 +62,7 @@ export class StatsService {
         String(amountTimesPricePerShare)
       );
     } catch (error) {
+      console.error(error);
       throw new Error(`Error getting vault stats: ${vaultRef.name}`);
     }
   }

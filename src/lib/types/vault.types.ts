@@ -23,7 +23,7 @@ export interface IVault {
   contract?: Contract;
   logoURI: string;
   contractApproved: boolean;
-  pricePerShare?: BigNumber;
+  pricePerShare?: number;
   strategy?: IStrategy;
   strategyContract?: Contract;
   geckoIdToken0?: string;
