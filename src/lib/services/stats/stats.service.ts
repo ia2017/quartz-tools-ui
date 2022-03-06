@@ -34,12 +34,13 @@ export class StatsService {
       //   ethers.utils.parseEther('0.000095553488826912')
       // );
 
+      vaultRef.walletBalanceBN = userBalance.value;
       // Trim user balance to avoid weird long decimal issues
       const str = ethers.utils.formatEther(userBalance.value);
       userBalance = new FormattedResult(
         ethers.utils.parseEther((+str).toFixed(12))
       );
-      vaultRef.walletBalanceBN = userBalance.value;
+
       vaultRef.userLpWalletBalance = userBalance.toNumber();
 
       const pricePerFullShare = new FormattedResult(
