@@ -51,26 +51,15 @@ export class StatsService {
       let userLpDepositBalance: ethers.BigNumber =
         await vaultRef.contract.balanceOf(userAddress);
 
+      console.log(ethers.utils.formatEther(userLpDepositBalance));
+
       vaultRef.userLpBaseDepositBalance = new FormattedResult(
         userLpDepositBalance
       ).toNumber();
 
-      // let userLpDepositBalance = ethers.BigNumber.from('58332221');
-      // const balStr = ethers.utils.formatEther(userLpDepositBalance);
-      // console.log(balStr);
-
-      // if (balStr.length > 18) {
-      //   console.log(ethers.utils.parseEther('58332221').toString());
-
-      //   const trimmed = balStr.slice(19);
-      //   console.log(trimmed);
-
-      //   const t2 = ethers.utils.parseEther('58332221').toString().slice(18);
-      //   console.log(t2);
-
-      //   userLpDepositBalance = ethers.utils.parseEther(trimmed);
-      //   // console.log(ethers.utils.formatEther(userLpDepositBalance));
-      // }
+      const fixed = vaultRef.userLpBaseDepositBalance.toFixed(18);
+      console.log(fixed);
+      console.log(ethers.utils.formatEther(ethers.utils.parseEther(fixed)));
 
       const amountTimesPricePerShare =
         new FormattedResult(userLpDepositBalance).toNumber() *
@@ -82,11 +71,15 @@ export class StatsService {
 
       vaultRef.userLpDepositBalance = userLpDepositBalance.isZero()
         ? 0
-        : roundDecimals(amountTimesPricePerShare, 8);
+        : amountTimesPricePerShare;
 
-      vaultRef.userLpDepositBalanceBN = ethers.utils.parseUnits(
-        String(amountTimesPricePerShare)
-      );
+      if (Number(fixed) > 0.000000001) {
+        vaultRef.userLpDepositBalanceBN = ethers.utils.parseEther(
+          String(amountTimesPricePerShare)
+        );
+      } else {
+        vaultRef.userLpDepositBalanceBN = ethers.constants.Zero;
+      }
     } catch (error) {
       console.error(error);
       throw new Error(`Error getting vault stats: ${vaultRef.name}`);
