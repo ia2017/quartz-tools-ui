@@ -12,8 +12,11 @@ export interface IVault {
   userLpWalletBalance: number;
   walletBalanceBN: BigNumber;
   userLpDepositBalance: number;
+  userLpBaseDepositBalance?: number; // amount not * by current pricePerShare, raw deposit amount
   userLpDepositBalanceFull?: number;
   userLpDepositBalanceBN: BigNumber;
+  userValueUSD?: number;
+  totalSupply?: number;
   APR?: number;
   dailyAPR: number;
   APY: number | string;

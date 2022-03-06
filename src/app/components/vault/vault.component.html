@@ -8,16 +8,25 @@
     <mat-spinner diameter="35" class="float-right"></mat-spinner>
   </div>
 
+  <div class="col-md-12" *ngIf="vault.userValueUSD > 0" style="margin-bottom: 5px;">
+    <div class="row">
+      <div class="col-md-12 col-12 col-xl-2"></div>
+      <div class="col-md-6 col-6 col-xl-2"></div>
+      <div class="col-md-6 col-6  col-xl-2">
+        <div class="text-center label-value">
+          {{ vault.userValueUSD | currency }}
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="col-md-12">
     <div class="row">
       <div class="col-md-12 col-12 col-xl-2 bold vault-info">
         <img src="{{ vault.logoURI }}" alt="">
-        <!-- <p>
-          {{ vault.name }}
-        </p> -->
       </div>
 
-      <div class="col-md-6 col-6  col-xl-2 bold balance">
+      <div class="col-md-6 col-6 col-xl-2 bold balance">
         <div class="text-center label-value">
           {{ vault.userLpWalletBalance }}
         </div>
@@ -28,6 +37,8 @@
 
       <div class="col-md-6 col-6  col-xl-2 bold balance">
         <div class="text-center label-value">
+
+
           {{ vault.userLpDepositBalance }}
         </div>
         <div class="text-center">

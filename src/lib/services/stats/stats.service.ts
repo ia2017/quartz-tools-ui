@@ -51,6 +51,10 @@ export class StatsService {
       let userLpDepositBalance: ethers.BigNumber =
         await vaultRef.contract.balanceOf(userAddress);
 
+      vaultRef.userLpBaseDepositBalance = new FormattedResult(
+        userLpDepositBalance
+      ).toNumber();
+
       // let userLpDepositBalance = ethers.BigNumber.from('58332221');
       // const balStr = ethers.utils.formatEther(userLpDepositBalance);
       // console.log(balStr);
@@ -90,11 +94,15 @@ export class StatsService {
   }
 
   async getVaultTVL(vault: IVault) {
+    let stats;
     if (vault.isSingleStake) {
-      return this.getSingleStakeTVL(vault);
+      stats = await this.getSingleStakeTVL(vault);
+    } else {
+      stats = await this.getPairVaultTVL(vault);
     }
 
-    return this.getPairVaultTVL(vault);
+    await this.setUserPercentOfDeposit(vault);
+    return stats;
   }
 
   async getPairVaultTVL(vault: IVault) {
@@ -155,6 +163,8 @@ export class StatsService {
       chefLpBalance.toNumber()
     );
 
+    vault.totalValueLocked = vaultTVL;
+
     const { APR, dailyAPR, APY } = await this.getVaultAPRs(
       vault,
       totalValueOfChefPoolUSD
@@ -174,7 +184,7 @@ export class StatsService {
     const { totalSupply, chefLpBalance, chefPercentOwnership } =
       await this.getChefInfo(stakeToken);
 
-    const chefPercentOfToken0 = totalSupply.toNumber() * chefPercentOwnership;
+    const chefPercentOfToken0 = totalSupply * chefPercentOwnership;
     const tokenPrice = await vault.fetchPriceToken0();
 
     const poolValueUsdToken0 = chefPercentOfToken0 * tokenPrice;
@@ -186,6 +196,8 @@ export class StatsService {
       totalValueOfChefPoolUSD,
       chefLpBalance.toNumber()
     );
+
+    vault.totalValueLocked = vaultTVL;
 
     const { APR, dailyAPR, APY } = await this.getVaultAPRs(
       vault,
@@ -200,6 +212,14 @@ export class StatsService {
     };
   }
 
+  private async setUserPercentOfDeposit(vault: IVault) {
+    const totalSupply = new FormattedResult(await vault.contract.totalSupply());
+    const ratio = vault.userLpDepositBalanceFull / totalSupply.toNumber();
+    const userPercent = roundDecimals(vault.totalValueLocked * ratio, 2);
+    vault.userValueUSD = userPercent;
+    return userPercent;
+  }
+
   private async getChefInfo(tokenContract) {
     const totalSupply = await tokenContract.totalSupply();
     const chefLpBalance = await tokenContract.balanceOf(
@@ -211,7 +231,7 @@ export class StatsService {
       chefLpBalance.toNumber(4) / totalSupply.toNumber(4);
 
     return {
-      totalSupply,
+      totalSupply: totalSupply.toNumber(),
       chefLpBalance,
       chefPercentOwnership,
     };
@@ -262,7 +282,6 @@ export class StatsService {
   getAPY(dailyAPR: number) {
     const dailyToPercent = dailyAPR / 100;
     const dailyCompoundResults = (1 + dailyToPercent) ** 365;
-
     return dailyCompoundResults;
   }
 
