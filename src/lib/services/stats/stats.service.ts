@@ -97,8 +97,6 @@ export class StatsService {
     } else {
       stats = await this.getPairVaultTVL(vault);
     }
-
-    // await this.setUserPercentOfDeposit(vault);
     return stats;
   }
 
@@ -140,8 +138,6 @@ export class StatsService {
       await pair.balanceOf(this.rewardPool.contract.address)
     );
 
-    // console.log('chefLpBalance: ' + chefLpBalance.toNumber());
-
     // Get reward pools % ownership of the pairs total supply
     const chefPercentOwnership =
       chefLpBalance.toNumber(4) / pairTotalSupply.toNumber(4);
@@ -157,15 +153,9 @@ export class StatsService {
       vault.fetchPriceToken1(),
     ]);
 
-    // console.log(vault.name);
-
     const lpValue0 = res0.toNumber(4) * priceToken0;
     const lpValue1 = res1.toNumber(4) * priceToken1;
     const lpTokenPrice = (lpValue0 + lpValue1) / pairTotalSupply.toNumber(4);
-
-    // console.log('lpValue0: ' + lpValue0);
-    // console.log('lpValue1: ' + lpValue1);
-    // console.log('lpTokenPrice: ' + lpTokenPrice);
 
     // The percentage of token0 and token1 for the pool * their price
     // will gives us the total current USD value of the chefs pool
@@ -189,65 +179,7 @@ export class StatsService {
     let stratPercentOfChef =
       stratLpDepositBalance.toNumber(4) / chefLpBalance.toNumber(4);
 
-    //console.log('stratPercentOfChef: ' + stratPercentOfChef + '%');
-
-    // const stratTVL =
-    //   stratLpDepositBalance.toNumber() *
-    //   vaultValuePerToken *
-    //   stratPercentOfChef;
     const vaultTVL = totalValueOfChefPoolUSD * stratPercentOfChef;
-    //console.log('stratTVL: ' + stratTVL);
-
-    const vaultValuePerToken = vault.pricePerShare * lpTokenPrice;
-    //console.log('PPS * lpTokenPrice: ' + vaultValuePerToken);
-
-    //console.log('userLpBaseDepositBalance: ' + vault.userLpBaseDepositBalance);
-
-    // const userValue = vaultValuePerToken * vault.userLpDepositBalanceUI;
-    //console.log('userValue: ' + userValue);
-
-    // Vault TVL really comes through the strategies.
-    // Strategy owns a certain percentage of the total deposits in the chef pool at any given time
-    // const vaultTVL = await this.getStrategyTVL(
-    //   vault,
-    //   totalValueOfChefPoolUSD,
-    //   chefLpBalance.toNumber()
-    // );
-
-    // if (vault.name == 'AMES-UST') {
-    //   console.log(vault.name);
-    //   console.log('lpTokenPrice: ' + lpTokenPrice);
-    //   console.log('totalValueOfChefPoolUSD: ' + totalValueOfChefPoolUSD);
-    //   console.log('stratLpDepositBalance: ' + stratLpDepositBalance.toNumber());
-    //   console.log('stratPercentOfChef: ' + stratPercentOfChef + '%');
-    //   console.log('stratTVL: ' + stratTVL);
-    //   console.log('PPS * lpTokenPrice: ' + vaultValuePerToken);
-    //   console.log(
-    //     'userLpBaseDepositBalance: ' + vault.userLpBaseDepositBalance
-    //   );
-    //   console.log('userValue: ' + userValue);
-    //   const userValueBase = vaultValuePerToken * vault.userLpBaseDepositBalance;
-    //   console.log('userValue userLpBaseDepositBalance: ' + userValueBase);
-
-    //   const baseDiff = userValue - userValueBase;
-    //   console.log('DEPOSIT DIFF: ' + baseDiff);
-    //   console.log('DEPOSIT DIFF: ' + baseDiff / userValue);
-
-    //   const vaultTotalSupply = new FormattedResult(
-    //     await vault.contract.totalSupply()
-    //   );
-    //   console.log('vaultTotalSupply: ' + vaultTotalSupply.toNumber());
-    //   const userBalance = new FormattedResult(
-    //     await vault.contract.balanceOf(this.web3.web3Info.userAddress)
-    //   );
-    //   console.log('userBalance: ' + userBalance.toNumber());
-    //   const userPercentOfStrat =
-    //     userBalance.toNumber() / vaultTotalSupply.toNumber();
-    //   console.log('userPercentOfStrat: ' + userPercentOfStrat);
-    //   const userActualValue = userPercentOfStrat * stratTVL
-    //   console.log('tvl * userPercent: ' + userPercentOfStrat * stratTVL);
-    //   vault.userValueUSD = userActualValue;
-    // }
 
     const vaultTotalSupply = new FormattedResult(
       await vault.contract.totalSupply()
@@ -324,17 +256,6 @@ export class StatsService {
       APY,
     };
   }
-
-  // private async setUserPercentOfDeposit(vault: IVault) {
-  //   const totalSupply = new FormattedResult(await vault.contract.totalSupply());
-  //   //console.log('vault total supply: ' + totalSupply.toNumber());
-  //   const ratio = vault.userLpDepositBalanceUI / totalSupply.toNumber();
-  //   //console.log('user ratio of vault: ' + ratio);
-  //   const userPercent = roundDecimals(vault.totalValueLocked * ratio, 2);
-
-  //   vault.userValueUSD = userPercent;
-  //   return userPercent;
-  // }
 
   private async getChefInfo(tokenContract) {
     const totalSupply = await tokenContract.totalSupply();
