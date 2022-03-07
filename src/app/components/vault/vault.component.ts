@@ -133,11 +133,12 @@ export class VaultComponent implements OnInit, OnDestroy {
 
     if (value === 100) {
       this._withdrawAmountMachine = this.vault.userLpDepositBalanceBN;
-      this.withdrawInput.value = String(this.vault.userLpDepositBalance);
+      this.withdrawInput.value = String(this.vault.userLpDepositBalanceUI);
       return;
     }
 
-    const withdrawAmountHuman = this.vault.userLpDepositBalance * (value / 100);
+    const withdrawAmountHuman =
+      this.vault.userLpDepositBalanceUI * (value / 100);
     this.withdrawInput.value = String(withdrawAmountHuman);
 
     this._withdrawAmountMachine = ethers.utils.parseEther(

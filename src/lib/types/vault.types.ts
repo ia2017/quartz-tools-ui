@@ -11,7 +11,7 @@ export interface IVault {
   lpAddress: string;
   userLpWalletBalance: number;
   walletBalanceBN: BigNumber;
-  userLpDepositBalance: number;
+  userLpDepositBalanceUI: number;
   userLpBaseDepositBalance?: number; // amount not * by current pricePerShare, raw deposit amount
   userLpDepositBalanceFull?: number;
   userLpDepositBalanceBN: BigNumber;

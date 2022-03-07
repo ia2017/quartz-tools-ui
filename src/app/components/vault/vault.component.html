@@ -39,7 +39,7 @@
         <div class="text-center label-value">
 
 
-          {{ vault.userLpDepositBalance }}
+          {{ vault.userLpDepositBalanceUI }}
         </div>
         <div class="text-center">
             Deposit Balance
@@ -166,7 +166,7 @@
           [disabled]="true">
         </mat-form-field>
         <mat-slider
-          [disabled]="!vault.userLpDepositBalance"
+          [disabled]="!vault.userLpDepositBalanceUI"
           [max]="100"
           [min]="0"
           [step]="1"
@@ -187,14 +187,14 @@
         <button
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.userLpDepositBalance"
+          [disabled]="!vault.userLpDepositBalanceUI"
           (click)="setVaultWithdrawAll()">
           Withdraw All
         </button>
         <button
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.userLpDepositBalance"
+          [disabled]="!vault.userLpDepositBalanceUI"
           (click)="setVaultWithdraw()">
           Withdraw
         </button>
