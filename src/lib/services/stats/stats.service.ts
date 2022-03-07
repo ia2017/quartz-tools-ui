@@ -65,21 +65,21 @@ export class StatsService {
       // console.log(fixed);
       // console.log(ethers.utils.formatEther(ethers.utils.parseEther(fixed)));
 
-      // const amountTimesPricePerShare =
-      //   new FormattedResult(userLpDepositBalance).toNumber() *
-      //   pricePerFullShare.toNumber();
+      const amountTimesPricePerShare =
+        new FormattedResult(userLpDepositBalance).toNumber() *
+        pricePerFullShare.toNumber();
 
       vaultRef.userLpDepositBalanceFull = userLpDepositBalance.isZero()
         ? 0
-        : vaultRef.userLpBaseDepositBalance;
+        : amountTimesPricePerShare;
 
       vaultRef.userLpDepositBalanceUI = userLpDepositBalance.isZero()
         ? 0
-        : roundDecimals(vaultRef.userLpBaseDepositBalance, 8);
+        : roundDecimals(amountTimesPricePerShare, 8);
 
       if (Number(fixed) > 0.000000001) {
         vaultRef.userLpDepositBalanceBN = ethers.utils.parseEther(
-          String(vaultRef.userLpBaseDepositBalance)
+          String(amountTimesPricePerShare)
         );
       } else {
         vaultRef.userLpDepositBalanceBN = ethers.constants.Zero;
