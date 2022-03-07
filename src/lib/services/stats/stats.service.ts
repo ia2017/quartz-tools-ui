@@ -17,16 +17,16 @@ export class StatsService {
 
   async setVaultUserStats(vaultRef: IVault, userAddress: string) {
     try {
-      let userBalance: FormattedResult;
+      let userWalletBalance: FormattedResult;
       if (vaultRef.isSingleStake) {
         const stakeToken = new ERC20(
           vaultRef.lpAddress,
           this.web3.web3Info.signer
         );
-        userBalance = await stakeToken.balanceOf(userAddress);
+        userWalletBalance = await stakeToken.balanceOf(userAddress);
       } else {
         const pair = new Pair(vaultRef.lpAddress, this.web3.web3Info.signer);
-        userBalance = await pair.balanceOf(userAddress);
+        userWalletBalance = await pair.balanceOf(userAddress);
       }
 
       // 0.000095553488826912
@@ -34,14 +34,21 @@ export class StatsService {
       //   ethers.utils.parseEther('0.000095553488826912')
       // );
 
-      vaultRef.walletBalanceBN = userBalance.value;
+      vaultRef.walletBalanceBN = userWalletBalance.value;
       // Trim user balance to avoid weird long decimal issues
-      const str = ethers.utils.formatEther(userBalance.value);
-      userBalance = new FormattedResult(
+      const str = ethers.utils.formatEther(userWalletBalance.value);
+      console.log(str);
+      userWalletBalance = new FormattedResult(
         ethers.utils.parseEther((+str).toFixed(12))
       );
 
-      vaultRef.userLpWalletBalance = userBalance.toNumber();
+      if (userWalletBalance.toNumber() > 0.0000000001) {
+        vaultRef.userLpWalletBalance = userWalletBalance.toNumber();
+      } else {
+        vaultRef.userLpWalletBalance = 0;
+      }
+
+      console.log(userWalletBalance.toNumber());
 
       const pricePerFullShare = new FormattedResult(
         await vaultRef.contract.getPricePerFullShare()
@@ -51,15 +58,15 @@ export class StatsService {
       let userLpDepositBalance: ethers.BigNumber =
         await vaultRef.contract.balanceOf(userAddress);
 
-      console.log(ethers.utils.formatEther(userLpDepositBalance));
+      // console.log(ethers.utils.formatEther(userLpDepositBalance));
 
       vaultRef.userLpBaseDepositBalance = new FormattedResult(
         userLpDepositBalance
       ).toNumber();
 
       const fixed = vaultRef.userLpBaseDepositBalance.toFixed(18);
-      console.log(fixed);
-      console.log(ethers.utils.formatEther(ethers.utils.parseEther(fixed)));
+      // console.log(fixed);
+      // console.log(ethers.utils.formatEther(ethers.utils.parseEther(fixed)));
 
       const amountTimesPricePerShare =
         new FormattedResult(userLpDepositBalance).toNumber() *
@@ -106,6 +113,7 @@ export class StatsService {
         'function token1() view returns (address)',
         'function balanceOf(address) view returns (uint256)',
         'function totalSupply() view returns (uint256)',
+        'function getReserves() view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast)',
       ],
       this.web3.web3Info.provider
     );
@@ -116,8 +124,8 @@ export class StatsService {
     const t1 = new ethers.Contract(token1, abi, this.web3.web3Info.provider);
 
     let [pairToken0Amount, pairToken1Amount, totalSupply] = await Promise.all([
-      t0.balanceOf(pair.address),
-      t1.balanceOf(pair.address),
+      t0.balanceOf(pair.address), // Same as `getReserves()` on the pair
+      t1.balanceOf(pair.address), // Same as `getReserves()` on the pair
       pair.totalSupply(),
     ]);
 
@@ -125,11 +133,26 @@ export class StatsService {
     pairToken1Amount = new FormattedResult(pairToken1Amount);
     totalSupply = new FormattedResult(totalSupply);
 
+    // console.log('pairToken0Amount: ' + pairToken0Amount.toNumber());
+    // console.log('pairToken1Amount: ' + pairToken1Amount.toNumber());
+    // console.log('pair total supply: ' + totalSupply.toNumber());
+
+    const res = await pair.getReserves();
+    const res0 = new FormattedResult(res._reserve0);
+    const res1 = new FormattedResult(res._reserve1);
+    // console.log('res0: ' + res0.toNumber());
+    // console.log('res1: ' + res1.toNumber());
+    // console.log('res0: ' + ethers.utils.formatEther(res._reserve0));
+    // console.log('res1: ' + ethers.utils.formatEther(res._reserve1));
+
+    // Check quantity of pair LP token deposited into chef contract
     const chefLpBalance = new FormattedResult(
       await pair.balanceOf(this.rewardPool.contract.address)
     );
 
-    // Get rewards % ownership of the pairs total supply
+    // console.log('chefLpBalance: ' + chefLpBalance.toNumber());
+
+    // Get reward pools % ownership of the pairs total supply
     const chefPercentOwnership =
       chefLpBalance.toNumber(4) / totalSupply.toNumber(4);
     const chefPercentOfToken0 =
@@ -142,6 +165,9 @@ export class StatsService {
       vault.fetchPriceToken0(),
       vault.fetchPriceToken1(),
     ]);
+
+    // console.log('priceToken0: ' + priceToken0);
+    // console.log('priceToken1: ' + priceToken1);
 
     // The percentage of token0 and token1 for the pool * their price
     // will gives us the total current USD value of the chefs pool
@@ -207,8 +233,11 @@ export class StatsService {
 
   private async setUserPercentOfDeposit(vault: IVault) {
     const totalSupply = new FormattedResult(await vault.contract.totalSupply());
+    //console.log('vault total supply: ' + totalSupply.toNumber());
     const ratio = vault.userLpDepositBalanceFull / totalSupply.toNumber();
+    //console.log('user ratio of vault: ' + ratio);
     const userPercent = roundDecimals(vault.totalValueLocked * ratio, 2);
+
     vault.userValueUSD = userPercent;
     return userPercent;
   }
