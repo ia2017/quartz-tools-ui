@@ -129,10 +129,6 @@ export class StatsService {
     pairToken1Amount = new FormattedResult(pairToken1Amount);
     pairTotalSupply = new FormattedResult(pairTotalSupply);
 
-    const res = await pair.getReserves();
-    const res0 = new FormattedResult(res._reserve0);
-    const res1 = new FormattedResult(res._reserve1);
-
     // Check quantity of pair LP token deposited into chef contract
     const chefLpBalance = new FormattedResult(
       await pair.balanceOf(this.rewardPool.contract.address)
@@ -153,19 +149,11 @@ export class StatsService {
       vault.fetchPriceToken1(),
     ]);
 
-    const lpValue0 = res0.toNumber(4) * priceToken0;
-    const lpValue1 = res1.toNumber(4) * priceToken1;
-    const lpTokenPrice = (lpValue0 + lpValue1) / pairTotalSupply.toNumber(4);
-
     // The percentage of token0 and token1 for the pool * their price
     // will gives us the total current USD value of the chefs pool
     const poolValueUsdToken0 = chefPercentOfToken0 * priceToken0;
     const poolValueUsdToken1 = chefPercentOfToken1 * priceToken1;
     const totalValueOfChefPoolUSD = poolValueUsdToken0 + poolValueUsdToken1;
-
-    // console.log('poolValueUsdToken0: ' + poolValueUsdToken0);
-    // console.log('poolValueUsdToken1: ' + poolValueUsdToken1);
-    //console.log('totalValueOfChefPoolUSD: ' + totalValueOfChefPoolUSD);
 
     const stratInfo = await this.rewardPool.userInfo(
       vault.poolId,
@@ -174,7 +162,6 @@ export class StatsService {
 
     // Strats LP tokens deposited in reward pool/chef
     const stratLpDepositBalance = new FormattedResult(stratInfo.amount);
-    //console.log('stratLpDepositBalance: ' + stratLpDepositBalance.toNumber());
 
     let stratPercentOfChef =
       stratLpDepositBalance.toNumber(4) / chefLpBalance.toNumber(4);
@@ -187,7 +174,7 @@ export class StatsService {
     const userBalance = new FormattedResult(
       await vault.contract.balanceOf(this.web3.web3Info.userAddress)
     );
-    console.log(userBalance.toNumber());
+
     const userPercentOfStrat =
       userBalance.toNumber() / vaultTotalSupply.toNumber();
     const userActualValue = userPercentOfStrat * vaultTVL;
