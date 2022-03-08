@@ -229,6 +229,18 @@ export class StatsService {
       chefLpBalance.toNumber()
     );
 
+    const userBalance = new FormattedResult(
+      await vault.contract.balanceOf(this.web3.web3Info.userAddress)
+    );
+
+    const vaultTotalSupply = new FormattedResult(
+      await vault.contract.totalSupply()
+    );
+    const userPercentOfStrat =
+      userBalance.toNumber() / vaultTotalSupply.toNumber();
+    const userActualValue = userPercentOfStrat * vaultTVL;
+    vault.userValueUSD = userActualValue;
+
     vault.totalValueLocked = vaultTVL;
 
     const { APR, dailyAPR, APY } = await this.getVaultAPRs(
