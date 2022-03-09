@@ -19,7 +19,7 @@ import {
 export const VAULT_UST_QUARTZ_HARMONY: IVault = {
   active: true,
   chainId: HARMONY_CHAIN.chainId,
-  name: 'Quartz-UST',
+  name: 'CEASED-UST',
   poolId: 0,
   vaultAddress: VAULT_UST_QUARTZ_ADDRESS_HARMONY,
   lpAddress: PAIR_UST_QUARTZ_ADDRESS_HARMONY,
@@ -32,7 +32,7 @@ export const VAULT_UST_QUARTZ_HARMONY: IVault = {
   totalValueLocked: 0,
   tvlChecked: false,
   loading: false,
-  logoURI: 'assets/quartz-ust-lp.svg',
+  logoURI: 'assets/ceased-ust-logo.svg',
   contractApproved: false,
   strategy: {
     address: STRAT_UST_QUARTZ_ADDRESS_HARMONY,
@@ -85,7 +85,7 @@ export const VAULT_ONE_QSHARE_HARMONY: IVault = {
 const VAULT_SINGLE_STAKE_QUARTZ: IVault = {
   active: true,
   chainId: HARMONY_CHAIN.chainId,
-  name: 'Quartz',
+  name: 'CEASED',
   poolId: 4,
   vaultAddress: VAULT_SINGLE_QUARTZ_ADDRESS_HARMONY,
   lpAddress: QUARTZ_ADDRESS_HARMONY,
@@ -98,7 +98,7 @@ const VAULT_SINGLE_STAKE_QUARTZ: IVault = {
   totalValueLocked: 0,
   tvlChecked: false,
   loading: false,
-  logoURI: 'assets/quartz-lp.svg',
+  logoURI: 'assets/ceased-defi-logo.svg',
   contractApproved: false,
   strategy: {
     address: STRAT_SINGLE_QUARTZ_ADDRESS_HARMONY,
