@@ -6,10 +6,12 @@ import {
   STRAT_AMETHYST_UST_ADDRESS_BSC,
   STRAT_ASHARE_UST_ADDRESS_BSC,
   STRAT_SINGLE_STAKE_1QSHARE_ADDRESS_BSC,
+  STRAT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
   VAULT_AMETHYST_ASHARE_ADDRESS_BSC,
   VAULT_AMETHYST_UST_ADDRESS_BSC,
   VAULT_ASHARE_UST_ADDRESS_BSC,
   VAULT_SINGLE_STAKE_1QSHARE_ADDRESS_BSC,
+  VAULT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
 } from './bsc-addresses';
 import {
   PAIR_AMETHYST_UST_BSC,
@@ -185,7 +187,42 @@ export const VAULT_AMETHYST_ASHARE_BSC: IVault = {
   isSingleStake: false,
 };
 
+const VAULT_SINGLE_STAKE_AMETHYST: IVault = {
+  active: true,
+  chainId: BINANCE_SMART_CHAIN.chainId,
+  name: 'AMETHYST',
+  poolId: 6,
+  vaultAddress: VAULT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
+  lpAddress: TOKENS.AMETHYST.BSC,
+  userLpWalletBalance: 0,
+  walletBalanceBN: ethers.constants.Zero,
+  userLpDepositBalanceUI: 0,
+  userLpDepositBalanceBN: ethers.constants.Zero,
+  APY: 0,
+  dailyAPR: 0.0,
+  totalValueLocked: 0,
+  tvlChecked: false,
+  loading: false,
+  logoURI: 'assets/ames-logo.svg',
+  contractApproved: false,
+  strategy: {
+    address: STRAT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => {
+    return (await getSingleTokenPrice('amethyst')).usd;
+  },
+  fetchPriceToken1: async () => {
+    return null;
+  },
+  fetchRewardTokenPrice: async () => {
+    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
+  },
+  compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
+  isSingleStake: true,
+};
+
 export const VAULTS_BSC = [
+  VAULT_SINGLE_STAKE_AMETHYST,
   VAULT_AMETHYST_UST_BSC,
   VAULT_AMETHYST_ASHARE_BSC,
   VAULT_ASHARE_UST_BSC,
