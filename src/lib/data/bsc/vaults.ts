@@ -190,7 +190,7 @@ export const VAULT_AMETHYST_ASHARE_BSC: IVault = {
 const VAULT_SINGLE_STAKE_AMETHYST: IVault = {
   active: true,
   chainId: BINANCE_SMART_CHAIN.chainId,
-  name: 'AMETHYST',
+  name: 'AMES',
   poolId: 6,
   vaultAddress: VAULT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
   lpAddress: TOKENS.AMETHYST.BSC,
