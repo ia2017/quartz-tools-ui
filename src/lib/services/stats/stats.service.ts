@@ -177,7 +177,9 @@ export class StatsService {
 
     const userPercentOfStrat =
       userBalance.toNumber() / vaultTotalSupply.toNumber();
+
     const userActualValue = userPercentOfStrat * vaultTVL;
+
     vault.userValueUSD = userActualValue;
 
     vault.totalValueLocked = vaultTVL;

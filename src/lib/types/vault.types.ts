@@ -10,6 +10,7 @@ export interface IVault {
   vaultAddress: string;
   lpAddress: string;
   userLpWalletBalance: number;
+  userWalletValueUSD?: number;
   walletBalanceBN: BigNumber;
   userLpDepositBalanceUI: number;
   userLpBaseDepositBalance?: number; // amount not * by current pricePerShare, raw deposit amount
