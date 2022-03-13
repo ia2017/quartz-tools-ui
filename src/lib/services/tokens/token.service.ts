@@ -62,7 +62,7 @@ export class TokenService {
     return new ERC20(address, this.web3.web3Info.signer);
   }
 
-  private async setPriceTokensInfo(chainId: number) {
+  async setPriceTokensInfo(chainId: number) {
     const chainTokens = PRICE_TOKENS[chainId];
     if (!chainTokens || !chainTokens.length) {
       this.setPriceTokens([]);
