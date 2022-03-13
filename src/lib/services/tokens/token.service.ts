@@ -21,9 +21,8 @@ import { FormattedResult } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import {
-  PAIR_AMETHYST_UST_BSC,
+  PAIR_UST_AMETHYST_BSC,
   PAIR_ASHARE_UST_BSC,
-  PAIR_1QSHARE_UST_BSC,
 } from 'src/lib/data/bsc/pairs';
 import { BehaviorSubject } from 'rxjs';
 import { TokenPriceInfo } from 'src/lib/types/token.types';
@@ -162,13 +161,8 @@ export class TokenService {
       this.web3.web3Info.signer
     );
 
-    this.contractRefs[PAIR_AMETHYST_UST_BSC] = createPairContract(
-      PAIR_AMETHYST_UST_BSC,
-      this.web3.web3Info.signer
-    );
-
-    this.contractRefs[PAIR_1QSHARE_UST_BSC] = createPairContract(
-      PAIR_1QSHARE_UST_BSC,
+    this.contractRefs[PAIR_UST_AMETHYST_BSC] = createPairContract(
+      PAIR_UST_AMETHYST_BSC,
       this.web3.web3Info.signer
     );
   }

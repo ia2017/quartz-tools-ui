@@ -1,12 +1,12 @@
 import { ethers } from 'ethers';
 import { ERC20 } from './classes/erc20';
 import { Pair } from './classes/pair';
-import { IERC20 } from './token.types';
 
 export interface IZapPool {
+  active: boolean;
   name: string;
-  token0?: ERC20;
-  token1?: ERC20;
+  token0: ERC20;
+  token1: ERC20;
   // zapInWithPath parameters
   tokenInAddress: string;
   pairAddress: string;
