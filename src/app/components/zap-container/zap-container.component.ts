@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Web3Service } from 'src/lib/services/web3.service';
 import { ZapService } from 'src/lib/services/zaps/zap.service';
 
 @Component({
@@ -7,5 +8,14 @@ import { ZapService } from 'src/lib/services/zaps/zap.service';
   styleUrls: ['./zap-container.component.scss'],
 })
 export class ZapContainerComponent {
-  constructor(public readonly zapService: ZapService) {}
+  constructor(
+    private readonly web3Service: Web3Service,
+    public readonly zapService: ZapService
+  ) {
+    this.web3Service.web3.subscribe((info) => {
+      if (info) {
+        this.zapService.setZapData(info.chainId);
+      }
+    });
+  }
 }

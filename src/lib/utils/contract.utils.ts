@@ -22,22 +22,3 @@ export function createERC20TokenContract(
     (<unknown>new ethers.Contract(address, ERC20_ABI, signer))
   );
 }
-
-export function createDefaultZapPool(
-  name: string,
-  pairAddress: string,
-  routerAddress: string,
-  path: string[]
-): IZapPool {
-  return {
-    name,
-    // zapInWithPath parameters
-    pairAddress,
-    routerAddress,
-    path,
-    pair: new Pair(pairAddress, null), // have to connect to a provider then
-    tokenInAddress: null, // selected by user
-    tokenInAmount: null,
-    tokenInAmountBN: null,
-  };
-}

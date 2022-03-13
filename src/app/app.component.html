@@ -20,15 +20,15 @@
       <li class="nav-item cursor">
         <a class="nav-link" routerLink="/vaults" routerLinkActive="active">Vaults</a>
       </li>
-      <!-- <li class="nav-item cursor">
-        <a class="nav-link" routerLink="/zaps" routerLinkActive="active">Zaps</a>
-      </li> -->
       <li class="nav-item cursor">
+        <a class="nav-link" routerLink="/zaps" routerLinkActive="active">Zaps</a>
+      </li>
+      <!-- <li class="nav-item cursor">
         <a class="nav-link">Zaps (Coming Soon)</a>
-      </li>
-      <li class="nav-item cursor" *ngIf="web3Service.connected && web3Service.web3Info?.chainId == 1666600000">
+      </li> -->
+      <!-- <li class="nav-item cursor" *ngIf="web3Service.connected && web3Service.web3Info?.chainId == 1666600000">
         <a class="nav-link">Swap (Coming Soon)</a>
-      </li>
+      </li> -->
     </ul>
   </div>
 
@@ -49,15 +49,15 @@
   </div>
 </div>
 
-<footer class="jss18">
-  <div class="MuiContainer-root MuiContainer-maxWidthLg">
-    <div class="MuiGrid-root MuiGrid-container">
-      <div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-6">
+<footer  class="fixed-bottom">
+  <div>
+    <div>
+      <div>
         <p style="padding-left: 25px;">
           Copyright © <a  href="https://ames-defi.app">ames-defi.app</a> 2022
         </p>
       </div>
-        <div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-6" style="text-align: right; height: 50px;">
+        <div style="text-align: right; height: 50px;">
           <a href="https://twitter.com/quartz_defi" rel="noopener noreferrer" target="_blank" class="jss19"><svg width="25" height="20.305" viewBox="0 0 25 20.305" style="fill: black; height: 30px;">
             <path d="M22.43,8.441c.016.222.016.444.016.666A14.478,14.478,0,0,1,7.868,23.685,14.479,14.479,0,0,1,0,21.385a10.6,10.6,0,0,0,1.237.063A10.261,10.261,0,0,0,7.6,19.26a5.133,5.133,0,0,1-4.791-3.553,6.461,6.461,0,0,0,.968.079,5.419,5.419,0,0,0,1.348-.174,5.124,5.124,0,0,1-4.109-5.029v-.063a5.16,5.16,0,0,0,2.316.65A5.131,5.131,0,0,1,1.745,4.317,14.564,14.564,0,0,0,12.31,9.678,5.784,5.784,0,0,1,12.183,8.5,5.129,5.129,0,0,1,21.05,5,10.088,10.088,0,0,0,24.3,3.761a5.11,5.11,0,0,1-2.253,2.824A10.272,10.272,0,0,0,25,5.792a11.014,11.014,0,0,1-2.57,2.649Z" transform="translate(0 -3.381)"></path>
           </svg></a><a href="https://github.com/ames-defi/" rel="noopener noreferrer" target="_blank" class="jss19"><svg width="25" height="24.375" viewBox="0 0 25 24.375" style="fill: black; height: 30px;">

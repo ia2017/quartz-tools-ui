@@ -1,4 +1,11 @@
 
+
+<div class="row">
+  <div class="col-md-12 text-center bold" *ngIf="(zapService.error | async) as errMsg">
+    {{ errMsg }}
+  </div>
+</div>
+
 <div class="row">
   <div class="col-md-3" *ngFor="let zap of zapService.zaps | async">
     {{ zap.name }}
