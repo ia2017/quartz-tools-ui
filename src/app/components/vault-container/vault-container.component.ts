@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
-import { VaultWatchService } from 'src/lib/services/vaults/vault-watch.service';
+import { DataWatchService } from 'src/lib/services/data-watch.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { Web3Service } from 'src/lib/services/web3.service';
 
@@ -20,7 +20,7 @@ export class VaultsContainerComponent implements OnDestroy {
     private readonly web3: Web3Service,
     public readonly vaultService: VaultService,
     private readonly snackBar: MatSnackBar,
-    private readonly watcher: VaultWatchService
+    private readonly watcher: DataWatchService
   ) {
     this.web3.web3.subscribe((web3Info) => {
       if (web3Info) {

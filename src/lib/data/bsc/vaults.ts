@@ -83,38 +83,6 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
   isSingleStake: false,
 };
 
-// export const VAULT_1QSHARE_UST_BSC: IVault = {
-//   active: false,
-//   chainId: BINANCE_SMART_CHAIN.chainId,
-//   name: '1QSHARE-UST',
-//   poolId: 2,
-//   vaultAddress: VAULT_1QSHARE_UST_ADDRESS_BSC,
-//   lpAddress: PAIR_1QSHARE_UST_BSC,
-//   userLpWalletBalance: 0,
-//   walletBalanceBN: ethers.constants.Zero,
-//   userLpDepositBalance: 0,
-//   userLpDepositBalanceBN: ethers.constants.Zero,
-//   APY: 0,
-//   dailyAPR: 0.0,
-//   totalValueLocked: 0,
-//   tvlChecked: false,
-//   loading: false,
-//   logoURI: 'assets/1share-ust-lp-logo.svg',
-//   contractApproved: false,
-//   strategy: {
-//     address: STRAT_1QSHARE_UST_ADDRESS_BSC,
-//   },
-//   fetchPriceToken0: async () => 1,
-//   fetchPriceToken1: async () => {
-//     // TODO: need to setup fetching AMM pricing for non gecko tokens
-//     return 25;
-//   },
-//   fetchRewardTokenPrice: async () => {
-//     return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
-//   },
-//   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
-// };
-
 export const VAULT_AMETHYST_ASHARE_BSC: IVault = {
   active: true,
   chainId: BINANCE_SMART_CHAIN.chainId,
@@ -184,8 +152,8 @@ const VAULT_SINGLE_STAKE_AMETHYST: IVault = {
 };
 
 export const VAULTS_BSC = [
-  VAULT_SINGLE_STAKE_AMETHYST,
   VAULT_AMETHYST_ASHARE_BSC,
   VAULT_AMETHYST_UST_BSC,
+  VAULT_SINGLE_STAKE_AMETHYST,
   VAULT_ASHARE_UST_BSC,
 ];
