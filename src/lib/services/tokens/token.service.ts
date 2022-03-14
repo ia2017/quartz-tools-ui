@@ -17,7 +17,7 @@ import {
   QUARTZ_QSHARE_DFK_LP_ADDRESS,
   QUARTZ_UST_DFK_LP_ADDRESS,
 } from '../../data/data';
-import { FormattedResult } from 'src/lib/utils/formatting';
+import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { Web3Service } from '../web3.service';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import {
@@ -30,6 +30,7 @@ import { PRICE_TOKENS } from 'src/lib/data/price-tokens';
 import { createPairContract } from 'src/lib/utils/contract.utils';
 import { Pair } from 'src/lib/types/classes/pair';
 import { ERC20 } from 'src/lib/types/classes/erc20';
+import { TokenInputOption } from 'src/lib/types/zap.types';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
@@ -85,6 +86,17 @@ export class TokenService {
       this.web3.web3Info.userAddress
     );
     return new FormattedResult(balance);
+  }
+
+  async setUserTokenBalances(tokens: TokenInputOption[]) {
+    for (const token of tokens) {
+      token.loadingBalance = true;
+      const contract = new ERC20(token.address, this.web3.web3Info.signer);
+      const balance = await contract.balanceOf(this.web3.web3Info.userAddress);
+      token.userBalanceUI = roundDecimals(Number(balance.formatEther()), 3);
+      token.userBalanceBN = balance.value;
+      token.loadingBalance = false;
+    }
   }
 
   getTokenContract(address: string) {

@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { QUARTZ_CONTRACTS } from 'src/lib/data/contract';
 import { ZAPS } from 'src/lib/data/zaps';
 import { ERC20 } from 'src/lib/types/classes/erc20';
 import { Pair } from 'src/lib/types/classes/pair';
-import { IZapPool } from 'src/lib/types/zap.types';
+import {
+  ChainZapData,
+  ChainZapInfo,
+  IZapPool,
+  ZapContractArgs,
+  ZapInput,
+} from 'src/lib/types/zap.types';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { CommonServiceEvents } from '../service-events-common';
 import { Web3Service } from '../web3.service';
@@ -19,6 +25,8 @@ export class ZapService extends CommonServiceEvents {
     return this._zaps.asObservable();
   }
 
+  private _chainZapData: ChainZapInfo;
+
   constructor(private readonly web3: Web3Service) {
     super();
   }
@@ -27,8 +35,17 @@ export class ZapService extends CommonServiceEvents {
     //
     // this.setContract(chainId);
     //
-    const zaps = this._getZapsForChain(chainId);
-    const zappers: IZapPool[] = await this._setupZaps(zaps);
+
+    const chainZaps = ZAPS[chainId];
+    if (!chainZaps) {
+      throw new Error('setZaps: Dafuq?');
+    }
+
+    this._chainZapData = chainZaps;
+
+    console.log(this._chainZapData);
+
+    const zappers: IZapPool[] = await this._setupZaps();
     this._zaps.next(zappers);
   }
 
@@ -51,17 +68,22 @@ export class ZapService extends CommonServiceEvents {
     }
   }
 
-  private _getZapsForChain(chainId: number) {
-    const chainZaps = ZAPS[chainId];
-    if (!chainZaps) {
-      throw new Error('setZaps: Dafuq?');
-    }
-
-    return chainZaps;
-  }
-
-  async zapInWithPath(zapInfo: IZapPool) {
+  async zapInWithPath(zapInput: ZapInput) {
     try {
+      const zapInfo = this._zaps.value.find(
+        (z) => z.pairAddress === zapInput.pairAddress
+      );
+      // Read routing path mapping for selected input token
+      const path = this._chainZapData.PATHS[zapInput.tokenInAddress];
+
+      const contractArgs: ZapContractArgs = {
+        tokenInAddress: zapInput.tokenInAddress,
+        pairAddress: zapInput.pairAddress,
+        tokenInAmountBN: ethers.BigNumber.from(zapInput.tokenInAmount),
+        routerAddress: zapInfo.routerAddress,
+        path,
+      };
+      console.log(contractArgs);
       // const tx = await this._contract.zapInWithPath();
       // await awaitTransactionComplete(tx);
     } catch (error) {
@@ -70,13 +92,14 @@ export class ZapService extends CommonServiceEvents {
   }
 
   /**
-   * Initialze zap contract info for easier UI component work
+   * Initialze zap contract info for easier UI component work.
+   * Call after setting value for `_chainZapData`
    * @param zapInfo
    */
-  private async _setupZaps(zapInfo: IZapPool[]) {
+  private async _setupZaps() {
     try {
       const zappers: IZapPool[] = [];
-      for (const zap of zapInfo) {
+      for (const zap of this._chainZapData.ZAPS) {
         const zapIn: IZapPool = {
           ...zap,
         };
@@ -94,6 +117,8 @@ export class ZapService extends CommonServiceEvents {
             this.web3.web3Info.signer
           );
         }
+
+        zapIn.tokenInputOptions = this._chainZapData.ZAP_IN_TOKEN_OPTIONS;
 
         zappers.push(zapIn);
       }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Web3Service } from 'src/lib/services/web3.service';
 import { ZapService } from 'src/lib/services/zaps/zap.service';
+import { ZapInput } from 'src/lib/types/zap.types';
 
 @Component({
   selector: 'quartz-zap-container',
@@ -8,6 +9,8 @@ import { ZapService } from 'src/lib/services/zaps/zap.service';
   styleUrls: ['./zap-container.component.scss'],
 })
 export class ZapContainerComponent {
+  runningZap = false;
+
   constructor(
     private readonly web3Service: Web3Service,
     public readonly zapService: ZapService
@@ -17,5 +20,9 @@ export class ZapContainerComponent {
         this.zapService.setZapData(info.chainId);
       }
     });
+  }
+
+  async handleZapIn(zapData: ZapInput) {
+    await this.zapService.zapInWithPath(zapData);
   }
 }

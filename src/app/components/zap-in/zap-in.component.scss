@@ -1,16 +1,17 @@
-.zappadoo {
-  border: 1px solid lightgray;
-  border-radius: 5px;
-  padding: 5px;
-  margin-bottom: 4px;
-
-  button {
-    margin-left: 5px;
-  }
+.header-image {
+  max-width: 75px;
+  max-height: 75px;
+  // background-size: cover;
 }
 
-.zap-header {
-  border: 1px solid lightgray;
-  border-radius: 5px;
-  padding: 5px;
+.input-option {
+  img {
+    max-width: 25px;
+    max-height: 25px;
+  }
+
+  .token-name {
+    display: inline-block;
+    margin-left: 10px;
+  }
 }

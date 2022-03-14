@@ -1,13 +1,29 @@
 
+<div class="nav-container">
+  <div class="row">
+    <div class="col-md-12 text-center bold" *ngIf="(zapService.error | async) as errMsg">
+      {{ errMsg }}
+    </div>
+  </div>
 
-<div class="row">
-  <div class="col-md-12 text-center bold" *ngIf="(zapService.error | async) as errMsg">
-    {{ errMsg }}
+  <div class="row" *ngIf="runningZap">
+    <div class="col-4"></div>
+    <div class="col-4 bold text-center">
+     <span style="display: inline-block;">
+      Zapping in..
+     </span>
+     <span style="display: inline-block;">
+      <mat-spinner diameter="20"></mat-spinner>
+     </span>
+    </div>
+    <div class="col-4"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4" *ngFor="let zap of zapService.zaps | async">
+      <quartz-zap-in [zap]="zap" (zapIn)="handleZapIn($event)"></quartz-zap-in>
+    </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-3" *ngFor="let zap of zapService.zaps | async">
-    {{ zap.name }}
-  </div>
-</div>
+
