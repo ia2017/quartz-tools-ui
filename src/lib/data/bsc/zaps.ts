@@ -18,7 +18,7 @@ const UST_INPUT_OPTION: TokenInputOption = {
 };
 
 const ASHARE_INPUT_OPTION: TokenInputOption = {
-  tokenName: 'AHARE',
+  tokenName: 'ASHARE',
   address: TOKENS.ASHARE.BSC,
   logoPath: TOKENS.ASHARE.logoPath,
 };
