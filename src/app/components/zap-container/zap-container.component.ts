@@ -9,8 +9,6 @@ import { ZapInput } from 'src/lib/types/zap.types';
   styleUrls: ['./zap-container.component.scss'],
 })
 export class ZapContainerComponent {
-  runningZap = false;
-
   constructor(
     private readonly web3Service: Web3Service,
     public readonly zapService: ZapService
@@ -20,9 +18,5 @@ export class ZapContainerComponent {
         this.zapService.setZapData(info.chainId);
       }
     });
-  }
-
-  async handleZapIn(zapData: ZapInput) {
-    await this.zapService.zapInWithPath(zapData);
   }
 }

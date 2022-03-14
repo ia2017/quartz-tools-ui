@@ -12,6 +12,7 @@ import {
   ZapContractArgs,
   ZapInput,
 } from 'src/lib/types/zap.types';
+import { roundDecimals } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { CommonServiceEvents } from '../service-events-common';
 import { Web3Service } from '../web3.service';
@@ -29,12 +30,22 @@ export class ZapService extends CommonServiceEvents {
 
   constructor(private readonly web3: Web3Service) {
     super();
+
+    this.web3.web3.subscribe((info) => {
+      if (info) {
+        this.setContract(info.chainId);
+      }
+    });
+
+    this.web3.chain.subscribe((chain) => {
+      if (chain) {
+        this.setContract(chain.chainId);
+      }
+    });
   }
 
   async setZapData(chainId: number) {
-    //
-    // this.setContract(chainId);
-    //
+    this.setContract(chainId);
 
     const chainZaps = ZAPS[chainId];
     if (!chainZaps) {
@@ -42,9 +53,6 @@ export class ZapService extends CommonServiceEvents {
     }
 
     this._chainZapData = chainZaps;
-
-    console.log(this._chainZapData);
-
     const zappers: IZapPool[] = await this._setupZaps();
     this._zaps.next(zappers);
   }
@@ -64,7 +72,7 @@ export class ZapService extends CommonServiceEvents {
         this.web3.web3Info.signer
       );
     } catch (error) {
-      this._error.next('Error getting zaps data');
+      this._error.next('Error getting zaps contract');
     }
   }
 
@@ -74,20 +82,50 @@ export class ZapService extends CommonServiceEvents {
         (z) => z.pairAddress === zapInput.pairAddress
       );
       // Read routing path mapping for selected input token
-      const path = this._chainZapData.PATHS[zapInput.tokenInAddress];
+      const path = zapInfo.pathsFromTokenIn[zapInput.tokenInAddress];
 
-      const contractArgs: ZapContractArgs = {
-        tokenInAddress: zapInput.tokenInAddress,
-        pairAddress: zapInput.pairAddress,
-        tokenInAmountBN: ethers.BigNumber.from(zapInput.tokenInAmount),
-        routerAddress: zapInfo.routerAddress,
-        path,
+      const tx = await this._contract.zapInWithPath(
+        zapInput.tokenInAddress,
+        zapInput.pairAddress,
+        zapInput.tokenInAmountBN,
+        zapInfo.routerAddress,
+        path
+      );
+      await awaitTransactionComplete(tx);
+
+      // Return the amount of LP tokens for convenience
+      const pair = new ERC20(zapInfo.pairAddress, this.web3.web3Info.signer);
+      const lpTokens = await pair.balanceOf(this.web3.web3Info.userAddress);
+
+      return {
+        lpTokensUI: roundDecimals(lpTokens.toNumber(), 8),
+        lpTokensBN: lpTokens.value,
       };
-      console.log(contractArgs);
-      // const tx = await this._contract.zapInWithPath();
-      // await awaitTransactionComplete(tx);
     } catch (error) {
       console.error(error);
+      this._error.next('Error zapping in');
+    }
+  }
+
+  async approveZapperIfNeeded(
+    tokenInAddress: string,
+    amountIn: ethers.BigNumber
+  ) {
+    try {
+      const tokenIn = new ERC20(tokenInAddress, this.web3.web3Info.signer);
+      const allowance = await tokenIn.allowance(
+        this.web3.web3Info.userAddress,
+        this._contract.address
+      );
+      console.log(allowance.formatEther());
+      if (allowance.value.lt(amountIn)) {
+        await tokenIn.approve(
+          this._contract.address,
+          ethers.constants.MaxUint256
+        );
+      }
+    } catch (error) {
+      this._error.next('Error approving contract');
     }
   }
 

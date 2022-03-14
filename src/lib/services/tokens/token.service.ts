@@ -31,6 +31,7 @@ import { createPairContract } from 'src/lib/utils/contract.utils';
 import { Pair } from 'src/lib/types/classes/pair';
 import { ERC20 } from 'src/lib/types/classes/erc20';
 import { TokenInputOption } from 'src/lib/types/zap.types';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {

@@ -15,6 +15,7 @@ export interface ZapInput {
   tokenInAddress: string;
   pairAddress: string;
   tokenInAmount: number;
+  tokenInAmountBN?: ethers.BigNumber;
   path?: string[]; // optional to allow being set later
 }
 
@@ -31,6 +32,7 @@ export interface IZapPool extends ZapInput {
   logoPath: string;
   routerAddress: string;
   tokenInputOptions?: TokenInputOption[];
+  pathsFromTokenIn?: TokenZapPathMap;
 }
 
 export type TokenZapPathMap = { [tokenAddress: string]: string[] };
