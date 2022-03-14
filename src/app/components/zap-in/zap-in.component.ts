@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { TokenService } from 'src/lib/services/tokens/token.service';
 import { ZapService } from 'src/lib/services/zaps/zap.service';
 import { IZapPool, TokenInputOption, ZapInput } from 'src/lib/types/zap.types';
+import { FormattedResult } from 'src/lib/utils/formatting';
 
 @Component({
   selector: 'quartz-zap-in',
@@ -32,14 +33,6 @@ export class ZapInComponent implements OnInit {
       tokenIn: new FormControl(null, [Validators.required]),
       tokenInAmount: new FormControl(null, [Validators.required]),
     });
-
-    const lpTokens = await this.zap.pair.balanceOf(
-      '0x2e86D29cFea7c4f422f7fCCF97986bbBa03e1a7F'
-    );
-    this.zapResult = {
-      lpTokensUI: lpTokens.toNumber(),
-    };
-    console.log(lpTokens.toNumber());
   }
 
   async runZapIn() {
@@ -48,6 +41,9 @@ export class ZapInComponent implements OnInit {
 
       const tokenInAmount = this.zapGroup.get('tokenInAmount').value;
       const tokenInAmountBN = ethers.utils.parseEther(String(tokenInAmount));
+      // console.log(tokenInAmount);
+      // const fmt = new FormattedResult(tokenInAmountBN);
+      // console.log(fmt.toNumber());
 
       const input: ZapInput = {
         tokenInAddress: tokenIn.address,
@@ -56,16 +52,16 @@ export class ZapInComponent implements OnInit {
         tokenInAmountBN,
       };
 
-      this.reset();
-
       this.runningZap = true;
       await this.zapService.approveZapperIfNeeded(
         tokenIn.address,
         tokenInAmountBN
       );
-      this.zapResult = await this.zapService.zapInWithPath(input);
-      console.log(this.zapResult);
+
+      const zapResult = await this.zapService.zapInWithPath(input);
       this.runningZap = false;
+      this.reset();
+      this.zapResult = zapResult;
     }
   }
 
@@ -84,6 +80,10 @@ export class ZapInComponent implements OnInit {
   onSelectedChange(selectedTokenIn: TokenInputOption) {
     this.currentSelectedToken = selectedTokenIn;
   }
+
+  // setUserMax() {
+  //   this.zapGroup.get('tokenInAmount').setValue()
+  // }
 
   private reset() {
     this.zapGroup.reset();

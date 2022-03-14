@@ -12,7 +12,7 @@ import {
   ZapContractArgs,
   ZapInput,
 } from 'src/lib/types/zap.types';
-import { roundDecimals } from 'src/lib/utils/formatting';
+import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { CommonServiceEvents } from '../service-events-common';
 import { Web3Service } from '../web3.service';
@@ -84,6 +84,10 @@ export class ZapService extends CommonServiceEvents {
       // Read routing path mapping for selected input token
       const path = zapInfo.pathsFromTokenIn[zapInput.tokenInAddress];
 
+      if (!path) {
+        throw new Error('dafaq?');
+      }
+
       const tx = await this._contract.zapInWithPath(
         zapInput.tokenInAddress,
         zapInput.pairAddress,
@@ -94,17 +98,21 @@ export class ZapService extends CommonServiceEvents {
       await awaitTransactionComplete(tx);
 
       // Return the amount of LP tokens for convenience
-      const pair = new ERC20(zapInfo.pairAddress, this.web3.web3Info.signer);
-      const lpTokens = await pair.balanceOf(this.web3.web3Info.userAddress);
-
-      return {
-        lpTokensUI: roundDecimals(lpTokens.toNumber(), 8),
-        lpTokensBN: lpTokens.value,
-      };
+      return this._getZapResult(zapInfo.pairAddress);
     } catch (error) {
       console.error(error);
       this._error.next('Error zapping in');
     }
+  }
+
+  private async _getZapResult(pairAddress: string) {
+    const pair = new ERC20(pairAddress, this.web3.web3Info.signer);
+    const lpTokens = await pair.balanceOf(this.web3.web3Info.userAddress);
+
+    return {
+      lpTokensUI: roundDecimals(lpTokens.toNumber(), 8),
+      lpTokensBN: lpTokens.value,
+    };
   }
 
   async approveZapperIfNeeded(
@@ -117,7 +125,7 @@ export class ZapService extends CommonServiceEvents {
         this.web3.web3Info.userAddress,
         this._contract.address
       );
-      console.log(allowance.formatEther());
+
       if (allowance.value.lt(amountIn)) {
         await tokenIn.approve(
           this._contract.address,
@@ -156,7 +164,7 @@ export class ZapService extends CommonServiceEvents {
           );
         }
 
-        zapIn.tokenInputOptions = this._chainZapData.ZAP_IN_TOKEN_OPTIONS;
+        zapIn.tokenInputOptions = zap.tokenInputOptions;
 
         zappers.push(zapIn);
       }
