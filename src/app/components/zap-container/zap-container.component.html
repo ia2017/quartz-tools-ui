@@ -8,7 +8,7 @@
 
 
   <div class="row">
-    <div class="col-md-4" *ngFor="let zap of zapService.zaps | async">
+    <div class="col-md-4" style="margin-top: 10px;" *ngFor="let zap of zapService.zaps | async">
       <quartz-zap-in [zap]="zap"></quartz-zap-in>
     </div>
   </div>
