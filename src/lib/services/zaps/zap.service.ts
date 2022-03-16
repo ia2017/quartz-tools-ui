@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { QUARTZ_CONTRACTS } from 'src/lib/data/contract';
-import { TOKENS } from 'src/lib/data/tokens';
 import { ZAPS } from 'src/lib/data/zaps';
 import { ERC20 } from 'src/lib/types/classes/erc20';
 import { Pair } from 'src/lib/types/classes/pair';
@@ -78,22 +77,6 @@ export class ZapService extends CommonServiceEvents {
 
   async zapInWithPath(zapInput: ZapInput) {
     try {
-      const tokenIn = new ERC20(
-        zapInput.tokenInAddress,
-        this.web3.web3Info.signer
-      );
-      const allowance = await tokenIn.allowance(
-        this.web3.web3Info.userAddress,
-        this._contract.address
-      );
-
-      if (allowance.value.lt(zapInput.tokenInAmountBN)) {
-        await tokenIn.approve(
-          this._contract.address,
-          ethers.constants.MaxUint256
-        );
-      }
-
       const zapInfo = this._zaps.value.find(
         (z) => z.pairAddress === zapInput.pairAddress
       );
@@ -102,14 +85,17 @@ export class ZapService extends CommonServiceEvents {
         (opt) => opt.address == zapInput.tokenInAddress
       );
 
-      console.log(zapInput);
-
       if (
         !tokenOptions.pathTokenInToLp0.length ||
         !tokenOptions.pathTokenInToLp1.length
       ) {
         throw new Error('dafuq?');
       }
+
+      await this.approveZapperIfNeeded(
+        zapInput.tokenInAddress,
+        zapInput.tokenInAmountBN
+      );
 
       const tx = await this._contract.zapInWithPath(
         zapInput.tokenInAddress,
@@ -119,7 +105,7 @@ export class ZapService extends CommonServiceEvents {
         tokenOptions.pathTokenInToLp0,
         tokenOptions.pathTokenInToLp1
       );
-      console.log(tx);
+
       await awaitTransactionComplete(tx);
 
       // Return the amount of LP tokens for convenience

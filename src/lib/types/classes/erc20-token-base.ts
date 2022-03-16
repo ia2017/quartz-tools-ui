@@ -34,7 +34,7 @@ export class ERC20TokenBase extends ethers.Contract implements IERC20 {
 
   async approve(spender: string, amount: ethers.BigNumber) {
     try {
-      const tx = this.contract.approve(spender, amount);
+      const tx = await this.contract.approve(spender, amount);
       await awaitTransactionComplete(tx);
     } catch (error) {
       throw error;

@@ -16,3 +16,19 @@ export const ASHARE_INPUT_OPTION: TokenInputOption = {
   pathTokenInToLp0: [],
   pathTokenInToLp1: [],
 };
+
+export const BNB_INPUT_OPTION: TokenInputOption = {
+  tokenName: 'BNB',
+  address: '',
+  logoPath: TOKENS.BNB.logoPath,
+  pathTokenInToLp0: [],
+  pathTokenInToLp1: [],
+};
+
+export const BUSD_INPUT_OPTION: TokenInputOption = {
+  tokenName: 'BUSD',
+  address: '',
+  logoPath: TOKENS.BUSD.logoPath,
+  pathTokenInToLp0: [],
+  pathTokenInToLp1: [],
+};

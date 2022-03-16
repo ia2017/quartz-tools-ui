@@ -72,10 +72,6 @@ export class ZapInComponent implements OnInit {
     this.currentSelectedToken = selectedTokenIn;
   }
 
-  // setUserMax() {
-  //   this.zapGroup.get('tokenInAmount').setValue()
-  // }
-
   private reset() {
     this.zapGroup.reset();
     this.lastBalanceCheck = null;

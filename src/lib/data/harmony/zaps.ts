@@ -30,5 +30,5 @@ export const ZAP_UST_JEWEL_HARMONY: IZapPool = {
 };
 
 export const ZAPS_HARMONY: ChainZapInfo = {
-  ZAPS: [ZAP_UST_JEWEL_HARMONY],
+  ZAPS: [],
 };

@@ -6,6 +6,8 @@ import {
 } from 'src/lib/types/zap.types';
 import {
   ASHARE_INPUT_OPTION,
+  BNB_INPUT_OPTION,
+  BUSD_INPUT_OPTION,
   UST_INPUT_OPTION,
 } from '../common/zap-input-options';
 import { TOKENS } from '../tokens';
@@ -30,8 +32,20 @@ export const ZAP_UST_AMES_BSC: IZapPool = {
     {
       ...UST_INPUT_OPTION,
       address: TOKENS.UST.BSC,
-      pathTokenInToLp0: [],
-      pathTokenInToLp1: [],
+      pathTokenInToLp0: [TOKENS.UST.BSC],
+      pathTokenInToLp1: [TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+    },
+    // {
+    //   ...BNB_INPUT_OPTION,
+    //   address: TOKENS.BNB.BSC,
+    //   pathTokenInToLp0: [TOKENS.BNB.BSC, TOKENS.UST.BSC],
+    //   pathTokenInToLp1: [TOKENS.BNB.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+    // },
+    {
+      ...BUSD_INPUT_OPTION,
+      address: TOKENS.BUSD.BSC,
+      pathTokenInToLp0: [TOKENS.BUSD.BSC, TOKENS.UST.BSC],
+      pathTokenInToLp1: [TOKENS.BUSD.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
     },
   ],
 };
@@ -54,6 +68,27 @@ export const ZAP_AMES_ASHARE_BSC: IZapPool = {
       address: TOKENS.ASHARE.BSC,
       pathTokenInToLp0: [TOKENS.ASHARE.BSC, TOKENS.AMETHYST.BSC],
       pathTokenInToLp1: [TOKENS.ASHARE.BSC],
+    },
+    {
+      ...UST_INPUT_OPTION,
+      address: TOKENS.UST.BSC,
+      pathTokenInToLp0: [TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+      pathTokenInToLp1: [
+        TOKENS.UST.BSC,
+        TOKENS.AMETHYST.BSC,
+        TOKENS.ASHARE.BSC,
+      ],
+    },
+    {
+      ...BUSD_INPUT_OPTION,
+      address: TOKENS.BUSD.BSC,
+      pathTokenInToLp0: [TOKENS.BUSD.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+      pathTokenInToLp1: [
+        TOKENS.BUSD.BSC,
+        TOKENS.UST.BSC,
+        TOKENS.AMETHYST.BSC,
+        TOKENS.ASHARE.BSC,
+      ],
     },
   ],
 };
