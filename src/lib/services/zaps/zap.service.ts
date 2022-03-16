@@ -109,16 +109,20 @@ export class ZapService extends CommonServiceEvents {
       await awaitTransactionComplete(tx);
 
       // Return the amount of LP tokens for convenience
-      return this._getZapResult(zapInfo.pairAddress);
+      return this.getZapResult(zapInfo.pairAddress);
     } catch (error) {
       console.error(error);
       this._error.next('Error zapping in');
     }
   }
 
-  private async _getZapResult(pairAddress: string) {
+  async getZapResult(pairAddress: string) {
     const pair = new ERC20(pairAddress, this.web3.web3Info.signer);
     const lpTokens = await pair.balanceOf(this.web3.web3Info.userAddress);
+
+    if (lpTokens.value.isZero()) {
+      return null;
+    }
 
     return {
       lpTokensUI: roundDecimals(lpTokens.toNumber(), 8),

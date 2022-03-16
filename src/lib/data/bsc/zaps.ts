@@ -1,9 +1,4 @@
-import {
-  ChainZapInfo,
-  IZapPool,
-  TokenInputOption,
-  TokenZapPathMap,
-} from 'src/lib/types/zap.types';
+import { ChainZapInfo, IZapPool } from 'src/lib/types/zap.types';
 import {
   ASHARE_INPUT_OPTION,
   BNB_INPUT_OPTION,
@@ -16,7 +11,7 @@ import {
   PAIR_AMETHYST_ASHARE_PAIR_ADDRESS_BSC,
   PAIR_UST_AMETHYST_BSC,
 } from './pairs';
-import { VAULT_AMETHYST_ASHARE_BSC, VAULT_ASHARE_UST_BSC } from './vaults';
+import { VAULT_AMETHYST_ASHARE_BSC, VAULT_AMETHYST_UST_BSC } from './vaults';
 
 export const ZAP_UST_AMES_BSC: IZapPool = {
   active: true,
@@ -50,7 +45,7 @@ export const ZAP_UST_AMES_BSC: IZapPool = {
       pathTokenInToLp1: [TOKENS.BUSD.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
     },
   ],
-  vault: VAULT_ASHARE_UST_BSC,
+  vault: VAULT_AMETHYST_UST_BSC,
 };
 
 export const ZAP_AMES_ASHARE_BSC: IZapPool = {

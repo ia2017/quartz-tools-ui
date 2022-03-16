@@ -45,6 +45,9 @@ export class ZapInComponent implements OnInit {
       tokenIn: new FormControl(null, [Validators.required]),
       tokenInAmount: new FormControl(null, [Validators.required]),
     });
+
+    // Show any already available to deposit if applicable
+    this.zapResult = await this.zapService.getZapResult(this.zap.pairAddress);
   }
 
   async runZapIn() {

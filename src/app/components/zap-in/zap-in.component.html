@@ -91,7 +91,7 @@
       <mat-icon class="float-right cursor" (click)="depositResult = null">clear</mat-icon>
     </div>
 
-    <div class="row" *ngIf="zapResult">
+    <div class="row" *ngIf="zapResult?.lpTokensUI > 0">
       <div class="col-md-12">
         <span class="bold">LP tokens: {{ zapResult.lpTokensUI }}</span>
       </div>
@@ -104,14 +104,14 @@
           Deposit to farm
           </button>
 
-        <!-- <button
+        <button
           mat-raised-button
           color="primary"
           style="margin-left: 10px;"
           (click)="depositTo('Vault')"
           *ngIf="zap.vault">
           Deposit to Vault
-        </button> -->
+        </button>
       </div>
     </div>
   </mat-card-content>

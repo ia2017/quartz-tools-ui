@@ -6,6 +6,15 @@ export function roundDecimals(value: number, decimalPlaces: number): number {
   );
 }
 
+export function ensureEtherFormat(amountIn: ethers.BigNumber) {
+  let amountInStr = ethers.utils.formatEther(amountIn);
+  if (amountInStr.length > 18) {
+    amountInStr = amountInStr.slice(0, 19);
+  }
+  amountIn = ethers.utils.parseEther(amountInStr);
+  return amountIn;
+}
+
 export function toNumber(value: ethers.BigNumber, decimals?: number): number {
   if (decimals) {
     return Number(ethers.utils.formatUnits(value, decimals));

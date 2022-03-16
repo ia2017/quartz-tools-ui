@@ -5,7 +5,11 @@ import { VAULTS } from 'src/lib/data/vaults';
 import { ERC20 } from 'src/lib/types/classes/erc20';
 import { ERC20TokenBase } from 'src/lib/types/classes/erc20-token-base';
 import { IVault } from 'src/lib/types/vault.types';
-import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
+import {
+  ensureEtherFormat,
+  FormattedResult,
+  roundDecimals,
+} from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { StatsService } from '../stats/stats.service';
 import { TokenService } from '../tokens/token.service';
@@ -163,6 +167,8 @@ export class VaultService {
         this._error.next(new Error("Can't deposit zero"));
         return;
       }
+
+      amountIn = ensureEtherFormat(amountIn);
 
       this._operationActive.next('Depositing to vault..');
       await this.approveVaultIfNeeded(vault, amountIn, vault.lpAddress);
