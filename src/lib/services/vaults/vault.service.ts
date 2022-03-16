@@ -135,35 +135,46 @@ export class VaultService {
     }
   }
 
-  async deposit(vault: IVault, amount: ethers.BigNumber) {
+  async deposit(vault: IVault, amount: ethers.BigNumber, initVaults = true) {
     try {
-      await this._deposit(vault, amount);
+      return await this._deposit(vault, amount, initVaults);
     } catch (error) {
       console.error(error);
-      this._error.next(new Error('Deposit Error'));
+      this._error.next(new Error('Vault deposit Error'));
     }
   }
 
-  async depositAll(vault: IVault) {
+  async depositAll(vault: IVault, initVaults = true) {
     try {
-      await this._deposit(vault, vault.walletBalanceBN);
-    } catch (error) {}
+      return await this._deposit(vault, vault.walletBalanceBN, initVaults);
+    } catch (error) {
+      console.error(error);
+      this._error.next(new Error('Vault deposit Error'));
+    }
   }
 
-  private async _deposit(vault: IVault, amountIn: ethers.BigNumber) {
+  private async _deposit(
+    vault: IVault,
+    amountIn: ethers.BigNumber,
+    initVaults: boolean
+  ) {
     try {
-      if (vault.walletBalanceBN.isZero() || amountIn.isZero()) {
+      if (amountIn.isZero()) {
         this._error.next(new Error("Can't deposit zero"));
         return;
       }
 
-      this._operationActive.next('Depositing..');
+      this._operationActive.next('Depositing to vault..');
       await this.approveVaultIfNeeded(vault, amountIn, vault.lpAddress);
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
-      await awaitTransactionComplete(depositTx);
-      this._operationActive.next('Deposit complete');
-      await this.initVaults(this.web3.web3Info.chainId);
+      const txReceipt = await awaitTransactionComplete(depositTx);
+      this._operationActive.next('Vault deposit complete');
+      if (initVaults) {
+        await this.initVaults(this.web3.web3Info.chainId);
+      }
+
+      return txReceipt;
     } catch (error) {
       throw error;
     }

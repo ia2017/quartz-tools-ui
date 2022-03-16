@@ -94,8 +94,6 @@ export class TokenService {
       token.loadingBalance = true;
       const contract = new ERC20(token.address, this.web3.web3Info.signer);
       const balance = await contract.balanceOf(this.web3.web3Info.userAddress);
-      console.log(token.address);
-      console.log(balance.value);
       token.userBalanceUI = Number(balance.formatEther());
       token.userBalanceBN = balance.value;
       token.loadingBalance = false;

@@ -11,6 +11,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -56,6 +57,7 @@ import { PriceButtonComponent } from './components/price-button/price-button.com
     MatExpansionModule,
     MatSliderModule,
     MatSnackBarModule,
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

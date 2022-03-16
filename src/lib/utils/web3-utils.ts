@@ -23,7 +23,7 @@ export async function getWeb3(
 
 export async function awaitTransactionComplete(
   txResponse: ContractTransaction,
-  confirmations = 2
+  confirmations = 1
 ): Promise<ContractReceipt> {
   try {
     console.log(`- Starting transaction: ${txResponse.hash}`);

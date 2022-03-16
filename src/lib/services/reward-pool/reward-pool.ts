@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { QUARTZ_CONTRACTS } from 'src/lib/data/contract';
 import { FormattedResult } from 'src/lib/utils/formatting';
+import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { Web3Service } from '../web3.service';
 import { REWARD_POOL_ABI } from './reward-pool-abi';
 
@@ -15,7 +16,7 @@ export class RewardPool {
         this.contract = new ethers.Contract(
           QUARTZ_CONTRACTS[web3Info.chainId].RewardPool,
           REWARD_POOL_ABI,
-          this.web3.web3Info.provider
+          this.web3.web3Info.signer
         );
       }
     });
@@ -23,6 +24,11 @@ export class RewardPool {
 
   userInfo(poolId: number, user: string) {
     return this.contract.userInfo(poolId, user);
+  }
+
+  async deposit(poolId: number, amount: ethers.BigNumber) {
+    const tx = await this.contract.deposit(poolId, amount);
+    return await awaitTransactionComplete(tx);
   }
 
   poolInfo(poolId: number) {

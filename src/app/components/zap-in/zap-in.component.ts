@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ethers } from 'ethers';
+import { RewardPool } from 'src/lib/services/reward-pool/reward-pool';
 import { TokenService } from 'src/lib/services/tokens/token.service';
+import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { ZapService } from 'src/lib/services/zaps/zap.service';
 import { IZapPool, TokenInputOption, ZapInput } from 'src/lib/types/zap.types';
-import { FormattedResult } from 'src/lib/utils/formatting';
 
 @Component({
   selector: 'quartz-zap-in',
@@ -21,11 +22,22 @@ export class ZapInComponent implements OnInit {
   currentSelectedToken: TokenInputOption = null;
   runningZap = false;
 
-  zapResult = null;
+  zapResult: {
+    lpTokensUI: number;
+    lpTokensBN: ethers.BigNumber;
+  };
+  depositing = false;
+  depositingTo = null;
+  depositResult: {
+    txHash?: string;
+    explorerLink?: string;
+  };
 
   constructor(
     private readonly tokenService: TokenService,
-    public readonly zapService: ZapService
+    public readonly zapService: ZapService,
+    private readonly vaultService: VaultService,
+    private readonly rewardPool: RewardPool
   ) {}
 
   async ngOnInit() {
@@ -70,6 +82,40 @@ export class ZapInComponent implements OnInit {
 
   onSelectedChange(selectedTokenIn: TokenInputOption) {
     this.currentSelectedToken = selectedTokenIn;
+  }
+
+  async depositTo(depositingTo: 'Farm' | 'Vault') {
+    try {
+      if (this.zapResult?.lpTokensUI) {
+        this.depositing = true;
+        this.depositingTo = depositingTo;
+
+        let tx: any;
+
+        if (depositingTo === 'Farm') {
+          tx = await this.rewardPool.deposit(
+            this.zap.poolId,
+            this.zapResult.lpTokensBN
+          );
+        }
+
+        if (depositingTo === 'Vault') {
+          tx = await this.vaultService.deposit(
+            this.zap.vault,
+            this.zapResult.lpTokensBN,
+            false
+          );
+        }
+
+        this.depositResult = {};
+        this.depositResult.txHash = tx.transactionHash;
+        this.depositResult.explorerLink =
+          'https://bscscan.com/tx/' + this.depositResult.txHash;
+        this.depositing = false;
+
+        this.reset();
+      }
+    } catch (error) {}
   }
 
   private reset() {

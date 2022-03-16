@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { ERC20 } from './classes/erc20';
 import { Pair } from './classes/pair';
+import { IVault } from './vault.types';
 
 // Required arguments to contract zapInWithPath function
 export interface ZapContractArgs {
@@ -32,6 +33,8 @@ export interface IZapPool extends ZapInput {
   logoPath: string;
   routerAddress: string;
   tokenInputOptions?: TokenInputOption[];
+  poolId: number;
+  vault?: IVault;
 }
 
 export type TokenZapPathMap = { [tokenAddress: string]: string[] };

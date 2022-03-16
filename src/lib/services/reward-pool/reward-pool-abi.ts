@@ -93,4 +93,22 @@ export const REWARD_POOL_ABI = [
     name: 'tSharePerSecond',
     type: 'function',
   },
+  {
+    outputs: [],
+    name: 'deposit',
+    inputs: [
+      {
+        name: '_pid',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: '_amount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    type: 'function',
+    stateMutability: 'nonpayable',
+  },
 ];

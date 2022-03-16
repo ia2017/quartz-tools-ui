@@ -66,24 +66,60 @@
                 </span>
               </mat-hint>
             </mat-form-field>
-<!--
-            <button mat-raised-button (click)="setUserMax()">Max</button> -->
           </div>
       </div>
     </form>
+
+    <div class="row" style="margin-bottom: 5px;" *ngIf="depositing">
+      <div class="col-3"></div>
+      <div class="col-5 bold text-center">
+      <span style="display: inline-block;">
+        Depositing to {{ depositingTo }}..
+      </span>
+      <span style="display: inline-block;">
+        <mat-spinner diameter="20"></mat-spinner>
+      </span>
+      </div>
+      <div class="col-3"></div>
+    </div>
+
+
+    <div class="alert alert-success clearfix" *ngIf="depositResult">
+      <span style="display:inline-block; margin-bottom: 15px;">
+        Deposit Complete. <a href="{{ depositResult.explorerLink }}" target="__blank">View on explorer</a>
+      </span>
+      <mat-icon class="float-right cursor" (click)="depositResult = null">clear</mat-icon>
+    </div>
 
     <div class="row" *ngIf="zapResult">
       <div class="col-md-12">
         <span class="bold">LP tokens: {{ zapResult.lpTokensUI }}</span>
       </div>
-    </div>
+      <div class="col-md-12" style="margin-top: 5px;">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="depositTo('Farm')"
+          *ngIf="zap.poolId >= 0">
+          Deposit to farm
+          </button>
 
+        <!-- <button
+          mat-raised-button
+          color="primary"
+          style="margin-left: 10px;"
+          (click)="depositTo('Vault')"
+          *ngIf="zap.vault">
+          Deposit to Vault
+        </button> -->
+      </div>
+    </div>
   </mat-card-content>
 
   <mat-card-actions align="end">
     <button
       mat-raised-button
-      class="quartz-btn"
+      color="primary"
       [disabled]="!zapGroup.valid ||
       currentSelectedToken?.userBalanceUI === 0 ||
       runningZap"
