@@ -38,12 +38,8 @@ export class ZapInComponent implements OnInit {
   async runZapIn() {
     if (this.zapGroup.valid) {
       const tokenIn = this.zapGroup.get('tokenIn').value;
-
       const tokenInAmount = this.zapGroup.get('tokenInAmount').value;
       const tokenInAmountBN = ethers.utils.parseEther(String(tokenInAmount));
-      // console.log(tokenInAmount);
-      // const fmt = new FormattedResult(tokenInAmountBN);
-      // console.log(fmt.toNumber());
 
       const input: ZapInput = {
         tokenInAddress: tokenIn.address,
@@ -53,11 +49,6 @@ export class ZapInComponent implements OnInit {
       };
 
       this.runningZap = true;
-      await this.zapService.approveZapperIfNeeded(
-        tokenIn.address,
-        tokenInAmountBN
-      );
-
       const zapResult = await this.zapService.zapInWithPath(input);
       this.runningZap = false;
       this.reset();

@@ -32,7 +32,6 @@ export interface IZapPool extends ZapInput {
   logoPath: string;
   routerAddress: string;
   tokenInputOptions?: TokenInputOption[];
-  pathsFromTokenIn?: TokenZapPathMap;
 }
 
 export type TokenZapPathMap = { [tokenAddress: string]: string[] };
@@ -44,12 +43,12 @@ export interface TokenInputOption {
   userBalanceUI?: number;
   userBalanceBN?: ethers.BigNumber;
   loadingBalance?: boolean;
+  pathTokenInToLp0: string[];
+  pathTokenInToLp1: string[];
 }
 
 export interface ChainZapInfo {
-  PATHS: TokenZapPathMap;
   ZAPS: IZapPool[];
-  ZAP_IN_TOKEN_OPTIONS: TokenInputOption[];
 }
 
 export interface ChainZapData {

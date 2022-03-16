@@ -7,6 +7,7 @@ import { BINANCE_SMART_CHAIN, HARMONY_CHAIN } from './chains';
 import {
   REWARD_POOL_ADDRESS_HARMONY,
   ZAPPER_ADDRESS_HARMONY,
+  ZAPPER_FLEX_ADDRESS_HARMONY,
 } from './harmony/contract-addresses';
 
 export const QUARTZ_CONTRACTS: {
@@ -17,7 +18,7 @@ export const QUARTZ_CONTRACTS: {
     RewardPool: REWARD_POOL_ADDRESS_BSC,
   },
   [HARMONY_CHAIN.chainId]: {
-    Zapper: ZAPPER_ADDRESS_HARMONY,
+    Zapper: ZAPPER_FLEX_ADDRESS_HARMONY,
     RewardPool: REWARD_POOL_ADDRESS_HARMONY,
   },
 };

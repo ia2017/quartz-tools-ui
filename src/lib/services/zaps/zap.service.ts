@@ -1,18 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { QUARTZ_CONTRACTS } from 'src/lib/data/contract';
+import { TOKENS } from 'src/lib/data/tokens';
 import { ZAPS } from 'src/lib/data/zaps';
 import { ERC20 } from 'src/lib/types/classes/erc20';
 import { Pair } from 'src/lib/types/classes/pair';
-import {
-  ChainZapData,
-  ChainZapInfo,
-  IZapPool,
-  ZapContractArgs,
-  ZapInput,
-} from 'src/lib/types/zap.types';
-import { FormattedResult, roundDecimals } from 'src/lib/utils/formatting';
+import { ChainZapInfo, IZapPool, ZapInput } from 'src/lib/types/zap.types';
+import { roundDecimals } from 'src/lib/utils/formatting';
 import { awaitTransactionComplete } from 'src/lib/utils/web3-utils';
 import { CommonServiceEvents } from '../service-events-common';
 import { Web3Service } from '../web3.service';
@@ -24,6 +19,11 @@ export class ZapService extends CommonServiceEvents {
   private _zaps = new BehaviorSubject<IZapPool[]>([]);
   get zaps() {
     return this._zaps.asObservable();
+  }
+
+  private _approved = new Subject<boolean>();
+  get approved() {
+    return this._approved.asObservable();
   }
 
   private _chainZapData: ChainZapInfo;
@@ -67,7 +67,7 @@ export class ZapService extends CommonServiceEvents {
       this._contract = new ethers.Contract(
         address,
         [
-          `function zapInWithPath(address, address, uint256, address, address[]) public`,
+          `function zapInWithPath(address, address, uint256, address, address[], address[]) public`,
         ],
         this.web3.web3Info.signer
       );
@@ -78,14 +78,37 @@ export class ZapService extends CommonServiceEvents {
 
   async zapInWithPath(zapInput: ZapInput) {
     try {
+      const tokenIn = new ERC20(
+        zapInput.tokenInAddress,
+        this.web3.web3Info.signer
+      );
+      const allowance = await tokenIn.allowance(
+        this.web3.web3Info.userAddress,
+        this._contract.address
+      );
+
+      if (allowance.value.lt(zapInput.tokenInAmountBN)) {
+        await tokenIn.approve(
+          this._contract.address,
+          ethers.constants.MaxUint256
+        );
+      }
+
       const zapInfo = this._zaps.value.find(
         (z) => z.pairAddress === zapInput.pairAddress
       );
       // Read routing path mapping for selected input token
-      const path = zapInfo.pathsFromTokenIn[zapInput.tokenInAddress];
+      const tokenOptions = zapInfo.tokenInputOptions.find(
+        (opt) => opt.address == zapInput.tokenInAddress
+      );
 
-      if (!path) {
-        throw new Error('dafaq?');
+      console.log(zapInput);
+
+      if (
+        !tokenOptions.pathTokenInToLp0.length ||
+        !tokenOptions.pathTokenInToLp1.length
+      ) {
+        throw new Error('dafuq?');
       }
 
       const tx = await this._contract.zapInWithPath(
@@ -93,8 +116,10 @@ export class ZapService extends CommonServiceEvents {
         zapInput.pairAddress,
         zapInput.tokenInAmountBN,
         zapInfo.routerAddress,
-        path
+        tokenOptions.pathTokenInToLp0,
+        tokenOptions.pathTokenInToLp1
       );
+      console.log(tx);
       await awaitTransactionComplete(tx);
 
       // Return the amount of LP tokens for convenience
