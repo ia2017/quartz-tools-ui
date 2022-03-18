@@ -6,6 +6,7 @@ import { TokenService } from 'src/lib/services/tokens/token.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { ZapService } from 'src/lib/services/zaps/zap.service';
 import { IZapPool, TokenInputOption, ZapInput } from 'src/lib/types/zap.types';
+import { ensureEtherFormat } from 'src/lib/utils/formatting';
 
 @Component({
   selector: 'quartz-zap-in',
@@ -46,7 +47,7 @@ export class ZapInComponent implements OnInit {
       tokenInAmount: new FormControl(null, [Validators.required]),
     });
 
-    // Show any already available to deposit if applicable
+    // Show any already available to deposit if available
     this.zapResult = await this.zapService.getZapResult(this.zap.pairAddress);
   }
 
@@ -54,7 +55,13 @@ export class ZapInComponent implements OnInit {
     if (this.zapGroup.valid) {
       const tokenIn = this.zapGroup.get('tokenIn').value;
       const tokenInAmount = this.zapGroup.get('tokenInAmount').value;
-      const tokenInAmountBN = ethers.utils.parseEther(String(tokenInAmount));
+
+      console.log(tokenInAmount);
+
+      let tokenInAmountBN = ethers.utils.parseUnits(String(tokenInAmount), 18);
+      tokenInAmountBN = ensureEtherFormat(tokenInAmountBN);
+
+      console.log(ethers.utils.formatEther(tokenInAmountBN));
 
       const input: ZapInput = {
         tokenInAddress: tokenIn.address,
@@ -71,8 +78,18 @@ export class ZapInComponent implements OnInit {
     }
   }
 
+  setDepositMax() {
+    if (this.currentSelectedToken?.userBalanceUI > 0) {
+      this.zapGroup
+        .get('tokenInAmount')
+        .setValue(this.currentSelectedToken.userBalanceUI, {
+          emitEvent: true,
+        });
+    }
+  }
+
   async getInputTokenBalances() {
-    // Limit queries in the event selects are being open and closed too frequently
+    // Limit balance queries in the event selects are being open and closed too frequently
     if (
       this.lastBalanceCheck &&
       Date.now() < this.lastBalanceCheck + this.balanceCheckLimit
@@ -123,6 +140,7 @@ export class ZapInComponent implements OnInit {
 
   private reset() {
     this.zapGroup.reset();
+    this.zapGroup.markAsPristine();
     this.lastBalanceCheck = null;
     this.currentSelectedToken = null;
     this.zapResult = null;
