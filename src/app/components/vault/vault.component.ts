@@ -13,6 +13,7 @@ import { IVault } from 'src/lib/types/vault.types';
   styleUrls: ['./vault.component.scss'],
 })
 export class VaultComponent implements OnInit, OnDestroy {
+  fadeIn: any;
   @Input() vault: IVault;
   @ViewChild('depositInput', {
     read: MatInput,

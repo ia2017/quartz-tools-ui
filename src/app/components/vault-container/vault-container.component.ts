@@ -4,13 +4,17 @@ import { Subscription } from 'rxjs';
 import { DataWatchService } from 'src/lib/services/data-watch.service';
 import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { Web3Service } from 'src/lib/services/web3.service';
+import { trigger, transition, useAnimation } from '@angular/animations';
+import { fadeIn } from 'ng-animate';
 
 @Component({
   selector: 'quartz-vault-container',
   templateUrl: './vault-container.component.html',
   styleUrls: ['./vault-container.component.scss'],
+  animations: [trigger('fadeIn', [transition('* => *', useAnimation(fadeIn))])],
 })
 export class VaultsContainerComponent implements OnDestroy {
+  fadeIn: any;
   private _subs = new Subscription();
   private _dataWatchInterval = 1000 * 60 * 3;
   loadingVaults = true;
