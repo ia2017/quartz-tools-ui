@@ -1,39 +1,42 @@
-<div class="row tab-option">
-  <div class="col-md-12" *ngFor="let vault of vaultService.vaults | async">
-      <mat-expansion-panel [expanded]="true" [@fadeIn]="fadeIn">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <h2 class="bold" style="margin: 0px;">
-              {{ vault.name }} <span *ngIf="!vault.active">(Inactive)</span>
-            </h2>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="vault">
-          <quartz-vault [vault]="vault"></quartz-vault>
-        </div>
-      </mat-expansion-panel>
+<div class="nav-container">
+  <div class="row tab-option">
+    <div class="col-md-12" *ngFor="let vault of vaultService.vaults | async">
+        <mat-expansion-panel [expanded]="true" [@fadeIn]="fadeIn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h2 class="bold" style="margin: 0px;">
+                {{ vault.name }} <span *ngIf="!vault.active">(Inactive)</span>
+              </h2>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="vault">
+            <quartz-vault [vault]="vault"></quartz-vault>
+          </div>
+        </mat-expansion-panel>
+    </div>
   </div>
-</div>
 
 
-<div class="row tab-option" *ngIf="loadingVaults">
-  <div class="col-4"></div>
-  <div class="col-4 bold text-center">
-   <span style="display: inline-block;">
-    Loading Vaults..
-   </span>
-   <span style="display: inline-block;">
-    <mat-spinner diameter="20"></mat-spinner>
-   </span>
+  <div class="row tab-option" *ngIf="loadingVaults">
+    <div class="col-4"></div>
+    <div class="col-4 bold text-center">
+     <span style="display: inline-block;">
+      Loading Vaults..
+     </span>
+     <span style="display: inline-block;">
+      <mat-spinner diameter="20"></mat-spinner>
+     </span>
+    </div>
+    <div class="col-4"></div>
   </div>
-  <div class="col-4"></div>
-</div>
 
-<div class="row tab-option" *ngIf="!loadingVaults && (vaultService.vaults | async).length == 0">
-  <div class="col-4"></div>
-  <div class="col-4 text-center bold">
-    Vaults currently not available on this chain.
+  <div class="row tab-option" *ngIf="!loadingVaults && (vaultService.vaults | async).length == 0">
+    <div class="col-4"></div>
+    <div class="col-4 text-center bold">
+      Vaults currently not available on this chain.
+    </div>
+    <div class="col-4"></div>
   </div>
-  <div class="col-4"></div>
+
 </div>
 

@@ -7,13 +7,18 @@ import { VaultService } from 'src/lib/services/vaults/vault.service';
 import { ZapService } from 'src/lib/services/zaps/zap.service';
 import { IZapPool, TokenInputOption, ZapInput } from 'src/lib/types/zap.types';
 import { ensureEtherFormat } from 'src/lib/utils/formatting';
+import { trigger, transition, useAnimation } from '@angular/animations';
+import { fadeIn } from 'ng-animate';
 
 @Component({
   selector: 'quartz-zap-in',
   templateUrl: './zap-in.component.html',
   styleUrls: ['./zap-in.component.scss'],
+  animations: [trigger('fadeIn', [transition('* => *', useAnimation(fadeIn))])],
 })
 export class ZapInComponent implements OnInit {
+  fadeIn: any;
+
   @Input() zap: IZapPool;
   zapGroup: FormGroup;
 
