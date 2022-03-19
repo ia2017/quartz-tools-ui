@@ -18,6 +18,7 @@ import {
 } from './pairs';
 import { BINANCE_SMART_CHAIN } from '../chains';
 import { TOKENS } from '../tokens';
+import { getAmethystPrice, getAsharePrice } from './pricing';
 
 export const VAULT_AMETHYST_UST_BSC: IVault = {
   active: true,
@@ -41,12 +42,8 @@ export const VAULT_AMETHYST_UST_BSC: IVault = {
     address: STRAT_AMETHYST_UST_ADDRESS_BSC,
   },
   fetchPriceToken0: async () => 1,
-  fetchPriceToken1: async () => {
-    return (await getSingleTokenPrice('amethyst')).usd;
-  },
-  fetchRewardTokenPrice: async () => {
-    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
-  },
+  fetchPriceToken1: getAmethystPrice,
+  fetchRewardTokenPrice: getAsharePrice,
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
   isSingleStake: false,
 };
@@ -73,12 +70,8 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
     address: STRAT_ASHARE_UST_ADDRESS_BSC,
   },
   fetchPriceToken0: async () => 1,
-  fetchPriceToken1: async () => {
-    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
-  },
-  fetchRewardTokenPrice: async () => {
-    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
-  },
+  fetchPriceToken1: getAsharePrice,
+  fetchRewardTokenPrice: getAsharePrice,
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
   isSingleStake: false,
 };
@@ -104,15 +97,9 @@ export const VAULT_AMETHYST_ASHARE_BSC: IVault = {
   strategy: {
     address: STRAT_AMETHYST_ASHARE_ADDRESS_BSC,
   },
-  fetchPriceToken0: async () => {
-    return (await getSingleTokenPrice('amethyst')).usd;
-  },
-  fetchPriceToken1: async () => {
-    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
-  },
-  fetchRewardTokenPrice: async () => {
-    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
-  },
+  fetchPriceToken0: getAmethystPrice,
+  fetchPriceToken1: getAsharePrice,
+  fetchRewardTokenPrice: getAsharePrice,
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
   isSingleStake: false,
 };
@@ -138,15 +125,11 @@ const VAULT_SINGLE_STAKE_AMETHYST: IVault = {
   strategy: {
     address: STRAT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
   },
-  fetchPriceToken0: async () => {
-    return (await getSingleTokenPrice('amethyst')).usd;
-  },
+  fetchPriceToken0: getAmethystPrice,
   fetchPriceToken1: async () => {
     return null;
   },
-  fetchRewardTokenPrice: async () => {
-    return (await getSingleTokenPrice('quartz-defi-ashare')).usd;
-  },
+  fetchRewardTokenPrice: getAsharePrice,
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
   isSingleStake: true,
 };
