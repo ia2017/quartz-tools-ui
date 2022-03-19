@@ -140,7 +140,6 @@ export class ZapInComponent implements OnInit {
 
   private reset() {
     this.zapGroup.reset();
-    this.zapGroup.markAsPristine();
     this.lastBalanceCheck = null;
     this.currentSelectedToken = null;
     this.zapResult = null;

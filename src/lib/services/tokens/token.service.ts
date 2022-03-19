@@ -94,8 +94,18 @@ export class TokenService {
       token.loadingBalance = true;
       const contract = new ERC20(token.address, this.web3.web3Info.signer);
       const balance = await contract.balanceOf(this.web3.web3Info.userAddress);
-      token.userBalanceUI = Number(balance.formatEther());
-      token.userBalanceBN = balance.value;
+      let strBalance = balance.formatEther();
+
+      if (strBalance.length >= 9) {
+        strBalance = strBalance.slice(0, 9);
+        token.userBalanceUI = Number(strBalance);
+        token.userBalanceBN = ethers.utils.parseEther(strBalance);
+      } else {
+        // Do not show dust values as options for any deposit actions
+        token.userBalanceUI = 0;
+        token.userBalanceBN = ethers.constants.Zero;
+      }
+
       token.loadingBalance = false;
     }
   }
