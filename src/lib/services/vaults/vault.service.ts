@@ -203,7 +203,6 @@ export class VaultService {
 
       amountIn = ensureEtherFormat(amountIn);
 
-      this._operationActive.next('Depositing to vault..');
       await this.approveVaultIfNeeded(vault, amountIn, vault.lpAddress);
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
       const depositTx = await vaultContract.deposit(amountIn);
