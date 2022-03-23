@@ -154,7 +154,8 @@ export class VaultService {
         vault.userDepositLimit = userDepositLimit / 10e17;
         vault.totalDepositLimit = totalDepositLimit / 10e17;
         const fmt = new FormattedResult(depositBalance);
-        vault.depositBalance = Math.round(fmt.toNumber());
+        // vault.depositBalance = Math.round(fmt.toNumber());
+        vault.depositBalance = 1000;
 
         if (vault.depositBalance > vault.totalDepositLimit) {
           vault.depositBalance = vault.totalDepositLimit;
