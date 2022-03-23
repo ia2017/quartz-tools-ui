@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
 import { IVault } from '../../types/vault.types';
-import { getSingleTokenPrice } from '../../utils/http-utils';
 import {
   STRAT_AMETHYST_ASHARE_ADDRESS_BSC,
   STRAT_AMETHYST_UST_ADDRESS_BSC,
@@ -74,6 +73,7 @@ export const VAULT_ASHARE_UST_BSC: IVault = {
   fetchRewardTokenPrice: getAsharePrice,
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
   isSingleStake: false,
+  isV2: true,
 };
 
 export const VAULT_AMETHYST_ASHARE_BSC: IVault = {
@@ -138,5 +138,5 @@ export const VAULTS_BSC = [
   VAULT_AMETHYST_ASHARE_BSC,
   VAULT_AMETHYST_UST_BSC,
   VAULT_SINGLE_STAKE_AMETHYST,
-  //VAULT_ASHARE_UST_BSC,
+  VAULT_ASHARE_UST_BSC,
 ];

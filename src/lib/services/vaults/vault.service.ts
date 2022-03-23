@@ -118,23 +118,33 @@ export class VaultService {
         [
           'function paused() view returns (bool)',
           'function withdrawalFee() view returns (uint256)',
+          'function protocolWithdrawalFee() view returns (uint256)',
         ],
         this.web3.web3Info.provider
       );
 
-      // Get/set basic vault token info
-      const [name, symbol, paused, withdrawalFee] = await Promise.all([
+      const promises = [
         vault.contract.name(),
         vault.contract.symbol(),
         vault.strategyContract.paused(),
         vault.strategyContract.withdrawalFee(),
-      ]);
+      ];
+
+      // Get/set basic vault token info
+      const [name, symbol, paused, withdrawalFee] = await Promise.all(promises);
+
+      if (vault.isV2) {
+        const protocolWithdrawalFee =
+          await vault.strategyContract.protocolWithdrawalFee();
+        vault.strategy.protocolWithdrawFee = protocolWithdrawalFee / 10;
+      }
 
       vault.tokenName = name;
       vault.symbol = symbol;
       vault.strategy.paused = paused;
       vault.strategy.withdrawlFee = withdrawalFee.toNumber() / 1000;
     } catch (error) {
+      console.error(error);
       this._error.next(new Error(`Error initializing vault: ${vault.name}`));
     }
   }

@@ -37,10 +37,12 @@ export interface IVault {
   fetchRewardTokenPrice: () => Promise<number>;
   compoundsDaily: number;
   isSingleStake: boolean;
+  isV2?: boolean;
 }
 
 export interface IStrategy {
   address: string;
   paused?: boolean;
   withdrawlFee?: number;
+  protocolWithdrawFee?: number;
 }

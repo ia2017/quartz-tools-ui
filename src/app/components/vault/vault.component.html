@@ -145,18 +145,26 @@
         </button>
         </div>
 
-        <div class="bold" style="padding: 5px;">
+        <ul class="list-group list-group-horizontal-sm" style="margin-top: 5px;">
+          <li class="list-group-item theme-background">Deposit Fee: 0%</li>
+          <li class="list-group-item theme-background">Withdrawl Fee: {{ vault.strategy.withdrawlFee }}%</li>
+          <li class="list-group-item theme-background">Protocol Fee: {{ vault.strategy.protocolWithdrawFee || 0 }}%</li>
+        </ul>
+
+        <!-- <div class="bold" style="padding: 5px;">
           <span style="margin-right: 5px;">
             Deposit Fee: 0%
           </span>
           <span>
-            Withdrawl Fee: {{ vault.strategy.withdrawlFee }}%
+            - Withdrawl Fee: {{ vault.strategy.withdrawlFee }}%
           </span>
-        </div>
+          <span *ngIf="vault.isV2">
+            - Protocol Fee: {{ vault.strategy.protocolWithdrawFee }}%
+          </span>
+        </div> -->
       </div>
 
       <div class="col-md-6 clearfix deposit-withdrawl">
-
         <mat-form-field appearance="outline">
           <input
           type="text"
