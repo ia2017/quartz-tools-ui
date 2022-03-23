@@ -97,7 +97,6 @@
           [step]="1"
           thumbLabel
           tickInterval="25"
-
           (input)="onDepositSliderInputChange($event.value)">
         </mat-slider>
 
@@ -110,7 +109,15 @@
           </span>
         </div>
 
+
+
         <div class="clearfix">
+          <ul class="list-group deposit-list-group list-group-horizontal-sm" *ngIf="vault.isV2">
+            <li class="list-group-item bold">User Deposit Limit: {{ vault.userDepositLimit}}</li>
+            <li class="list-group-item bold">
+              Total Deposits:  {{ vault.depositBalance }}/{{ vault.dailyDepositLimit}} (current limit)</li>
+          </ul>
+
           <button
           *ngIf="!vault.contractApproved"
           mat-raised-button
@@ -125,7 +132,11 @@
           *ngIf="vault.contractApproved"
           mat-raised-button
           class="float-right quartz-btn"
-          [disabled]="!vault.contractApproved || !vault.active || !vault.userLpWalletBalance || vault.strategy.paused"
+          [disabled]="!vault.contractApproved
+          || !vault.active
+          || !vault.userLpWalletBalance
+          || vault.strategy.paused
+          || vault.depositLimitReached"
           (click)="setVaultDepositAll()">
 
           <span *ngIf="vault.active">Deposit All</span>
@@ -138,30 +149,21 @@
           class="float-right quartz-btn"
           [disabled]="!vault.active
           || !vault.userLpWalletBalance
-          || vault.strategy.paused"
+          || vault.strategy.paused
+          || vault.depositLimitReached"
           (click)="setVaultDeposit()">
           <span *ngIf="vault.active">Deposit</span>
           <span *ngIf="!vault.active">Inactive</span>
         </button>
         </div>
 
-        <ul class="list-group list-group-horizontal-sm" style="margin-top: 5px;">
+        <ul class="list-group list-group-horizontal-sm" style="margin-top: 15px;">
           <li class="list-group-item theme-background">Deposit Fee: 0%</li>
           <li class="list-group-item theme-background">Withdrawal Fee: {{ vault.strategy.withdrawlFee }}%</li>
-          <li class="list-group-item theme-background">Protocol Withdrawal Fee: {{ vault.strategy.protocolWithdrawFee || 0 }}%</li>
+          <li class="list-group-item theme-background" *ngIf="vault.isV2">
+            Protocol Withdrawal Fee: {{ vault.strategy.protocolWithdrawFee || 0 }}%
+          </li>
         </ul>
-
-        <!-- <div class="bold" style="padding: 5px;">
-          <span style="margin-right: 5px;">
-            Deposit Fee: 0%
-          </span>
-          <span>
-            - Withdrawl Fee: {{ vault.strategy.withdrawlFee }}%
-          </span>
-          <span *ngIf="vault.isV2">
-            - Protocol Fee: {{ vault.strategy.protocolWithdrawFee }}%
-          </span>
-        </div> -->
       </div>
 
       <div class="col-md-6 clearfix deposit-withdrawl">

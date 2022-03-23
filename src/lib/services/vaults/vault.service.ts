@@ -134,9 +134,32 @@ export class VaultService {
       const [name, symbol, paused, withdrawalFee] = await Promise.all(promises);
 
       if (vault.isV2) {
-        const protocolWithdrawalFee =
-          await vault.strategyContract.protocolWithdrawalFee();
+        const promises = [
+          vault.strategyContract.protocolWithdrawalFee(),
+          //  vault.contract.depositLimitsEnabled(),
+          vault.contract.userDepositLimit(),
+          vault.contract.dailyDepositLimit(),
+          vault.contract.balance(),
+        ];
+        const [
+          protocolWithdrawalFee,
+          //  depositLimitsEnabled,
+          userDepositLimit,
+          dailyDepositLimit,
+          depositBalance,
+        ] = await Promise.all(promises);
+
         vault.strategy.protocolWithdrawFee = protocolWithdrawalFee / 10;
+        // vault.depositLimitsEnabled = depositLimitsEnabled;
+        vault.userDepositLimit = userDepositLimit / 10e17;
+        vault.dailyDepositLimit = dailyDepositLimit / 10e17;
+        const fmt = new FormattedResult(depositBalance);
+        vault.depositBalance = Math.round(fmt.toNumber());
+
+        if (vault.depositBalance > vault.dailyDepositLimit) {
+          vault.depositBalance = vault.dailyDepositLimit;
+          vault.depositLimitReached = true;
+        }
       }
 
       vault.tokenName = name;

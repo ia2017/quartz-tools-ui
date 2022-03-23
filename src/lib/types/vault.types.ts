@@ -38,6 +38,11 @@ export interface IVault {
   compoundsDaily: number;
   isSingleStake: boolean;
   isV2?: boolean;
+  userDepositLimit?: number;
+  dailyDepositLimit?: number;
+  depositLimitsEnabled?: boolean;
+  depositBalance?: number; // Amount of LP deposited into vault
+  depositLimitReached?: boolean;
 }
 
 export interface IStrategy {

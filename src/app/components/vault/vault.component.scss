@@ -89,3 +89,10 @@ button[mat-raised-button] {
   text-transform: uppercase;
   text-shadow: 0 2px 2px rgba(0, 0, 0, 0.4);
 }
+
+.deposit-list-group {
+  display: inline-block;
+  li {
+    display: inline-block;
+  }
+}

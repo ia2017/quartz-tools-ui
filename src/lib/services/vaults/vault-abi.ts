@@ -21,6 +21,16 @@ export const VAULT_ABI = [
         name: '_approvalDelay',
         type: 'uint256',
       },
+      {
+        internalType: 'uint256',
+        name: '_dailyDepositLimit',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_userDepositLimit',
+        type: 'uint256',
+      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -228,6 +238,19 @@ export const VAULT_ABI = [
   },
   {
     inputs: [],
+    name: 'dailyDepositLimit',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'decimals',
     outputs: [
       {
@@ -387,6 +410,45 @@ export const VAULT_ABI = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_dailyDepositLimit',
+        type: 'uint256',
+      },
+    ],
+    name: 'setDailyDepositLimit',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bool',
+        name: '_enabled',
+        type: 'bool',
+      },
+    ],
+    name: 'setDepositLimitEnabaled',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_userDepositLimit',
+        type: 'uint256',
+      },
+    ],
+    name: 'setUserDepositLimit',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'stratCandidate',
     outputs: [
@@ -518,6 +580,19 @@ export const VAULT_ABI = [
   },
   {
     inputs: [],
+    name: 'userDepositLimit',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'want',
     outputs: [
       {
@@ -533,7 +608,7 @@ export const VAULT_ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: '_shares',
+        name: '_amountSharesOut',
         type: 'uint256',
       },
     ],
