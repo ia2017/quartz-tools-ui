@@ -109,52 +109,52 @@
           </span>
         </div>
 
-
-
         <div class="clearfix">
-          <ul class="list-group deposit-list-group list-group-horizontal-sm" *ngIf="vault.isV2">
+          <ul
+            class="list-group deposit-list-group list-group-horizontal-sm"
+            *ngIf="vault.isV2 && vault.depositLimitsEnabled">
             <li class="list-group-item bold">User Deposit Limit: {{ vault.userDepositLimit}}</li>
             <li class="list-group-item bold">
-              Total Deposits:  {{ vault.depositBalance }}/{{ vault.dailyDepositLimit}} (current limit)</li>
+              Total Deposits:  {{ vault.depositBalance }}/{{ vault.totalDepositLimit}} (current limit)</li>
           </ul>
 
           <button
-          *ngIf="!vault.contractApproved"
-          mat-raised-button
-          class="float-right quartz-btn"
-          (click)="setApproval()"
-          [disabled]="!vault.active || vault.strategy.paused">
-          <span *ngIf="vault.active">Approve</span>
-          <span *ngIf="!vault.active">Inactive</span>
-        </button>
+            *ngIf="!vault.contractApproved"
+            mat-raised-button
+            class="float-right quartz-btn"
+            (click)="setApproval()"
+            [disabled]="!vault.active || vault.strategy.paused">
+            <span *ngIf="vault.active">Approve</span>
+            <span *ngIf="!vault.active">Inactive</span>
+          </button>
 
-        <button
-          *ngIf="vault.contractApproved"
-          mat-raised-button
-          class="float-right quartz-btn"
-          [disabled]="!vault.contractApproved
-          || !vault.active
-          || !vault.userLpWalletBalance
-          || vault.strategy.paused
-          || vault.depositLimitReached"
-          (click)="setVaultDepositAll()">
+          <button
+            *ngIf="vault.contractApproved"
+            mat-raised-button
+            class="float-right quartz-btn"
+            [disabled]="!vault.contractApproved
+            || !vault.active
+            || !vault.userLpWalletBalance
+            || vault.strategy.paused
+            || vault.depositLimitReached"
+            (click)="setVaultDepositAll()">
 
-          <span *ngIf="vault.active">Deposit All</span>
-          <span *ngIf="!vault.active">Inactive</span>
-        </button>
+            <span *ngIf="vault.active">Deposit All</span>
+            <span *ngIf="!vault.active">Inactive</span>
+          </button>
 
-        <button
-          *ngIf="vault.contractApproved"
-          mat-raised-button
-          class="float-right quartz-btn"
-          [disabled]="!vault.active
-          || !vault.userLpWalletBalance
-          || vault.strategy.paused
-          || vault.depositLimitReached"
-          (click)="setVaultDeposit()">
-          <span *ngIf="vault.active">Deposit</span>
-          <span *ngIf="!vault.active">Inactive</span>
-        </button>
+          <button
+            *ngIf="vault.contractApproved"
+            mat-raised-button
+            class="float-right quartz-btn"
+            [disabled]="!vault.active
+            || !vault.userLpWalletBalance
+            || vault.strategy.paused
+            || vault.depositLimitReached"
+            (click)="setVaultDeposit()">
+            <span *ngIf="vault.active">Deposit</span>
+            <span *ngIf="!vault.active">Inactive</span>
+          </button>
         </div>
 
         <ul class="list-group list-group-horizontal-sm" style="margin-top: 15px;">

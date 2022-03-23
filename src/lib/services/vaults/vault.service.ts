@@ -136,28 +136,28 @@ export class VaultService {
       if (vault.isV2) {
         const promises = [
           vault.strategyContract.protocolWithdrawalFee(),
-          //  vault.contract.depositLimitsEnabled(),
+          vault.contract.depositLimitsEnabled(),
           vault.contract.userDepositLimit(),
-          vault.contract.dailyDepositLimit(),
+          vault.contract.totalDepositLimit(),
           vault.contract.balance(),
         ];
         const [
           protocolWithdrawalFee,
-          //  depositLimitsEnabled,
+          depositLimitsEnabled,
           userDepositLimit,
-          dailyDepositLimit,
+          totalDepositLimit,
           depositBalance,
         ] = await Promise.all(promises);
 
         vault.strategy.protocolWithdrawFee = protocolWithdrawalFee / 10;
-        // vault.depositLimitsEnabled = depositLimitsEnabled;
+        vault.depositLimitsEnabled = depositLimitsEnabled;
         vault.userDepositLimit = userDepositLimit / 10e17;
-        vault.dailyDepositLimit = dailyDepositLimit / 10e17;
+        vault.totalDepositLimit = totalDepositLimit / 10e17;
         const fmt = new FormattedResult(depositBalance);
         vault.depositBalance = Math.round(fmt.toNumber());
 
-        if (vault.depositBalance > vault.dailyDepositLimit) {
-          vault.depositBalance = vault.dailyDepositLimit;
+        if (vault.depositBalance > vault.totalDepositLimit) {
+          vault.depositBalance = vault.totalDepositLimit;
           vault.depositLimitReached = true;
         }
       }

@@ -39,7 +39,7 @@ export interface IVault {
   isSingleStake: boolean;
   isV2?: boolean;
   userDepositLimit?: number;
-  dailyDepositLimit?: number;
+  totalDepositLimit?: number;
   depositLimitsEnabled?: boolean;
   depositBalance?: number; // Amount of LP deposited into vault
   depositLimitReached?: boolean;

@@ -23,7 +23,7 @@ export const VAULT_ABI = [
       },
       {
         internalType: 'uint256',
-        name: '_dailyDepositLimit',
+        name: '_totalDepositLimit',
         type: 'uint256',
       },
       {
@@ -238,19 +238,6 @@ export const VAULT_ABI = [
   },
   {
     inputs: [],
-    name: 'dailyDepositLimit',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
     name: 'decimals',
     outputs: [
       {
@@ -304,6 +291,19 @@ export const VAULT_ABI = [
     name: 'depositAll',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'depositLimitsEnabled',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -412,12 +412,12 @@ export const VAULT_ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '_dailyDepositLimit',
-        type: 'uint256',
+        internalType: 'bool',
+        name: '_enabled',
+        type: 'bool',
       },
     ],
-    name: 'setDailyDepositLimit',
+    name: 'setDepositLimitEnabaled',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -425,12 +425,12 @@ export const VAULT_ABI = [
   {
     inputs: [
       {
-        internalType: 'bool',
-        name: '_enabled',
-        type: 'bool',
+        internalType: 'uint256',
+        name: '_totalDepositLimit',
+        type: 'uint256',
       },
     ],
-    name: 'setDepositLimitEnabaled',
+    name: 'setTotalDepositLimit',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -487,6 +487,19 @@ export const VAULT_ABI = [
         internalType: 'string',
         name: '',
         type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'totalDepositLimit',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
