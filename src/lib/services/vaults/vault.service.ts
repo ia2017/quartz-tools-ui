@@ -154,8 +154,8 @@ export class VaultService {
         vault.userDepositLimit = userDepositLimit / 10e17;
         vault.totalDepositLimit = totalDepositLimit / 10e17;
         const fmt = new FormattedResult(depositBalance);
-        // vault.depositBalance = Math.round(fmt.toNumber());
-        vault.depositBalance = 1000;
+        vault.depositBalance = Math.round(fmt.toNumber());
+        //vault.depositBalance = 2000;
 
         if (vault.depositBalance >= vault.totalDepositLimit) {
           vault.depositBalance = vault.totalDepositLimit;
@@ -203,6 +203,7 @@ export class VaultService {
       }
 
       amountIn = ensureEtherFormat(amountIn);
+      console.log(amountIn.toString());
 
       await this.approveVaultIfNeeded(vault, amountIn, vault.lpAddress);
       const vaultContract = this.getVaultInstance(vault.vaultAddress);
