@@ -163,6 +163,12 @@ export class VaultService {
         }
       }
 
+      if (vault.protocolVersion) {
+        const protocolWithdrawalFee =
+          await vault.strategyContract.protocolWithdrawalFee();
+        vault.strategy.protocolWithdrawFee = protocolWithdrawalFee / 10;
+      }
+
       vault.tokenName = name;
       vault.symbol = symbol;
       vault.strategy.paused = paused;

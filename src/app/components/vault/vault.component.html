@@ -160,7 +160,7 @@
         <ul class="list-group list-group-horizontal-sm" style="margin-top: 15px;">
           <li class="list-group-item theme-background">Deposit Fee: 0%</li>
           <li class="list-group-item theme-background">Withdrawal Fee: {{ vault.strategy.withdrawlFee }}%</li>
-          <li class="list-group-item theme-background" *ngIf="vault.isV2">
+          <li class="list-group-item theme-background" *ngIf="vault.isV2 || vault.protocolVersion">
             Protocol Withdrawal Fee: {{ vault.strategy.protocolWithdrawFee || 0 }}%
           </li>
         </ul>

@@ -43,6 +43,7 @@ export interface IVault {
   depositLimitsEnabled?: boolean;
   depositBalance?: number; // Amount of LP deposited into vault
   depositLimitReached?: boolean;
+  protocolVersion?: boolean;
 }
 
 export interface IStrategy {

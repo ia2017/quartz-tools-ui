@@ -5,6 +5,8 @@ import {
   STRAT_AMETHYST_UST_ADDRESS_BSC,
   STRAT_ASHARE_UST_ADDRESS_BSC,
   STRAT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
+  V2_STRAT_AMETHYST_UST_ADDRESS_BSC,
+  V2_VAULT_AMETHYST_UST_ADDRESS_BSC,
   VAULT_AMETHYST_ASHARE_ADDRESS_BSC,
   VAULT_AMETHYST_UST_ADDRESS_BSC,
   VAULT_ASHARE_UST_ADDRESS_BSC,
@@ -45,6 +47,35 @@ export const VAULT_AMETHYST_UST_BSC: IVault = {
   fetchRewardTokenPrice: getAsharePrice,
   compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
   isSingleStake: false,
+};
+
+export const V2_VAULT_AMETHYST_UST_BSC: IVault = {
+  active: true,
+  chainId: BINANCE_SMART_CHAIN.chainId,
+  name: 'X-AMES-UST',
+  poolId: 0,
+  vaultAddress: V2_VAULT_AMETHYST_UST_ADDRESS_BSC,
+  lpAddress: PAIR_UST_AMETHYST_BSC,
+  userLpWalletBalance: 0,
+  walletBalanceBN: ethers.constants.Zero,
+  userLpDepositBalanceUI: 0,
+  userLpDepositBalanceBN: ethers.constants.Zero,
+  APY: 0,
+  dailyAPR: 0.0,
+  totalValueLocked: 0,
+  tvlChecked: false,
+  loading: false,
+  logoURI: 'assets/ames-ust-lp-logo.svg',
+  contractApproved: false,
+  strategy: {
+    address: V2_STRAT_AMETHYST_UST_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => 1,
+  fetchPriceToken1: getAmethystPrice,
+  fetchRewardTokenPrice: getAsharePrice,
+  compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
+  isSingleStake: false,
+  protocolVersion: true,
 };
 
 export const VAULT_ASHARE_UST_BSC: IVault = {
@@ -135,6 +166,7 @@ const VAULT_SINGLE_STAKE_AMETHYST: IVault = {
 };
 
 export const VAULTS_BSC = [
+  V2_VAULT_AMETHYST_UST_BSC,
   VAULT_AMETHYST_ASHARE_BSC,
   VAULT_AMETHYST_UST_BSC,
   VAULT_SINGLE_STAKE_AMETHYST,
