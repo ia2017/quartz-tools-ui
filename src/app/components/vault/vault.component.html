@@ -136,7 +136,9 @@
             || !vault.active
             || !vault.userLpWalletBalance
             || vault.strategy.paused
-            || vault.depositLimitReached"
+            || vault.depositLimitReached
+            || vault.name === 'AMES-UST'
+            || vault.name === 'X-AMES'"
             (click)="setVaultDepositAll()">
 
             <span *ngIf="vault.active">Deposit All</span>
@@ -151,7 +153,8 @@
             || !vault.userLpWalletBalance
             || vault.strategy.paused
             || vault.depositLimitReached
-            || vault.name === 'AMES-UST'"
+            || vault.name === 'AMES-UST'
+            || vault.name === 'X-AMES'"
             (click)="setVaultDeposit()">
             <span *ngIf="vault.active">Deposit</span>
             <span *ngIf="!vault.active">Inactive</span>
