@@ -108,36 +108,6 @@ export const VAULT_AMETHYST_ASHARE_BSC: IVault = {
   isSingleStake: false,
 };
 
-const VAULT_SINGLE_STAKE_AMETHYST: IVault = {
-  active: true,
-  chainId: BINANCE_SMART_CHAIN.chainId,
-  name: 'AMES',
-  poolId: 6,
-  vaultAddress: VAULT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
-  lpAddress: TOKENS.AMETHYST.BSC,
-  userLpWalletBalance: 0,
-  walletBalanceBN: ethers.constants.Zero,
-  userLpDepositBalanceUI: 0,
-  userLpDepositBalanceBN: ethers.constants.Zero,
-  APY: 0,
-  dailyAPR: 0.0,
-  totalValueLocked: 0,
-  tvlChecked: false,
-  loading: false,
-  logoURI: 'assets/ames-logo.svg',
-  contractApproved: false,
-  strategy: {
-    address: STRAT_SINGLE_STAKE_AMETHYST_ADDRESS_BSC,
-  },
-  fetchPriceToken0: getAmethystPrice,
-  fetchPriceToken1: async () => {
-    return null;
-  },
-  fetchRewardTokenPrice: getAsharePrice,
-  compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
-  isSingleStake: true,
-};
-
 export const V2_VAULT_ASHARE_UST_BSC: IVault = {
   active: true,
   chainId: BINANCE_SMART_CHAIN.chainId,
@@ -204,6 +174,5 @@ export const VAULTS_BSC = [
   V2_VAULT_AMETHYST_UST_BSC,
   V2_VAULT_ASHARE_UST_BSC,
   VAULT_AMETHYST_ASHARE_BSC,
-  VAULT_SINGLE_STAKE_AMETHYST,
   VAULT_AMETHYST_UST_BSC,
 ];

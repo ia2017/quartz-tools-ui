@@ -157,10 +157,10 @@ export class VaultService {
         vault.depositBalance = Math.round(fmt.toNumber());
         //vault.depositBalance = 2000;
 
-        if (vault.depositBalance >= vault.totalDepositLimit) {
-          vault.depositBalance = vault.totalDepositLimit;
-          vault.depositLimitReached = true;
-        }
+        // if (vault.depositBalance >= vault.totalDepositLimit) {
+        //   vault.depositBalance = vault.totalDepositLimit;
+        //   vault.depositLimitReached = true;
+        // }
       }
 
       if (vault.protocolVersion) {
