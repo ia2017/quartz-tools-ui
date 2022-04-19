@@ -48,50 +48,50 @@ export const ZAP_UST_AMES_BSC: IZapPool = {
   vault: VAULT_AMETHYST_UST_BSC,
 };
 
-export const ZAP_AMES_ASHARE_BSC: IZapPool = {
-  active: true,
-  name: 'AMES-ASHARE',
-  poolId: 5,
-  pairAddress: PAIR_AMETHYST_ASHARE_PAIR_ADDRESS_BSC,
-  token0: null,
-  token1: null,
-  routerAddress: PANCAKESWAP_ROUTER_ADDRESS,
-  pair: null,
-  tokenInAddress: null,
-  tokenInAmount: null,
-  logoPath: 'assets/ames-ashare-lp-logo.svg',
-  path: [],
-  tokenInputOptions: [
-    {
-      ...ASHARE_INPUT_OPTION,
-      address: TOKENS.ASHARE.BSC,
-      pathTokenInToLp0: [TOKENS.ASHARE.BSC, TOKENS.AMETHYST.BSC],
-      pathTokenInToLp1: [TOKENS.ASHARE.BSC],
-    },
-    {
-      ...UST_INPUT_OPTION,
-      address: TOKENS.UST.BSC,
-      pathTokenInToLp0: [TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
-      pathTokenInToLp1: [
-        TOKENS.UST.BSC,
-        TOKENS.AMETHYST.BSC,
-        TOKENS.ASHARE.BSC,
-      ],
-    },
-    {
-      ...BUSD_INPUT_OPTION,
-      address: TOKENS.BUSD.BSC,
-      pathTokenInToLp0: [TOKENS.BUSD.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
-      pathTokenInToLp1: [
-        TOKENS.BUSD.BSC,
-        TOKENS.UST.BSC,
-        TOKENS.AMETHYST.BSC,
-        TOKENS.ASHARE.BSC,
-      ],
-    },
-  ],
-  vault: VAULT_AMETHYST_ASHARE_BSC,
-};
+// export const ZAP_AMES_ASHARE_BSC: IZapPool = {
+//   active: true,
+//   name: 'AMES-ASHARE',
+//   poolId: 5,
+//   pairAddress: PAIR_AMETHYST_ASHARE_PAIR_ADDRESS_BSC,
+//   token0: null,
+//   token1: null,
+//   routerAddress: PANCAKESWAP_ROUTER_ADDRESS,
+//   pair: null,
+//   tokenInAddress: null,
+//   tokenInAmount: null,
+//   logoPath: 'assets/ames-ashare-lp-logo.svg',
+//   path: [],
+//   tokenInputOptions: [
+//     {
+//       ...ASHARE_INPUT_OPTION,
+//       address: TOKENS.ASHARE.BSC,
+//       pathTokenInToLp0: [TOKENS.ASHARE.BSC, TOKENS.AMETHYST.BSC],
+//       pathTokenInToLp1: [TOKENS.ASHARE.BSC],
+//     },
+//     {
+//       ...UST_INPUT_OPTION,
+//       address: TOKENS.UST.BSC,
+//       pathTokenInToLp0: [TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+//       pathTokenInToLp1: [
+//         TOKENS.UST.BSC,
+//         TOKENS.AMETHYST.BSC,
+//         TOKENS.ASHARE.BSC,
+//       ],
+//     },
+//     {
+//       ...BUSD_INPUT_OPTION,
+//       address: TOKENS.BUSD.BSC,
+//       pathTokenInToLp0: [TOKENS.BUSD.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+//       pathTokenInToLp1: [
+//         TOKENS.BUSD.BSC,
+//         TOKENS.UST.BSC,
+//         TOKENS.AMETHYST.BSC,
+//         TOKENS.ASHARE.BSC,
+//       ],
+//     },
+//   ],
+//   vault: VAULT_AMETHYST_ASHARE_BSC,
+// };
 
 // export const ZAP_AMES_SINGLE_STAKE_BSC: IZapPool = {
 //   active: true,
@@ -138,5 +138,5 @@ export const ZAP_AMES_ASHARE_BSC: IZapPool = {
 // };
 
 export const ZAPS_BSC: ChainZapInfo = {
-  ZAPS: [ZAP_UST_AMES_BSC, ZAP_AMES_ASHARE_BSC],
+  ZAPS: [ZAP_UST_AMES_BSC],
 };
