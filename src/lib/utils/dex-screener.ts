@@ -3,7 +3,7 @@ import axios from 'axios';
 const PAIR_INFO_URL = 'https://api.dexscreener.io/latest/dex/pairs/';
 
 export async function getPairInfo(
-  chainSymbol: 'bsc' | 'harmony',
+  chainSymbol: 'bsc' | 'harmony' | 'avalanche',
   pairAddress: string
 ) {
   try {

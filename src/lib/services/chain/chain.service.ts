@@ -6,6 +6,8 @@ import {
   BINANCE_SMART_CHAIN,
   CURRENT_CHAINS,
   HARMONY_CHAIN,
+  BINANCE_SMART_CHAIN_TESTNET,
+  AVALANCHE
 } from '../../data/chains';
 
 @Injectable({ providedIn: 'root' })
@@ -18,6 +20,8 @@ export class ChainService {
   private readonly currentSupportedChains = [
     HARMONY_CHAIN,
     BINANCE_SMART_CHAIN,
+    BINANCE_SMART_CHAIN_TESTNET,
+    AVALANCHE,
   ];
 
   constructor() {}

@@ -32,3 +32,20 @@ export const BUSD_INPUT_OPTION: TokenInputOption = {
   pathTokenInToLp0: [],
   pathTokenInToLp1: [],
 };
+
+export const GSHARE_INPUT_OPTION: TokenInputOption = {
+  tokenName: 'GSHARE',
+  address: '',
+  logoPath: TOKENS.GSHARE.logoPath,
+  pathTokenInToLp0: [],
+  pathTokenInToLp1: [],
+};
+
+export const AVAX_INPUT_OPTION: TokenInputOption = {
+  tokenName: 'AVAX',
+  address: '',
+  logoPath: TOKENS.BNB.logoPath,
+  pathTokenInToLp0: [],
+  pathTokenInToLp1: [],
+};
+

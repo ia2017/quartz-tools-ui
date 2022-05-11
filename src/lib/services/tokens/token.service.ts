@@ -24,6 +24,10 @@ import {
   PAIR_UST_AMETHYST_BSC,
   PAIR_ASHARE_UST_BSC,
 } from 'src/lib/data/bsc/pairs';
+import {
+  PAIR_GRAVE_AVAX_ADDRESS,
+  PAIR_GSHARE_AVAX_ADDRESS,
+} from 'src/lib/data/avalanche/pairs';
 import { BehaviorSubject } from 'rxjs';
 import { TokenPriceInfo } from 'src/lib/types/token.types';
 import { PRICE_TOKENS } from 'src/lib/data/price-tokens';
@@ -185,6 +189,16 @@ export class TokenService {
 
     this.contractRefs[PAIR_UST_AMETHYST_BSC] = createPairContract(
       PAIR_UST_AMETHYST_BSC,
+      this.web3.web3Info.signer
+    );
+
+    this.contractRefs[PAIR_GRAVE_AVAX_ADDRESS] = createPairContract(
+      PAIR_GRAVE_AVAX_ADDRESS,
+      this.web3.web3Info.signer
+    );
+
+    this.contractRefs[PAIR_GSHARE_AVAX_ADDRESS] = createPairContract(
+      PAIR_GSHARE_AVAX_ADDRESS,
       this.web3.web3Info.signer
     );
   }

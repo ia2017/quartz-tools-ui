@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { TokenBaseConfig } from './token.types';
 
-export type ChainName = 'Harmony' | 'Avalance';
+export type ChainName = 'Harmony' | 'Avalanche';
 
 export interface ChainBaseConfig {
   name: string;

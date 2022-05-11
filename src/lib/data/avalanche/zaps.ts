@@ -1,36 +1,34 @@
 import { ChainZapInfo, IZapPool } from 'src/lib/types/zap.types';
 import {
-  ASHARE_INPUT_OPTION,
-  BNB_INPUT_OPTION,
-  BUSD_INPUT_OPTION,
-  UST_INPUT_OPTION,
+  GSHARE_INPUT_OPTION,
+  AVAX_INPUT_OPTION,
 } from '../common/zap-input-options';
 import { TOKENS } from '../tokens';
-import { PANCAKESWAP_ROUTER_ADDRESS } from './bsc-addresses';
+import { TRADERJOE_ROUTER_ADDRESS } from './avalanche-addresses';
 import {
-  PAIR_AMETHYST_ASHARE_PAIR_ADDRESS_BSC,
-  PAIR_UST_AMETHYST_BSC,
+  PAIR_GRAVE_AVAX_ADDRESS,
+  PAIR_GSHARE_AVAX_ADDRESS,
 } from './pairs';
-import { VAULT_AMETHYST_ASHARE_BSC, VAULT_AMETHYST_UST_BSC, VAULT_GRAVE_AVAX } from './vaults';
+import { VAULT_GRAVE_AVAX } from './vaults';
 
-export const ZAP_UST_AMES_BSC: IZapPool = {
+export const ZAP_AVAX_GRAVE_AVALANCHE: IZapPool = {
   active: true,
-  name: 'AMES-UST',
+  name: 'GRAVE-AVAX',
   poolId: 0,
-  pairAddress: PAIR_UST_AMETHYST_BSC,
+  pairAddress: PAIR_GRAVE_AVAX_ADDRESS,
   token0: null,
   token1: null,
-  routerAddress: PANCAKESWAP_ROUTER_ADDRESS,
+  routerAddress: TRADERJOE_ROUTER_ADDRESS,
   pair: null,
   tokenInAddress: null,
   tokenInAmount: null,
-  logoPath: 'assets/ames-ust-lp-logo.svg',
+  logoPath: 'assets/logo.a9502d88.svg',
   tokenInputOptions: [
     {
-      ...UST_INPUT_OPTION,
-      address: TOKENS.UST.BSC,
-      pathTokenInToLp0: [TOKENS.UST.BSC],
-      pathTokenInToLp1: [TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+      ...AVAX_INPUT_OPTION,
+      address: TOKENS.AVAX.AVALANCHE,
+      pathTokenInToLp0: [TOKENS.AVAX.AVALANCHE],
+      pathTokenInToLp1: [TOKENS.AVAX.AVALANCHE, TOKENS.GRAVE.AVALANCHE],
     },
     // {
     //   ...BNB_INPUT_OPTION,
@@ -38,12 +36,12 @@ export const ZAP_UST_AMES_BSC: IZapPool = {
     //   pathTokenInToLp0: [TOKENS.BNB.BSC, TOKENS.UST.BSC],
     //   pathTokenInToLp1: [TOKENS.BNB.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
     // },
-    {
-      ...BUSD_INPUT_OPTION,
-      address: TOKENS.BUSD.BSC,
-      pathTokenInToLp0: [TOKENS.BUSD.BSC, TOKENS.UST.BSC],
-      pathTokenInToLp1: [TOKENS.BUSD.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
-    },
+    // {
+    //   ...BUSD_INPUT_OPTION,
+    //   address: TOKENS.BUSD.BSC,
+    //   pathTokenInToLp0: [TOKENS.BUSD.BSC, TOKENS.UST.BSC],
+    //   pathTokenInToLp1: [TOKENS.BUSD.BSC, TOKENS.UST.BSC, TOKENS.AMETHYST.BSC],
+    // },
   ],
   vault: VAULT_GRAVE_AVAX,
 };
@@ -137,6 +135,6 @@ export const ZAP_UST_AMES_BSC: IZapPool = {
 //   ],
 // };
 
-export const ZAPS_BSC: ChainZapInfo = {
-  ZAPS: [ZAP_UST_AMES_BSC],
+export const ZAPS_AVALANCHE: ChainZapInfo = {
+  ZAPS: [ZAP_AVAX_GRAVE_AVALANCHE],
 };

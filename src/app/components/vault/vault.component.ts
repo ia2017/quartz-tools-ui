@@ -35,12 +35,14 @@ export class VaultComponent implements OnInit, OnDestroy {
     public readonly vaultService: VaultService,
     private readonly vaultStats: StatsService,
     private readonly webService: Web3Service
+
   ) {
     const sub = this.webService.error.subscribe((err) => {
       this.vault.loading = false;
       this.resetInputs();
     });
     this._subs.add(sub);
+    
   }
 
   async ngOnInit() {

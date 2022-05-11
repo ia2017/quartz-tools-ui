@@ -43,4 +43,23 @@ export const TOKENS = {
     logoPath:
       'https://assets.coingecko.com/coins/images/12681/small/UST.png?1601612407',
   },
+  GRAVE: {
+    AVALANCHE: '0x3700a92dd231F0CaC37D31dBcF4c0f5cCb1db6Ca',
+    logoPath:
+      '',
+
+  },
+  GSHARE: {
+    AVALANCHE: '0xFfE04Bf98C7111360Bf7A6c56b343915543cD941',
+    logoPath:
+      '',
+
+  },
+  AVAX: {
+    AVALANCHE: '0x1CE0c2827e2eF14D5C4f29a091d735A204794041',
+    logoPath:
+      '',
+
+  },
+  
 };

@@ -33,4 +33,5 @@ export const PRICE_INFO_GSHARE: TokenPriceInfo = {
   getPrice: getGSharePrice,
 };
 
-export const BSC_PRICE_TOKENS = [PRICE_INFO_AMES, PRICE_INFO_ASHARE];
+//export const BSC_PRICE_TOKENS = [PRICE_INFO_AMES, PRICE_INFO_ASHARE];
+export const AVALANCHE_PRICE_TOKENS = [PRICE_INFO_GRAVE, PRICE_INFO_GSHARE];

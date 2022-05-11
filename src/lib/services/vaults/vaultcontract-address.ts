@@ -1,0 +1,1 @@
+export const vaultcontract_address='0xa03DE9f05b38eFa586BF474417647df04D7907f1';

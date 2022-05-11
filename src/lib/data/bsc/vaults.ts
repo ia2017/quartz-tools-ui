@@ -19,7 +19,7 @@ import {
   PAIR_ASHARE_UST_BSC,
   PAIR_AMETHYST_ASHARE_PAIR_ADDRESS_BSC,
 } from './pairs';
-import { BINANCE_SMART_CHAIN } from '../chains';
+import { BINANCE_SMART_CHAIN, BINANCE_SMART_CHAIN_TESTNET } from '../chains';
 import { TOKENS } from '../tokens';
 import { getAmethystPrice, getAsharePrice } from './pricing';
 
@@ -169,10 +169,69 @@ const V2_VAULT_SINGLE_STAKE_AMETHYST: IVault = {
   protocolVersion: true,
 };
 
+export const VAULT_GRAVE_AVAX: IVault = {
+  active: true,
+  chainId: BINANCE_SMART_CHAIN_TESTNET.chainId,
+  name: 'X-GRAVE-AVAX',
+  poolId: 1,
+  vaultAddress: '0xa03DE9f05b38eFa586BF474417647df04D7907f1',
+  lpAddress: PAIR_UST_AMETHYST_BSC,
+  userLpWalletBalance: 0,
+  walletBalanceBN: ethers.constants.Zero,
+  userLpDepositBalanceUI: 0,
+  userLpDepositBalanceBN: ethers.constants.Zero,
+  APY: 0,
+  dailyAPR: 0.0,
+  totalValueLocked: 0,
+  tvlChecked: false,
+  loading: false,
+  logoURI: 'assets/logo.a9502d88.svg',
+  contractApproved: false,
+  strategy: {
+    address: V2_STRAT_AMETHYST_UST_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => 1,
+  fetchPriceToken1: getAmethystPrice,
+  fetchRewardTokenPrice: getAsharePrice,
+  compoundsDaily: BINANCE_SMART_CHAIN_TESTNET.compoundsGuessimate,
+  isSingleStake: false,
+  protocolVersion: true,
+};
+
+export const V2_VAULT_GRAVE_AVAX: IVault = {
+  active: true,
+  chainId: BINANCE_SMART_CHAIN.chainId,
+  name: 'X-GRAVE-AVAX',
+  poolId: 0,
+  vaultAddress: V2_VAULT_AMETHYST_UST_ADDRESS_BSC,
+  lpAddress: PAIR_UST_AMETHYST_BSC,
+  userLpWalletBalance: 0,
+  walletBalanceBN: ethers.constants.Zero,
+  userLpDepositBalanceUI: 0,
+  userLpDepositBalanceBN: ethers.constants.Zero,
+  APY: 0,
+  dailyAPR: 0.0,
+  totalValueLocked: 0,
+  tvlChecked: false,
+  loading: false,
+  logoURI: 'assets/logo.a9502d88.svg',
+  contractApproved: false,
+  strategy: {
+    address: V2_STRAT_AMETHYST_UST_ADDRESS_BSC,
+  },
+  fetchPriceToken0: async () => 1,
+  fetchPriceToken1: getAmethystPrice,
+  fetchRewardTokenPrice: getAsharePrice,
+  compoundsDaily: BINANCE_SMART_CHAIN.compoundsGuessimate,
+  isSingleStake: false,
+  protocolVersion: true,
+};
+
 export const VAULTS_BSC = [
-  V2_VAULT_SINGLE_STAKE_AMETHYST,
-  V2_VAULT_AMETHYST_UST_BSC,
-  V2_VAULT_ASHARE_UST_BSC,
+  //V2_VAULT_SINGLE_STAKE_AMETHYST,
+  V2_VAULT_GRAVE_AVAX,
+  //V2_VAULT_ASHARE_UST_BSC,
   // VAULT_AMETHYST_ASHARE_BSC,
   // VAULT_AMETHYST_UST_BSC,
 ];
+
